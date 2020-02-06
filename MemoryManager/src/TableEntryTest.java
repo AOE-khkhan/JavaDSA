@@ -21,17 +21,21 @@ public class TableEntryTest extends TestCase {
   }
 
   public void testIsActive() {
-    assert (anEntry.isActive());
+    assertEquals(anEntry.isActive(), true);
   }
 
   public void testDeletion() {
     anEntry.markDeleted();
-    assert (anEntry.isDeleted());
+    assertEquals(anEntry.isDeleted(), true);
   }
 
   public void testIsFree() {
     TableEntry sampleEntry = new TableEntry();
-    assert (sampleEntry.isFree());
+    assertEquals(sampleEntry.isFree(), true);
+  }
+
+  public void testGetRecordName() {
+    assertEquals(anEntry.getRecordName(), "Poochie");
   }
 
   // public void

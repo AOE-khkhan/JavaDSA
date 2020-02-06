@@ -1,8 +1,12 @@
+
 /**
  * Project 1: Memory Manager
  * Intermediate Data Structure and Algorithm, CS 5040
  * Spring 2020, Virginia Tech
  */
+
+import java.io.File;
+import java.util.Scanner;
 
 /**
  * The class containing the main method.
@@ -32,11 +36,59 @@
 // letter of this restriction.
 
 public class MemMan {
-    /**
-     * @param args
-     *     Command line parameters
-     */
-    public static void main(String[] args) {
-        // This is the main file for the program.
+  /**
+   * @param args Command line parameters
+   */
+  public static void main(String[] args) {
+    // This is the main file for the program.
+
+    // the initial memory size
+    // int initMemSize = Integer.parseInt(args[0]);
+
+    // the initial hashtable size
+    int initHashTblSize = Integer.parseInt(args[1]);
+
+    // the command file
+    File commandFile = new File(args[2]);
+
+    // ready to honor any commands
+    try {
+      // scans the command file
+      Scanner sc = new Scanner(commandFile);
+      // our hashtable
+      RecordHashTable hashTable = new RecordHashTable(initHashTblSize);
+
+      while (sc.hasNext()) {
+        String commandLine = sc.nextLine().trim().replaceAll("\\s+", " ");
+
+        if (commandLine.equals("print hashtable")) {
+          hashTable.printHashTable();
+
+        } else if (commandLine.startsWith("add")) {
+          String recordName = commandLine.substring(4);
+          boolean added = hashTable.addEntry(new Record(recordName));
+
+          if (added) {
+            System.out.println("|" + recordName + "| has been added to the Name database.");
+          } else {
+            System.out.println("|" + recordName + "| duplicates a record already in the Name database.");
+          }
+
+        } else if (commandLine.startsWith("delete")) {
+          String recordName = commandLine.substring(7);
+          boolean deleted = hashTable.deleteRecord(recordName);
+
+          if (deleted) {
+            System.out.println("|" + recordName + "| has been deleted from the Name database.");
+          } else {
+            System.out.println("|" + recordName + "| not deleted because it does not exist in the Name database.");
+          }
+
+        }
+      }
+    } catch (Exception e) {
+      // can't read commands, then quit early
+      return;
     }
+  }
 }

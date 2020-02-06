@@ -1,0 +1,2 @@
+delete    Death    Note
+add  Death Note

@@ -6,58 +6,68 @@
  * @version 2020-02-04
  */
 public class RecordHashTable {
-  // the minimum size of a table
-  public static final int MIN_SIZE = 10;
+  /**
+   * the minimum size of a table
+   */
+  public static final int MIN_SIZE = 1;
 
-  // the number of slots present at the current state of the table
+  /**
+   * the number of slots present at the current state of the table
+   */
   private int size;
 
-  // the number of records the table holds.
+  /**
+   * the number of records the table holds.
+   */
   private int count;
 
-  // the table data
+  /**
+   * the table data array
+   */
   private TableEntry[] tableData;
 
+  /**
+   * Empty parameter constructor.
+   */
   public RecordHashTable() {
     this(RecordHashTable.MIN_SIZE);
   }
 
+  /**
+   * Construct RecordHashTable by giving table size. Minimum size is always
+   * maintained.
+   * 
+   * @param tableSize The size of the hash table.
+   */
   public RecordHashTable(int tableSize) {
     this.size = tableSize < RecordHashTable.MIN_SIZE ? RecordHashTable.MIN_SIZE : tableSize;
     // initialize the table data
     this.tableData = new TableEntry[this.getSize()];
-    for (int i = 0; i < this.getSize(); ++i)
+    for (int i = 0; i < this.getSize(); ++i) {
       this.tableData[i] = new TableEntry();
+    }
   }
 
+  /** Get the size of the hash table. */
   public int getSize() {
     return this.size;
   }
 
+  /** Get the number of entries the hash table currently holds. */
   public int getCount() {
     return this.count;
   }
 
-  private void incrementCount() {
-    ++this.count;
-  }
-
-  private void decrementCount() {
-    --this.count;
-  }
-
+  /**
+   * Add a Record entry to the hash table.
+   * 
+   * @param record Record object
+   * @throws IllegalStateException
+   */
   public boolean addEntry(Record record) throws IllegalStateException {
-    // check if the size limit permits any addition
-    // if not, extend the table size by doubling it
-    // find a slot for the record by hashing
-    // if record exists in the slot and not marked deleted: return
-    // if slot active: do quadratic probing and find slot again
-    // add entry, increment counts return
-
-    if (this.getSize() / 2 == this.getCount()) {
+    if (this.getSize() / 2 <= this.getCount()) {
       this.doubleTableSize();
     }
-
     int homeSlot = RecordHashTable.getHomeSlot(record.getName(), this.getSize());
     int validSlot = homeSlot;
     int probeLevel = 0;
@@ -65,49 +75,160 @@ public class RecordHashTable {
     int sanityCounter = 0;
     boolean foundDuplicate = false;
     while ((sanityCounter < this.getSize()) && (!this.tableData[validSlot].isFree()) && (!foundDuplicate)) {
-      if (this.tableData[validSlot].getRecord().getName() == record.getName()) {
+      if (this.tableData[validSlot].getRecordName().equals(record.getName())) {
         foundDuplicate = true;
         break;
       }
       validSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel, this.getSize());
     }
-
-    if (sanityCounter >= this.getSize())
+    if (sanityCounter == this.getSize()) {
       throw new IllegalStateException("Can't hash!");
-
-    if (foundDuplicate)
+    }
+    if (foundDuplicate) {
       return false;
-
+    }
     this.tableData[validSlot] = new TableEntry(record);
     this.incrementCount();
     return true;
   }
 
-  private void doubleTableSize() {
-    int newSize = 2 * this.getSize();
+  /**
+   * Delete a record from the table.
+   * 
+   * @param key A string that is the name of the record to be deleted.
+   * @return true if any deletion occurs, false otherwise.
+   */
+  public boolean deleteRecord(String key) {
+    // int recordPos = this.getRecordSlot(key);
 
-    // initialize new table data
+    // if ((recordPos != -1) && (this.tableData[recordPos].isActive())){
+    //   this.tableData[recordPos].markDeleted();
+    //   this.decrementCount();
+    //   return true;
+    // }
+    // return false;
+
+    // if (recordPos > -1) {
+    //   this.tableData[recordPos].markDeleted();
+    //   this.decrementCount();
+    //   return true;
+    // }
+    // return false;
+    for (int i = 0; i < this.getSize(); ++i) {
+      if (this.tableData[i].isActive() && this.tableData[i].getRecordName().equals(key)){
+        this.tableData[i].markDeleted();
+        this.decrementCount();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Print the hashtable. Prints each Record's name and the position on the table.
+   */
+  public void printHashTable() {
+    for (int i = 0; i < this.getSize(); ++i) {
+      if (this.tableData[i].isActive()) {
+        System.out.println("|" + this.tableData[i].getRecordName() + "| " + i);
+      }
+    }
+    System.out.println("Total records: " + this.getCount());
+  }
+
+  /**
+   * Double the size of the hashtable. Rehashes existing non-deleted entries.
+   * 
+   * @throws IllegalStateException
+   */
+  private void doubleTableSize() throws IllegalStateException {
+
+    int newSize = 2 * this.getSize();
     TableEntry[] newTableData = new TableEntry[newSize];
+
     for (int i = 0; i < newSize; ++i) {
       newTableData[i] = new TableEntry();
     }
-
     int countAdds = 0;
     for (int i = 0; i < this.getSize(); ++i) {
       if (this.tableData[i].isActive()) {
-        int homeSlot = RecordHashTable.getHomeSlot(this.tableData[i].getRecord().getName(), newSize);
+        int homeSlot = RecordHashTable.getHomeSlot(this.tableData[i].getRecordName(), newSize);
         int validSlot = homeSlot;
         int probeLevel = 0;
-        while (!newTableData[i].isFree()) {
+        int sanityCounter = 0;
+        while ((!newTableData[validSlot].isFree()) && (sanityCounter < newSize)) {
           validSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel, newSize);
+          ++sanityCounter;
+        }
+        if (sanityCounter == newSize) {
+          throw new IllegalStateException("Can't hash!");
         }
         newTableData[validSlot] = this.tableData[i];
         ++countAdds;
       }
     }
+
     this.tableData = newTableData;
     this.size = newSize;
     this.count = countAdds;
+  }
+
+  /**
+   * Increment the entries count.
+   */
+  private void incrementCount() {
+    ++this.count;
+  }
+
+  /**
+   * Decrement the entries count.
+   */
+  private void decrementCount() {
+    --this.count;
+  }
+
+  /**
+   * Get the slot index of a Record by its name.
+   * 
+   * @param key The String name of the Record.
+   * @return The index of the valid slot for a Record.
+   */
+  private int getRecordSlot(String key) {
+    int homeSlot = RecordHashTable.getHomeSlot(key, this.getSize());
+    int validSlot = homeSlot;
+    int probeLevel = 0;
+    int sanityCounter = 0;
+
+    // while (
+    //     (sanityCounter < this.getSize()) &&
+    //     ((!this.tableData[validSlot].isFree()) ||
+    //       (!((this.tableData[validSlot].isActive()) &&
+    //       this.tableData[validSlot].getRecordName().equals(key))))) {
+    //   validSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel, this.getSize());
+    //   ++sanityCounter;
+    // }
+
+    // if (sanityCounter != this.getSize()){
+    //   return validSlot;
+    // } else {
+    //   return -1;
+    // }
+
+    while ((sanityCounter < this.getSize()) &&
+    ((!this.tableData[validSlot].isFree()) ||
+    (!(this.tableData[validSlot].isActive() &&
+    this.tableData[validSlot].getRecordName().equals(key))))) {
+
+    validSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel,
+    this.getSize());
+    ++sanityCounter;
+    }
+
+    if ((!this.tableData[validSlot].isFree()) && (sanityCounter <
+    this.getSize())) {
+    return validSlot;
+    }
+    return -1;
   }
 
   /**
@@ -118,6 +239,7 @@ public class RecordHashTable {
    * @return The home slot for string
    */
   private static int getHomeSlot(String string, int tableSize) {
+
     int intLength = string.length() / 4;
     long sum = 0;
     for (int j = 0; j < intLength; j++) {

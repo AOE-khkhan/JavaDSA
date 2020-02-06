@@ -9,18 +9,27 @@
  * @version 2020-02-03
  */
 public class Record {
-  // the identifier used for this Record object
+  /**
+   * The identifier used for this Record object.
+   */
   private String name;
 
-  // reference to the first RecordKeyVal object
-  // which will be null by default
+  /**
+   * Reference to the first RecordKeyVal object. Null by default.
+   */
   private RecordKeyVal headRecord;
 
+  /** Construct a Record object from its name. */
   public Record(String name) {
     this.name = name;
     headRecord = null;
   }
 
+  /**
+   * Get the name of this Record object.
+   * 
+   * @return String that is the name of this record.
+   */
   public String getName() {
     return this.name;
   }
@@ -52,7 +61,7 @@ public class Record {
   public boolean deleteRecordKeyVal(String key) {
     if (this.getHeadRecord() == null)
       return false;
-    if (this.getHeadRecord().getKey() == key) {
+    if (this.getHeadRecord().getKey().equals(key)) {
       this.setHeadRecord(this.getHeadRecord().getNextKeyVal());
       return true;
     } else {
@@ -72,16 +81,30 @@ public class Record {
     return this.getHeadRecord().findKeyVal(key);
   }
 
+  /**
+   * Print the Record. Intended for testing purpose.
+   */
   public void printRecord() {
     if (this.getHeadRecord() == null)
       return;
     this.getHeadRecord().printKeyVal();
   }
 
+  /**
+   * Get the head of the RecordKeyVal data structure. RecordKeyVal is a linked
+   * list.
+   * 
+   * @return RecordKeyVal linked list.
+   */
   private RecordKeyVal getHeadRecord() {
     return this.headRecord;
   }
 
+  /**
+   * Set the RecordKeyVal data member of this object.
+   * 
+   * @param kv RecordKeyVal linked list.
+   */
   private void setHeadRecord(RecordKeyVal kv) {
     this.headRecord = kv;
   }

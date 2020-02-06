@@ -12,28 +12,63 @@
  */
 
 class RecordKeyVal {
+  /**
+   * Key of the record.
+   */
   private String key;
+  /**
+   * Value of the record.
+   */
   private String val;
+  /**
+   * The linked RecordKeyVal object.
+   */
   private RecordKeyVal nextKeyVal;
 
+  /**
+   * Construct RecordKeyVal from a key and a value.
+   * 
+   * @param k String key.
+   * @param v string value.
+   */
   public RecordKeyVal(String k, String v) {
     this.key = k;
     this.val = v;
     this.nextKeyVal = null;
   }
 
+  /**
+   * Get the key of the object.
+   * 
+   * @return String key.
+   */
   public String getKey() {
     return this.key;
   }
 
+  /**
+   * Get the value of the object.
+   * 
+   * @return String value.
+   */
   public String getVal() {
     return this.val;
   }
 
+  /**
+   * Get reference to the linked RecordKeyVal object.
+   * 
+   * @return RecordKeyVal reference.
+   */
   public RecordKeyVal getNextKeyVal() {
     return this.nextKeyVal;
   }
 
+  /**
+   * Set the linked RecordKeyVal object.
+   * 
+   * @param kv RecordKeyVal reference.
+   */
   public void setNextKeyVal(RecordKeyVal kv) {
     this.nextKeyVal = kv;
   }
@@ -45,10 +80,12 @@ class RecordKeyVal {
    * @return RecordKeyVal if key found, null otherwise.
    */
   public RecordKeyVal findKeyVal(String key) {
-    if (this.getKey() == key)
+    if (this.getKey().equals(key)) {
       return this;
-    if (this.getNextKeyVal() == null)
+    }
+    if (this.getNextKeyVal() == null) {
       return null;
+    }
     return this.getNextKeyVal().findKeyVal(key);
   }
 
@@ -59,9 +96,10 @@ class RecordKeyVal {
    * @return true if any deletion occurs, false otherwise
    */
   public boolean deleteKeyVal(String key) {
-    if (this.getNextKeyVal() == null)
+    if (this.getNextKeyVal() == null) {
       return false;
-    if (this.getNextKeyVal().getKey() == key) {
+    }
+    if (this.getNextKeyVal().getKey().equals(key)) {
       this.setNextKeyVal(this.getNextKeyVal().getNextKeyVal());
       return true;
     } else {
@@ -76,21 +114,23 @@ class RecordKeyVal {
    * @param kv RecordKeyVal to be appended.
    */
   public void appendKeyVal(RecordKeyVal kv) {
-    if (this.getNextKeyVal() == null)
+    if (this.getNextKeyVal() == null) {
       this.setNextKeyVal(kv);
-    else
+    } else {
       getNextKeyVal().appendKeyVal(kv);
+    }
   }
 
   /**
-   * Print the key-value entries from all RecordKeyVal's.
+   * Print the key-value entries.
    *
    * Intended for testing.
    */
   public void printKeyVal() {
     System.out.println(this.getKey() + " " + this.getVal());
-    if (this.getNextKeyVal() == null)
+    if (this.getNextKeyVal() == null) {
       return;
+    }
     this.getNextKeyVal().printKeyVal();
   }
 }

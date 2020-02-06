@@ -44,9 +44,5 @@ public class RecordTest extends TestCase {
     found = aRecord.findRecordKeyVal("Genre");
     assertEquals(found, null);
   }
-
-//  public void test
-
-  // public void test
 }
 

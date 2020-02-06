@@ -34,12 +34,18 @@ public class RecordKeyValTest extends TestCase {
     assertEquals(nextkv.getVal(), "Super Hit");
   }
 
+  public void testGetNextKeyVal(){
+    aKVpair.setNextKeyVal(new RecordKeyVal("Popularity", "Super Hit"));
+    assertEquals(aKVpair.getNextKeyVal().getKey(), "Popularity");
+    assertEquals(aKVpair.getNextKeyVal().getVal(), "Super Hit");
+  }
+
   public void testSetNextKeyValLinked() {
     RecordKeyVal newKVpair = new RecordKeyVal("Year", "1995");
     newKVpair.setNextKeyVal(new RecordKeyVal("Country", "Japan"));
     aKVpair.setNextKeyVal(newKVpair);
 
-    printLinkedRecordKeyVal(aKVpair);
+    aKVpair.printKeyVal();
 
     String output = systemOut().getHistory();
     assertFuzzyEquals("Genre Anime\nYear 1995\nCountry Japan\n", output);
@@ -53,7 +59,7 @@ public class RecordKeyValTest extends TestCase {
 
     aKVpair.deleteKeyVal("Year");
 
-    printLinkedRecordKeyVal(aKVpair);
+    aKVpair.printKeyVal();
 
     String output = systemOut().getHistory();
     assertFuzzyEquals("Genre Anime\nCountry Japan\n", output);
@@ -64,10 +70,10 @@ public class RecordKeyValTest extends TestCase {
   public void testAppendKeyVal() {
     aKVpair.appendKeyVal(new RecordKeyVal("Year", "1995"));
 
-    printLinkedRecordKeyVal(aKVpair);
+    aKVpair.printKeyVal();
     String output = systemOut().getHistory();
 
-    assert (output.endsWith("1995\n"));
+    assertFuzzyEquals(output, "Genre Anime\nYear 1995");
     System.out.println("--------------------------------------");
   }
 
@@ -77,14 +83,4 @@ public class RecordKeyValTest extends TestCase {
     found = aKVpair.findKeyVal("Country");
     assertEquals(found, null);
   }
-
-  /*
-   * TOOD Redundant function. Clean up.
-   */
-  private void printLinkedRecordKeyVal(RecordKeyVal kv) {
-    System.out.println(kv.getKey() + " " + kv.getVal());
-    if (!(kv.getNextKeyVal() == null))
-      printLinkedRecordKeyVal(kv.getNextKeyVal());
-  }
-
 }
