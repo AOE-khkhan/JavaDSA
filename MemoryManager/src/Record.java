@@ -19,9 +19,12 @@ public class Record {
    */
   private RecordKeyVal headRecord;
 
-  /** Construct a Record object from its name. */
-  public Record(String name) {
-    this.name = name;
+  /** Construct a Record object from its name.
+   *  
+   * @param n name of the record
+   * */
+  public Record(String n) {
+    this.name = n;
     headRecord = null;
   }
 
@@ -38,7 +41,7 @@ public class Record {
    * Add a RecordKeyVal entry.
    * 
    * @param kv the RecordKeyVal object to be added.
-   * @return true if no deletion occured, false if an existing RecordKeyVal was
+   * @return true if no deletion occurred, false if an existing RecordKeyVal was
    *         first deleted and a new RecordKeyVal was appended.
    */
   public boolean addRecordKeyVal(RecordKeyVal kv) {
@@ -53,7 +56,7 @@ public class Record {
   }
 
   /**
-   * Delete a key-value entry if key exists in the headRecord data member.
+   * Delete a key-value entry if key exists.
    * 
    * @param key key to be looked for
    * @return true if any deletion occurs, false otherwise.

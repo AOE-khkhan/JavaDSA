@@ -43,7 +43,7 @@ public class TableEntry {
   /**
    * Get the name field of the Record object held by this TableEntry.
    * 
-   * @return
+   * @return name field of the Record object held by this object.
    */
   public String getRecordName() {
     return this.getRecord().getName();
@@ -84,7 +84,7 @@ public class TableEntry {
   }
 
   /**
-   * Tells if the entry is active, deleted or free.
+   * Denote if the entry is active, deleted or free.
    */
   public static enum SlotInfo {
     ACTIVE, FREE, DELETED

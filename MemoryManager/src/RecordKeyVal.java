@@ -76,34 +76,34 @@ class RecordKeyVal {
   /**
    * Search for the key-value by key in the linked list.
    * 
-   * @param key key to search
+   * @param k key to search
    * @return RecordKeyVal if key found, null otherwise.
    */
-  public RecordKeyVal findKeyVal(String key) {
-    if (this.getKey().equals(key)) {
+  public RecordKeyVal findKeyVal(String k) {
+    if (this.getKey().equals(k)) {
       return this;
     }
     if (this.getNextKeyVal() == null) {
       return null;
     }
-    return this.getNextKeyVal().findKeyVal(key);
+    return this.getNextKeyVal().findKeyVal(k);
   }
 
   /**
    * Delete a key-value entry if key exists in the linked RecordKeyVal.
    * 
-   * @param key key to be looked for
+   * @param k key to be looked for
    * @return true if any deletion occurs, false otherwise
    */
-  public boolean deleteKeyVal(String key) {
+  public boolean deleteKeyVal(String k) {
     if (this.getNextKeyVal() == null) {
       return false;
     }
-    if (this.getNextKeyVal().getKey().equals(key)) {
+    if (this.getNextKeyVal().getKey().equals(k)) {
       this.setNextKeyVal(this.getNextKeyVal().getNextKeyVal());
       return true;
     } else {
-      return this.getNextKeyVal().deleteKeyVal(key);
+      return this.getNextKeyVal().deleteKeyVal(k);
     }
   }
 

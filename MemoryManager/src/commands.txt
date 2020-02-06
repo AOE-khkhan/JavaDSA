@@ -1,2 +1,16 @@
+print           hashtable
 delete    Death    Note
 add  Death Note
+print hashtable
+add   Death     Note
+add      Can   You        Handle?
+add  Another Test
+print hashtable
+delete Death                     Note
+add Death Note
+delete Another Test
+add  Fullmetal Alchemist
+add Spirited Away
+add death note
+add Castle in the Sky
+print hashtable
