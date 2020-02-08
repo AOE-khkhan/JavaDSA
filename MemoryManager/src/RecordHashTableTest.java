@@ -85,10 +85,10 @@ public class RecordHashTableTest extends TestCase {
   /**
    * Test the hashtable print method.
    */
-  public void testPrintHashTable() {
+  public void testPrint() {
     sampleTable.addRecord(new Record("Death Note"));
     sampleTable.addRecord(new Record("Can you handle?"));
-    sampleTable.printHashTable();
+    sampleTable.print();
     String output = systemOut().getHistory();
     assertFuzzyEquals(output, "|Can you handle?| 0\n"
         + "|Death Note| 4\nTotal records: 2");

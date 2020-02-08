@@ -125,7 +125,7 @@ public class RecordHashTable {
   /**
    * Print the hashtable. Prints each Record's name and the position on the table.
    */
-  public void printHashTable() {
+  public void print() {
     for (int i = 0; i < this.getSize(); ++i) {
       if (this.tableData[i].isActive()) {
         System.out.println("|" + this.tableData[i].getRecordName() + "| " + i);

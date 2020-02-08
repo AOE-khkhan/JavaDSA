@@ -61,40 +61,20 @@ public class MemMan {
       Scanner sc = new Scanner(commandFile);
       // our hashtable
       RecordHashTable hashTable = new RecordHashTable(initHashTblSize);
+      Communicator memManCommunicator = new Communicator(hashTable);
       while (sc.hasNext()) {
         String commandLine = sc.nextLine().trim().replaceAll("\\s+", " ");
 
         if (commandLine.equals("print hashtable")) {
-          hashTable.printHashTable();
+          memManCommunicator.printHashTable();
 
         } else if (commandLine.startsWith("add")) {
           String recordName = commandLine.substring(4);
-          int tableSize = hashTable.getSize();
-          boolean added = hashTable.addRecord(new Record(recordName));
-
-          if (added) {
-            System.out.println("|" + recordName +
-                "| has been added to the Name database.");
-            if (hashTable.getSize() > tableSize) {
-              System.out.println("Name hash table size doubled to "
-                  + hashTable.getSize() + " slots.");
-            }
-          } else {
-            System.out.println("|" + recordName
-                + "| duplicates a record already in the Name database.");
-          }
+          memManCommunicator.addRecordToHashTable(recordName);
 
         } else if (commandLine.startsWith("delete")) {
           String recordName = commandLine.substring(7);
-          boolean deleted = hashTable.deleteRecord(recordName);
-
-          if (deleted) {
-            System.out.println("|" + recordName
-                + "| has been deleted from the Name database.");
-          } else {
-            System.out.println("|" + recordName
-                + "| not deleted because it does not exist in the Name database.");
-          }
+          memManCommunicator.deleteRecordFromHashTable(recordName);
 
         } else if (commandLine.startsWith("update add")) {
           String pattern = "^update add(.*?)<SEP>(.*?)<SEP>(.*)$";
@@ -105,15 +85,7 @@ public class MemMan {
           String fieldName = m.group(2).trim();
           String fieldValue = m.group(3).trim();
 
-          Record theRecord = hashTable.getRecord(name);
-
-          if (theRecord != null) {
-            theRecord.addRecordKeyVal(new RecordKeyVal(fieldName, fieldValue));
-            System.out.println("Updated Record: |" + theRecord.toString() + "|");
-          } else {
-            System.out.println("|" + name
-                + "| not updated because it does not exist in the Name database.");
-          }
+          memManCommunicator.updateAddRecordKeyVal(name, fieldName, fieldValue);
 
         } else if (commandLine.startsWith("update delete")) {
           String pattern = "^update delete(.*?)<SEP>(.*?)$";
@@ -123,20 +95,8 @@ public class MemMan {
           String nameString = m.group(1).trim();
           String fieldNameString = m.group(2).trim();
 
-          Record theRecord = hashTable.getRecord(nameString);
-          if (theRecord != null) {
-            boolean deleted = theRecord.deleteRecordKeyVal(fieldNameString);
-            if (deleted) {
-              System.out.println("Updated Record: |" + theRecord.toString() + "|");
-            } else {
-              System.out.println(
-                  "|" + nameString + "| not updated because the field |"
-                  + fieldNameString + "| does not exist");
-            }
-          } else {
-            System.out.println("|" + nameString
-                + "| not updated because it does not exist in the Name database.");
-          }
+          memManCommunicator.updateDeleteRecordKeyVal(nameString,
+                                                      fieldNameString);
         }
       }
       sc.close();
