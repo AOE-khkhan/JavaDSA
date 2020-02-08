@@ -7,6 +7,8 @@
 
 import java.io.File;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * The class containing the main method.
@@ -57,7 +59,6 @@ public class MemMan {
       Scanner sc = new Scanner(commandFile);
       // our hashtable
       RecordHashTable hashTable = new RecordHashTable(initHashTblSize);
-
       while (sc.hasNext()) {
         String commandLine = sc.nextLine().trim().replaceAll("\\s+", " ");
 
@@ -66,10 +67,14 @@ public class MemMan {
 
         } else if (commandLine.startsWith("add")) {
           String recordName = commandLine.substring(4);
-          boolean added = hashTable.addEntry(new Record(recordName));
+          int tableSize = hashTable.getSize();
+          boolean added = hashTable.addRecord(new Record(recordName));
 
           if (added) {
             System.out.println("|" + recordName + "| has been added to the Name database.");
+            if (hashTable.getSize() > tableSize) {
+              System.out.println("Name hash table size doubled to " + hashTable.getSize() + " slots.");
+            }
           } else {
             System.out.println("|" + recordName + "| duplicates a record already in the Name database.");
           }
@@ -84,8 +89,47 @@ public class MemMan {
             System.out.println("|" + recordName + "| not deleted because it does not exist in the Name database.");
           }
 
+        } else if (commandLine.startsWith("update add")) {
+          String pattern = "^update add(.*?)<SEP>(.*?)<SEP>(.*)$";
+          Pattern r = Pattern.compile(pattern);
+          Matcher m = r.matcher(commandLine);
+          m.find();
+          String name = m.group(1).trim();
+          String fieldName = m.group(2).trim();
+          String fieldValue = m.group(3).trim();
+
+          Record theRecord = hashTable.getRecord(name);
+
+          if (theRecord != null) {
+            theRecord.addRecordKeyVal(new RecordKeyVal(fieldName, fieldValue));
+            System.out.println("Updated Record: |" + theRecord.toString() + "|");
+          } else {
+            System.out.println("|" + name + "| not updated because it does not exist in the Name database.");
+          }
+
+        } else if (commandLine.startsWith("update delete")) {
+          String pattern = "^update delete(.*?)<SEP>(.*?)$";
+          Pattern r = Pattern.compile(pattern);
+          Matcher m = r.matcher(commandLine);
+          m.find();
+          String nameString = m.group(1).trim();
+          String fieldNameString = m.group(2).trim();
+
+          Record theRecord = hashTable.getRecord(nameString);
+          if (theRecord != null) {
+            boolean deleted = theRecord.deleteRecordKeyVal(fieldNameString);
+            if (deleted) {
+              System.out.println("Updated Record: |" + theRecord.toString() + "|");
+            } else {
+              System.out.println(
+                  "|" + nameString + "| not updated because the field |" + fieldNameString + "| does not exist");
+            }
+          } else {
+            System.out.println("|" + nameString + "| not updated because it does not exist in the Name database.");
+          }
         }
       }
+      sc.close();
     } catch (Exception e) {
       // can't read commands, then quit early
       return;

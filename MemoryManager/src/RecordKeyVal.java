@@ -96,15 +96,16 @@ class RecordKeyVal {
    * @return true if any deletion occurs, false otherwise
    */
   public boolean deleteKeyVal(String k) {
-    if (this.getNextKeyVal() == null) {
-      return false;
+    RecordKeyVal curRecordKV = this;
+
+    while (curRecordKV.getNextKeyVal() != null) {
+      if (curRecordKV.getNextKeyVal().getKey().equals(k)) {
+        curRecordKV.setNextKeyVal(curRecordKV.getNextKeyVal().getNextKeyVal());
+        return true;
+      }
+      curRecordKV = curRecordKV.getNextKeyVal();
     }
-    if (this.getNextKeyVal().getKey().equals(k)) {
-      this.setNextKeyVal(this.getNextKeyVal().getNextKeyVal());
-      return true;
-    } else {
-      return this.getNextKeyVal().deleteKeyVal(k);
-    }
+    return false;
   }
 
   /**
@@ -114,23 +115,21 @@ class RecordKeyVal {
    * @param kv RecordKeyVal to be appended.
    */
   public void appendKeyVal(RecordKeyVal kv) {
-    if (this.getNextKeyVal() == null) {
-      this.setNextKeyVal(kv);
-    } else {
-      getNextKeyVal().appendKeyVal(kv);
+    RecordKeyVal curRecordKV = this;
+
+    while (curRecordKV.getNextKeyVal() != null) {
+      curRecordKV = curRecordKV.getNextKeyVal();
     }
+    curRecordKV.setNextKeyVal(kv);
   }
 
   /**
-   * Print the key-value entries.
-   *
-   * Intended for testing.
+   * String representation of the key-value object.
+   * 
+   * @return Returns the String representation of the object.
    */
-  public void printKeyVal() {
-    System.out.println(this.getKey() + " " + this.getVal());
-    if (this.getNextKeyVal() == null) {
-      return;
-    }
-    this.getNextKeyVal().printKeyVal();
+  @Override
+  public String toString() {
+    return this.getKey().toString() + "<SEP>" + this.getVal().toString();
   }
 }

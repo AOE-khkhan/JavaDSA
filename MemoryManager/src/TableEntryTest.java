@@ -17,7 +17,8 @@ public class TableEntryTest extends TestCase {
   }
 
   public void testGetRecord() {
-    assertEquals(anEntry.getRecord().getName(), "Poochie");
+	Record gotRecord = anEntry.getRecord();
+    assertEquals(gotRecord.getName(), "Poochie");
   }
 
   public void testIsActive() {
@@ -35,7 +36,7 @@ public class TableEntryTest extends TestCase {
   }
 
   public void testGetRecordName() {
-    assertEquals(anEntry.getRecordName(), "Poochie");
+    assertEquals(anEntry.getRecordName(), anEntry.getRecord().getName());
   }
 
   // public void

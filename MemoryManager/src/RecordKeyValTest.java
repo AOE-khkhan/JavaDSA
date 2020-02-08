@@ -44,12 +44,12 @@ public class RecordKeyValTest extends TestCase {
     RecordKeyVal newKVpair = new RecordKeyVal("Year", "1995");
     newKVpair.setNextKeyVal(new RecordKeyVal("Country", "Japan"));
     aKVpair.setNextKeyVal(newKVpair);
-
-    aKVpair.printKeyVal();
-
-    String output = systemOut().getHistory();
-    assertFuzzyEquals("Genre Anime\nYear 1995\nCountry Japan\n", output);
-    System.out.println("--------------------------------------");
+    
+    assertEquals(aKVpair.getNextKeyVal().getKey(), "Year");
+    assertEquals(aKVpair.getNextKeyVal().getVal(), "1995");
+    
+    assertEquals(aKVpair.getNextKeyVal().getNextKeyVal().getKey(), "Country");
+    assertEquals(aKVpair.getNextKeyVal().getNextKeyVal().getVal(), "Japan");
   }
 
   public void testDeleteKeyVal() {
@@ -58,23 +58,19 @@ public class RecordKeyValTest extends TestCase {
     aKVpair.setNextKeyVal(newKVpair);
 
     aKVpair.deleteKeyVal("Year");
-
-    aKVpair.printKeyVal();
-
-    String output = systemOut().getHistory();
-    assertFuzzyEquals("Genre Anime\nCountry Japan\n", output);
-
-    System.out.println("--------------------------------------");
+    assertEquals(aKVpair.getNextKeyVal().getKey(), "Country");
+    assertEquals(aKVpair.getNextKeyVal().getVal(), "Japan");
   }
 
   public void testAppendKeyVal() {
     aKVpair.appendKeyVal(new RecordKeyVal("Year", "1995"));
-
-    aKVpair.printKeyVal();
-    String output = systemOut().getHistory();
-
-    assertFuzzyEquals(output, "Genre Anime\nYear 1995");
-    System.out.println("--------------------------------------");
+    aKVpair.appendKeyVal(new RecordKeyVal("Country", "Japan"));
+    
+    assertEquals(aKVpair.getNextKeyVal().getKey(), "Year");
+    assertEquals(aKVpair.getNextKeyVal().getVal(), "1995");
+    
+    assertEquals(aKVpair.getNextKeyVal().getNextKeyVal().getKey(), "Country");
+    assertEquals(aKVpair.getNextKeyVal().getNextKeyVal().getVal(), "Japan");
   }
 
   public void testFindKeyVal() {
@@ -82,5 +78,13 @@ public class RecordKeyValTest extends TestCase {
     assertEquals(found.getVal(), "Anime");
     found = aKVpair.findKeyVal("Country");
     assertEquals(found, null);
+  }
+  
+  public void testToString() {
+	  System.out.println(aKVpair);
+	  String output = systemOut().getHistory();
+	  
+	  assertFuzzyEquals(output, "Genre<SEP>Anime");
+	  
   }
 }

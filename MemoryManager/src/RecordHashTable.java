@@ -7,27 +7,27 @@
  */
 public class RecordHashTable {
   /**
-   * the minimum size of a table
+   * The minimum size of the table
    */
   public static final int MIN_SIZE = 1;
 
   /**
-   * the number of slots present at the current state of the table
+   * The number of slots present at the current state of the table
    */
   private int size;
 
   /**
-   * the number of active records the table holds.
+   * The number of active records the table holds.
    */
-  private int count;
+  private int countActive;
 
   /**
-   * the number of deleted records the table holds.
+   * The number of deleted records the table holds.
    */
   private int countDeleted;
 
   /**
-   * the table data array
+   * The TableEntry array field.
    */
   private TableEntry[] tableData;
 
@@ -64,13 +64,13 @@ public class RecordHashTable {
 
   /**
    * Get the number of entries the hash table currently holds. Both the active and
-   * deleted entries are counted for the reasons how the closed hashtable is
+   * deleted entries are counted for the reasons how this closed hashtable is
    * implemented.
    * 
    * @return the int count of the non-free entries in the hashtable
    */
   public int getCount() {
-    return this.count;
+    return this.countActive;
   }
 
   /**
@@ -78,26 +78,44 @@ public class RecordHashTable {
    * database no changes will be made.
    * 
    * @param record Record object
-   * @throws IllegalStateException
    * @return true if addition is successful, false otherwise.
    */
-  public boolean addEntry(Record record) throws IllegalStateException {
-    if (this.getSize() / 2 <= this.getCount() + this.countDeleted) {
-      this.doubleTableSize();
-    }
+  public boolean addRecord(Record record) {
 
-    int validSlot = this.getRecordSlot(record.getName());
+    int validSlot = this.getSlotForInsertion(record.getName());
 
     if (validSlot == -1) {
-      throw new IllegalStateException("Hashtable is in illegal state. Can't hash!");
+      return false;
     }
 
-    if (this.tableData[validSlot].isFree()) {
+    if (this.tableData[validSlot].isDeleted()) {
       this.tableData[validSlot] = new TableEntry(record);
-      ++this.count;
-      return true;
+      ++this.countActive;
+      --this.countDeleted;
+    } else {
+      if ((this.countActive + this.countDeleted >= this.getSize() / 2)) {
+        this.doubleTableSize();
+        validSlot = this.getSlotForInsertion(record.getName());
+      }
+      this.tableData[validSlot] = new TableEntry(record);
+      ++this.countActive;
     }
-    return false;
+    return true;
+  }
+
+  /**
+   * Get a reference to the Record if the Record exists.
+   * 
+   * @param key The name field of the Record to be returned.
+   * @return Record object reference if found, null otherwise.
+   */
+  public Record getRecord(String key) {
+    int recordPos = this.getSlotForLookUp(key);
+    if (recordPos == -1) {
+      return null;
+    }
+    Record found = this.tableData[recordPos].getRecord();
+    return found;
   }
 
   /**
@@ -107,15 +125,16 @@ public class RecordHashTable {
    * @return true if any deletion occurs, false otherwise.
    */
   public boolean deleteRecord(String key) {
-    int recordPos = this.getRecordSlot(key);
+    int recordPos = this.getSlotForLookUp(key);
 
-    if ((recordPos != -1) && (this.tableData[recordPos].isActive())) {
-      this.tableData[recordPos].markDeleted();
-      ++this.countDeleted;
-      --this.count;
-      return true;
+    if (recordPos == -1) {
+      return false;
     }
-    return false;
+
+    this.tableData[recordPos].markDeleted();
+    ++this.countDeleted;
+    --this.countActive;
+    return true;
   }
 
   /**
@@ -138,42 +157,86 @@ public class RecordHashTable {
     RecordHashTable newHashTable = new RecordHashTable(this.getSize() * 2);
     for (int i = 0; i < this.getSize(); ++i) {
       if (this.tableData[i].isActive()) {
-        newHashTable.addEntry(this.tableData[i].getRecord());
+        newHashTable.addRecord(this.tableData[i].getRecord());
       }
     }
     this.tableData = newHashTable.tableData;
     this.size = newHashTable.size;
-    this.count = newHashTable.count;
+    this.countActive = newHashTable.countActive;
   }
 
   /**
-   * Get the slot index of a Record by its name. An active slot with key as the
-   * Record name or a free slot computed by hashing (and probing if needed) are
-   * valid slots. This function returns the first index of such kinds. If no valid
-   * slot could be found it returns -1 and that implies an unexpected state of the
-   * table.
+   * Return a slot index in the hashtable for insertion.
+   *
+   * Candidate positions will be computed using hashing and probing as needed. A
+   * free slot or a deleted slot (given that no duplicate exists after the deleted
+   * slot) are valid slot indices. Whichever comes first is reurned.
    * 
-   * @param key The String name of the Record.
-   * @return The index of the valid slot for a Record.
+   * @param key Record name String used for hashing and lookup.
+   * @return A valid slot index eligible for insertion, -1 if insertion cannot be
+   *         performed.
    */
-  private int getRecordSlot(String key) {
+  private int getSlotForInsertion(String key) {
     int homeSlot = RecordHashTable.getHomeSlot(key, this.getSize());
-    int validSlot = homeSlot;
+    int runningSlot = homeSlot;
+    int tombstoneSlot = -1;
     int probeLevel = 0;
     int sanityCounter = 0;
 
-    do {
-      TableEntry curEntry = this.tableData[validSlot];
+    TableEntry curEntry = null;
 
-      if (curEntry.isFree() || (curEntry.isActive() && curEntry.getRecordName().equals(key))) {
-        return validSlot;
+    do {
+      curEntry = this.tableData[runningSlot];
+      if (curEntry.isFree() && (tombstoneSlot == -1)) {
+        return runningSlot;
       }
-      validSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel, this.getSize());
+      if (curEntry.isActive() && curEntry.getRecordName().equals(key)) {
+        return -1;
+      }
+
+      if ((tombstoneSlot == -1) && curEntry.isDeleted() && curEntry.getRecordName().equals(key)) {
+        tombstoneSlot = runningSlot;
+      }
+
+      runningSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel, this.getSize());
+
+      ++sanityCounter;
 
     } while (sanityCounter < this.getSize());
+    return tombstoneSlot;
+  }
 
+  /**
+   * Return a slot index from the hashtable that has a key being looked for.
+   *
+   * Candidate positions will be computed using hashing and probing as needed.
+   * Only active slots will be considered and the key will be matched against such
+   * a slot's key. If a free slot is encountered, then it will be implied that no
+   * key is present in the table and -1 will be returned.
+   * 
+   * @param key Record name string used for hashing and lookup.
+   * @return The slot index if the key exists, -1 otherwise.
+   */
+  private int getSlotForLookUp(String key) {
+    int homeSlot = RecordHashTable.getHomeSlot(key, this.getSize());
+    int runningSlot = homeSlot;
+    int probeLevel = 0;
+    int sanityCounter = 0;
+
+    TableEntry curEntry = null;
+    do {
+      curEntry = this.tableData[runningSlot];
+      if (curEntry.isFree()) {
+        break;
+      }
+
+      if (curEntry.getRecordName().equals(key)) {
+        return runningSlot;
+      }
+      runningSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel, this.getSize());
+      ++sanityCounter;
+    } while (sanityCounter < this.getSize());
     return -1;
-
   }
 
   /**
@@ -213,9 +276,7 @@ public class RecordHashTable {
    * @param probeLevel Number of times position finding is attempted.
    * @param tableSize  The size of the table on which the position is to be found.
    */
-  private static int getProbedSlot(int homeSlot, int probeLevel, int tableSize) throws IllegalArgumentException {
-    if (homeSlot > tableSize)
-      throw new IllegalArgumentException("The homeSlot index should be smaller than the tableSize!");
+  private static int getProbedSlot(int homeSlot, int probeLevel, int tableSize) {
     return (homeSlot + probeLevel * probeLevel) % tableSize;
   }
 

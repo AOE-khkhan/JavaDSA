@@ -17,15 +17,16 @@ public class Record {
   /**
    * Reference to the first RecordKeyVal object. Null by default.
    */
-  private RecordKeyVal headRecord;
+  private RecordKeyVal headRecordKeyVal;
 
-  /** Construct a Record object from its name.
-   *  
+  /**
+   * Construct a Record object from its name.
+   * 
    * @param n name of the record
-   * */
+   */
   public Record(String n) {
     this.name = n;
-    headRecord = null;
+    headRecordKeyVal = null;
   }
 
   /**
@@ -45,13 +46,17 @@ public class Record {
    *         first deleted and a new RecordKeyVal was appended.
    */
   public boolean addRecordKeyVal(RecordKeyVal kv) {
-    if (this.getHeadRecord() == null) {
-      this.setHeadRecord(kv);
+    if (this.getHeadRecordKV() == null) {
+      this.setHeadRecordKV(kv);
       return true;
     } else {
       boolean del_dup = this.deleteRecordKeyVal(kv.getKey());
-      this.getHeadRecord().appendKeyVal(kv);
-      return del_dup;
+      if (this.getHeadRecordKV() == null) {
+        this.setHeadRecordKV(kv);
+      } else {
+        this.getHeadRecordKV().appendKeyVal(kv);
+      }
+      return (! del_dup);
     }
   }
 
@@ -62,13 +67,14 @@ public class Record {
    * @return true if any deletion occurs, false otherwise.
    */
   public boolean deleteRecordKeyVal(String key) {
-    if (this.getHeadRecord() == null)
+    if (this.getHeadRecordKV() == null)
       return false;
-    if (this.getHeadRecord().getKey().equals(key)) {
-      this.setHeadRecord(this.getHeadRecord().getNextKeyVal());
+    if (this.getHeadRecordKV().getKey().equals(key)) {
+      this.setHeadRecordKV(this.getHeadRecordKV().getNextKeyVal());
       return true;
     } else {
-      return this.getHeadRecord().deleteKeyVal(key);
+      boolean deleted = this.getHeadRecordKV().deleteKeyVal(key);
+      return deleted;
     }
   }
 
@@ -79,28 +85,35 @@ public class Record {
    * @return RecordKeyVal if found, null otherwise.
    */
   public RecordKeyVal findRecordKeyVal(String key) {
-    if (this.getHeadRecord() == null)
+    if (this.getHeadRecordKV() == null)
       return null;
-    return this.getHeadRecord().findKeyVal(key);
+    RecordKeyVal found = this.getHeadRecordKV().findKeyVal(key);
+    return found;
   }
 
   /**
-   * Print the Record. Intended for testing purpose.
+   * Override the toString method.
+   * 
+   * @return String representation of the Record object.
    */
-  public void printRecord() {
-    if (this.getHeadRecord() == null)
-      return;
-    this.getHeadRecord().printKeyVal();
+  @Override
+  public String toString() {
+    String result = this.getName();
+    RecordKeyVal curRecordKV = this.getHeadRecordKV();
+    while (curRecordKV != null) {
+      result += "<SEP>" + curRecordKV.toString();
+      curRecordKV = curRecordKV.getNextKeyVal();
+    }
+    return result;
   }
 
   /**
-   * Get the head of the RecordKeyVal data structure. RecordKeyVal is a linked
-   * list.
+   * Get the filed headRecordKeyVal.
    * 
    * @return RecordKeyVal linked list.
    */
-  private RecordKeyVal getHeadRecord() {
-    return this.headRecord;
+  private RecordKeyVal getHeadRecordKV() {
+    return this.headRecordKeyVal;
   }
 
   /**
@@ -108,8 +121,8 @@ public class Record {
    * 
    * @param kv RecordKeyVal linked list.
    */
-  private void setHeadRecord(RecordKeyVal kv) {
-    this.headRecord = kv;
+  private void setHeadRecordKV(RecordKeyVal kv) {
+    this.headRecordKeyVal = kv;
   }
 
 }

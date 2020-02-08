@@ -19,30 +19,42 @@ public class RecordTest extends TestCase {
   }
 
   public void testAddRecordKeyVal() {
-    aRecord.addRecordKeyVal(new RecordKeyVal("Genre", "Anime"));
-    aRecord.addRecordKeyVal(new RecordKeyVal("Country", "Japan"));
-    aRecord.printRecord();
-
-    String output = systemOut().getHistory();
-    assertFuzzyEquals(output, "Genre Anime\nCountry Japan");
+    boolean added = aRecord.addRecordKeyVal(new RecordKeyVal("Genre", "Anime"));
+    assertEquals(added, true);
+    added = aRecord.addRecordKeyVal(new RecordKeyVal("Genre", "Anime"));
+    assertEquals(added, false);
+    added = aRecord.addRecordKeyVal(new RecordKeyVal("Country", "Japan"));
+    assertEquals(added, true);
   }
 
-  public void testDeleteRecordKeyVal(){
+  public void testDeleteRecordKeyVal() {
     aRecord.deleteRecordKeyVal("Genre");
     assertEquals(aRecord.findRecordKeyVal("Genre"), null);
     aRecord.addRecordKeyVal(new RecordKeyVal("Year", "2003"));
-    aRecord.printRecord();
-    String output = systemOut().getHistory();
-    assertFuzzyEquals(output, "Year 2003");
   }
 
-  public void testFindRecordKeyVal(){
+  public void testFindRecordKeyVal() {
     aRecord.addRecordKeyVal(new RecordKeyVal("Genre", "Anime"));
+
     RecordKeyVal found = aRecord.findRecordKeyVal("Genre");
     assertEquals(found.getVal(), "Anime");
-    aRecord.deleteRecordKeyVal("Genre");
-    found = aRecord.findRecordKeyVal("Genre");
-    assertEquals(found, null);
-  }
-}
 
+    aRecord.deleteRecordKeyVal("Genre");
+
+    found = aRecord.findRecordKeyVal("Genre");
+    assertNull(found);
+
+    aRecord.addRecordKeyVal(new RecordKeyVal("Country", "Japan"));
+    found = aRecord.findRecordKeyVal("Country");
+    assertNotNull(found);
+  }
+
+  public void testToString() {
+    assertFuzzyEquals(aRecord.toString(), "Death Note");
+    aRecord.addRecordKeyVal(new RecordKeyVal("Genre", "Anime"));
+    aRecord.addRecordKeyVal(new RecordKeyVal("Country", "Japan"));
+    System.out.println(aRecord.toString());
+    assertFuzzyEquals(aRecord.toString(), "Death Note<SEP>Genre<SEP>Anime<SEP>Country<SEP>Japan");
+  }
+
+}
