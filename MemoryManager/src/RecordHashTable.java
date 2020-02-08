@@ -7,11 +7,6 @@
  */
 public class RecordHashTable {
   /**
-   * The minimum size of the table
-   */
-  public static final int MIN_SIZE = 1;
-
-  /**
    * The number of slots present at the current state of the table
    */
   private int size;
@@ -32,20 +27,12 @@ public class RecordHashTable {
   private TableEntry[] tableData;
 
   /**
-   * Empty parameter constructor.
-   */
-  public RecordHashTable() {
-    this(RecordHashTable.MIN_SIZE);
-  }
-
-  /**
-   * Construct RecordHashTable by giving table size. Minimum size is always
-   * maintained.
+   * Construct RecordHashTable by giving table size.
    * 
    * @param tableSize The size of the hash table.
    */
   public RecordHashTable(int tableSize) {
-    this.size = tableSize < RecordHashTable.MIN_SIZE ? RecordHashTable.MIN_SIZE : tableSize;
+    this.size = tableSize;
     // initialize the table data
     this.tableData = new TableEntry[this.getSize()];
     for (int i = 0; i < this.getSize(); ++i) {
@@ -63,9 +50,7 @@ public class RecordHashTable {
   }
 
   /**
-   * Get the number of entries the hash table currently holds. Both the active and
-   * deleted entries are counted for the reasons how this closed hashtable is
-   * implemented.
+   * Get the number of the active entries.
    * 
    * @return the int count of the non-free entries in the hashtable
    */
@@ -74,10 +59,10 @@ public class RecordHashTable {
   }
 
   /**
-   * Add a Record entry to the hash table. The Record's name already exists in the
-   * database no changes will be made.
+   * Add a Record entry to the hash table. If the Record's name already exists in
+   * the database no changes will be made.
    * 
-   * @param record Record object
+   * @param record a Record object
    * @return true if addition is successful, false otherwise.
    */
   public boolean addRecord(Record record) {
@@ -150,7 +135,7 @@ public class RecordHashTable {
   }
 
   /**
-   * Double the size of the hashtable. Rehashes existing non-deleted entries.
+   * Double the size of the hashtable. Rehashes existing active entries.
    * 
    */
   private void doubleTableSize() {
@@ -241,7 +226,7 @@ public class RecordHashTable {
 
   /**
    * Compute the hash function. Uses the "sfold" method from the OpenDSA module on
-   * hash functions
+   * hash functions.
    *
    * @param string The string to be hashed
    * @return The home slot for string

@@ -39,6 +39,8 @@ import java.util.regex.Matcher;
 
 public class MemMan {
   /**
+   * The main method of the MemMan program.
+   * 
    * @param args Command line parameters
    */
   public static void main(String[] args) {
@@ -71,12 +73,15 @@ public class MemMan {
           boolean added = hashTable.addRecord(new Record(recordName));
 
           if (added) {
-            System.out.println("|" + recordName + "| has been added to the Name database.");
+            System.out.println("|" + recordName +
+                "| has been added to the Name database.");
             if (hashTable.getSize() > tableSize) {
-              System.out.println("Name hash table size doubled to " + hashTable.getSize() + " slots.");
+              System.out.println("Name hash table size doubled to "
+                  + hashTable.getSize() + " slots.");
             }
           } else {
-            System.out.println("|" + recordName + "| duplicates a record already in the Name database.");
+            System.out.println("|" + recordName
+                + "| duplicates a record already in the Name database.");
           }
 
         } else if (commandLine.startsWith("delete")) {
@@ -84,9 +89,11 @@ public class MemMan {
           boolean deleted = hashTable.deleteRecord(recordName);
 
           if (deleted) {
-            System.out.println("|" + recordName + "| has been deleted from the Name database.");
+            System.out.println("|" + recordName
+                + "| has been deleted from the Name database.");
           } else {
-            System.out.println("|" + recordName + "| not deleted because it does not exist in the Name database.");
+            System.out.println("|" + recordName
+                + "| not deleted because it does not exist in the Name database.");
           }
 
         } else if (commandLine.startsWith("update add")) {
@@ -104,7 +111,8 @@ public class MemMan {
             theRecord.addRecordKeyVal(new RecordKeyVal(fieldName, fieldValue));
             System.out.println("Updated Record: |" + theRecord.toString() + "|");
           } else {
-            System.out.println("|" + name + "| not updated because it does not exist in the Name database.");
+            System.out.println("|" + name
+                + "| not updated because it does not exist in the Name database.");
           }
 
         } else if (commandLine.startsWith("update delete")) {
@@ -122,10 +130,12 @@ public class MemMan {
               System.out.println("Updated Record: |" + theRecord.toString() + "|");
             } else {
               System.out.println(
-                  "|" + nameString + "| not updated because the field |" + fieldNameString + "| does not exist");
+                  "|" + nameString + "| not updated because the field |"
+                  + fieldNameString + "| does not exist");
             }
           } else {
-            System.out.println("|" + nameString + "| not updated because it does not exist in the Name database.");
+            System.out.println("|" + nameString
+                + "| not updated because it does not exist in the Name database.");
           }
         }
       }
@@ -134,5 +144,5 @@ public class MemMan {
       // can't read commands, then quit early
       return;
     }
-  }
-}
+  } // main
+}   // class MemMan

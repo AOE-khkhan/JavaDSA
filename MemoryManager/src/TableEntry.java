@@ -87,7 +87,12 @@ public class TableEntry {
    * Denote if the entry is active, deleted or free.
    */
   public static enum SlotInfo {
-    ACTIVE, FREE, DELETED
+    /** Mark a TableEntry as filled with data. */
+    ACTIVE,
+    /** Mark a TableEntry as empty. */
+    FREE,
+    /** Mark a TableEntry as a tombstone. */
+    DELETED
   }
 
 }

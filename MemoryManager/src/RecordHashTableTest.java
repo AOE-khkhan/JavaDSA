@@ -3,26 +3,41 @@ import student.TestCase;
 // -------------------------------------------------------------------------
 /**
  * Test the RecordHashTable class.
+ * 
+ * @author Bimal Gaudel
+ * @version 0.1
  */
 public class RecordHashTableTest extends TestCase {
+
+  /**
+   * A RecordHashTable object used for test methods below.
+   */
   private RecordHashTable sampleTable;
 
+  /**
+   * Sets up the tests that follow.
+   */
   public void setUp() {
     sampleTable = new RecordHashTable(10);
   }
 
+  /**
+   * Test the constructors of the RecordHashTable class.
+   */
   public void testConstructors() {
-    RecordHashTable aTable = new RecordHashTable();
-    assertNotNull(aTable);
-    assertEquals(aTable.getSize(), RecordHashTable.MIN_SIZE);
-    aTable = new RecordHashTable(-40);
-    assertEquals(aTable.getSize(), RecordHashTable.MIN_SIZE);
+    assertNotNull(sampleTable);
   }
 
+  /**
+   * Test the getSize getter method.
+   */
   public void testGetSize() {
     assertEquals(sampleTable.getSize(), 10);
   }
 
+  /**
+   * Test the methods for adding Record objects to the RecordHashTable.
+   */
   public void testAddRecord() {
     sampleTable.addRecord(new Record("Poochie"));
     sampleTable.addRecord(new Record("Pie"));
@@ -31,6 +46,9 @@ public class RecordHashTableTest extends TestCase {
     assertEquals(sampleTable.getCount(), 2);
   }
 
+  /**
+   * Test the Record getter method.
+   */
   public void testGetRecord() {
     sampleTable.addRecord(new Record("Charlie"));
     sampleTable.addRecord(new Record("Max"));
@@ -45,6 +63,9 @@ public class RecordHashTableTest extends TestCase {
     assertNull(found);
   }
 
+  /**
+   * Test if the hashtable doubles in size as expected.
+   */
   public void testDoubleTableSize() {
     RecordHashTable aTable = new RecordHashTable(3);
     aTable.addRecord(new Record("Charlie"));
@@ -61,14 +82,21 @@ public class RecordHashTableTest extends TestCase {
     // assertEquals(aTable.getCount(), 2);
   }
 
+  /**
+   * Test the hashtable print method.
+   */
   public void testPrintHashTable() {
     sampleTable.addRecord(new Record("Death Note"));
     sampleTable.addRecord(new Record("Can you handle?"));
     sampleTable.printHashTable();
     String output = systemOut().getHistory();
-    assertFuzzyEquals(output, "|Can you handle?| 0\n|Death Note| 4\nTotal records: 2");
+    assertFuzzyEquals(output, "|Can you handle?| 0\n"
+        + "|Death Note| 4\nTotal records: 2");
   }
 
+  /**
+   * Test the method to delete a Record from the table.
+   */
   public void testDeleteRecord() {
     sampleTable.addRecord(new Record("Bailey"));
     sampleTable.addRecord(new Record("Frankie"));
