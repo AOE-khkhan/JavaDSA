@@ -47,6 +47,34 @@ public class RecordHashTableTest extends TestCase {
   }
 
   /**
+   * Test hash collisions.
+   */
+  public void testHashCollision() {
+    // for the strings "aaaazzzz", "bbbbyyyy", "ccccxxxx"
+    // and "ddddwwww" the home slot is computed to be 1
+    // for a hash table of size 10.
+    // So, if our hashtable algorithm works as expected
+    // aaaazzzz -> 1
+    // bbbbyyyy -> 2 // because it collided once
+    // ccccxxxx -> 5 // because it collided twice
+    // delete bbbbyyyy
+    // ddddwwww -> 2 // tombstone is reclaimed
+    //
+    sampleTable.addRecord(new Record("aaaazzzz"));
+    sampleTable.addRecord(new Record("bbbbyyyy"));
+    sampleTable.addRecord(new Record("ccccxxxx"));
+    sampleTable.deleteRecord("bbbbyyyy");
+    sampleTable.addRecord(new Record("ddddwwww"));
+    sampleTable.print();
+    String expectedOutput = "|aaaazzzz| 1\n"
+                          + "|ddddwwww| 2\n"
+                          // + "|bbbbyyyy| 2\n"
+                          + "|ccccxxxx| 5\n"
+                          + "Total records: 3";
+    assertFuzzyEquals(expectedOutput, systemOut().getHistory());
+  }
+
+  /**
    * Test the Record getter method.
    */
   public void testGetRecord() {

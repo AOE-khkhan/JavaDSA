@@ -174,16 +174,21 @@ public class RecordHashTable {
 
     do {
       curEntry = this.tableData[runningSlot];
-      if (curEntry.isFree() && (tombstoneSlot == -1)) {
-        return runningSlot;
-      }
-      if (curEntry.isActive() && curEntry.getRecordName().equals(key)) {
-        return -1;
+      if (curEntry.isFree()) {
+        if (tombstoneSlot != -1) {
+          return tombstoneSlot;
+        }
+        else {
+          return runningSlot;
+        }
       }
 
-      if ((tombstoneSlot == -1) && curEntry.isDeleted()
-          && curEntry.getRecordName().equals(key)) {
+      if ((tombstoneSlot == -1) && curEntry.isDeleted()) {
         tombstoneSlot = runningSlot;
+      }
+
+      if (curEntry.isActive() && curEntry.getRecordName().equals(key)) {
+        return -1;
       }
 
       runningSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel,
@@ -192,7 +197,7 @@ public class RecordHashTable {
       ++sanityCounter;
 
     } while (sanityCounter < this.getSize());
-    return tombstoneSlot;
+    return -1;
   }
 
   /**
