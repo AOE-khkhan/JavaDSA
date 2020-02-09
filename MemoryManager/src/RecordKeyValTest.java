@@ -77,10 +77,13 @@ public class RecordKeyValTest extends TestCase {
     RecordKeyVal newKVpair = new RecordKeyVal("Year", "1995");
     newKVpair.setNextKeyVal(new RecordKeyVal("Country", "Japan"));
     aKVpair.setNextKeyVal(newKVpair);
+    aKVpair.appendKeyVal(new RecordKeyVal("Popularity", "Superhit"));
 
     aKVpair.deleteKeyVal("Year");
     assertEquals(aKVpair.getNextKeyVal().getKey(), "Country");
     assertEquals(aKVpair.getNextKeyVal().getVal(), "Japan");
+    aKVpair.deleteKeyVal("Popularity");
+    assertNull(aKVpair.getNextKeyVal().getNextKeyVal());
   }
 
   /** Test the method that appends a RecordKeyVal object at the end the list. */
@@ -100,7 +103,12 @@ public class RecordKeyValTest extends TestCase {
     RecordKeyVal found = aKVpair.findKeyVal("Genre");
     assertEquals(found.getVal(), "Anime");
     found = aKVpair.findKeyVal("Country");
-    assertEquals(found, null);
+    assertNull(found);
+    aKVpair.appendKeyVal(new RecordKeyVal("Country", "Japan"));
+    found = aKVpair.findKeyVal("Country");
+    assertNotNull(found);
+    found = aKVpair.findKeyVal("Popularity");
+    assertNull(found);
   }
 
   /** Test the overridden method toString. */
