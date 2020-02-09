@@ -56,7 +56,7 @@ public class TableEntry {
    * @return true if the entry is active.
    */
   public boolean isActive() {
-    return this.info == SlotInfo.ACTIVE;
+    return this.info == SlotInfo.valueOf("ACTIVE");
   }
 
   /**
@@ -66,7 +66,7 @@ public class TableEntry {
    * @return true if the entry is deleted.
    */
   public boolean isDeleted() {
-    return this.info == SlotInfo.DELETED;
+    return this.info == SlotInfo.valueOf("DELETED");
   }
 
   /**
@@ -75,7 +75,7 @@ public class TableEntry {
    * @return true if the entry is free.
    */
   public boolean isFree() {
-    return this.info == SlotInfo.FREE;
+    return this.info == SlotInfo.valueOf("FREE");
   }
 
   /**
