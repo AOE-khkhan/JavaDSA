@@ -1,4 +1,4 @@
-/* **
+/**
  * A communicator class that responds to commands received to manage the memory
  * and the hashtable.
  *
@@ -6,9 +6,7 @@
  * @version 2020-02-08
  */
 class Communicator {
-  /**
-   * The hashtable we are working on.
-   */
+  /** The hashtable we are working on. */
   private RecordHashTable theHashTable;
 
   /**

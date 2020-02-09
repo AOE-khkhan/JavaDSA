@@ -104,7 +104,8 @@ public class MemMan {
         }
       }
       sc.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       // can't read commands, then quit
       return;
     }

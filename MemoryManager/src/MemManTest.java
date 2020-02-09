@@ -29,7 +29,7 @@ public class MemManTest extends TestCase {
     String[] args = { "0", "10", "src/commands.txt" };
     MemMan.main(args);
 
-    String expected_output = "Total records: 0\n"
+    String expectedOutput = "Total records: 0\n"
         + "|Death Note| not deleted because"
         + " it does not exist in the Name database.\n"
         + "|Another Note| not updated because"
@@ -61,7 +61,6 @@ public class MemManTest extends TestCase {
         + "|Spirited Away| 5\n" + "|Castle in the Sky| 7\n" + "|death note| 8\n"
         + "|Can You Handle?| 16\n" + "Total records: 6";
 
-    String output = systemOut().getHistory();
-    assertFuzzyEquals(output, expected_output);
+    assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
   }
 }
