@@ -50,7 +50,8 @@ public class TableEntry {
   }
 
   /**
-   * Check if this entry is active. An active entry is neither deleted nor empty.
+   * Check if this entry is active. An active entry is neither deleted nor
+   * empty.
    * 
    * @return true if the entry is active.
    */
@@ -59,7 +60,8 @@ public class TableEntry {
   }
 
   /**
-   * Check if this entry is deleted. A deleted entry is neither active nor empty.
+   * Check if this entry is deleted. A deleted entry is neither active nor
+   * empty.
    * 
    * @return true if the entry is deleted.
    */
@@ -77,7 +79,8 @@ public class TableEntry {
   }
 
   /**
-   * Mark this entry as deleted. This doesn't make this entry a free entry though.
+   * Mark this entry as deleted. This doesn't make this entry a free entry
+   * though.
    */
   public void markDeleted() {
     this.info = SlotInfo.DELETED;

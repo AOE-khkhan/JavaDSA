@@ -66,7 +66,8 @@ public class RecordTest extends TestCase {
     aRecord.addRecordKeyVal(new RecordKeyVal("Genre", "Anime"));
     aRecord.addRecordKeyVal(new RecordKeyVal("Country", "Japan"));
     System.out.println(aRecord.toString());
-    assertFuzzyEquals(aRecord.toString(), "Death Note<SEP>Genre<SEP>Anime<SEP>Country<SEP>Japan");
+    assertFuzzyEquals(aRecord.toString(),
+        "Death Note<SEP>Genre<SEP>Anime<SEP>Country<SEP>Japan");
   }
 
 }

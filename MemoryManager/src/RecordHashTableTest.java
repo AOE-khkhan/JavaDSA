@@ -90,8 +90,8 @@ public class RecordHashTableTest extends TestCase {
     sampleTable.addRecord(new Record("Can you handle?"));
     sampleTable.print();
     String output = systemOut().getHistory();
-    assertFuzzyEquals(output, "|Can you handle?| 0\n"
-        + "|Death Note| 4\nTotal records: 2");
+    assertFuzzyEquals(output,
+        "|Can you handle?| 0\n" + "|Death Note| 4\nTotal records: 2");
   }
 
   /**

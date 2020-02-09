@@ -37,15 +37,16 @@ class Communicator {
     boolean added = this.theHashTable.addRecord(new Record(recordName));
 
     if (added) {
-      System.out.println(
-          "|" + recordName + "| has been added to the Name database.");
+      System.out
+          .println("|" + recordName + "| has been added to the Name database.");
 
       if (this.theHashTable.getSize() > tableSize) {
         System.out.println("Name hash table size doubled to "
             + this.theHashTable.getSize() + " slots.");
       }
 
-    } else {
+    }
+    else {
       System.out.println("|" + recordName
           + "| duplicates a record already in the Name database.");
     }
@@ -57,12 +58,13 @@ class Communicator {
    *
    * @param recordName String identifier of the Record to delete.
    */
-  public void deleteRecordFromHashTable(String recordName){
+  public void deleteRecordFromHashTable(String recordName) {
     boolean deleted = this.theHashTable.deleteRecord(recordName);
     if (deleted) {
-      System.out.println("|" + recordName
-          + "| has been deleted from the Name database.");
-    } else {
+      System.out.println(
+          "|" + recordName + "| has been deleted from the Name database.");
+    }
+    else {
       System.out.println("|" + recordName
           + "| not deleted because it does not exist in the Name database.");
     }
@@ -71,24 +73,24 @@ class Communicator {
   /**
    * Add a key-value entry to a Record object.
    *
-   * If Record doesn't exist, nothing will be changed.
-   * If the key already exists, the existing key-value
-   * pair will be deleted and the new key-value will be
-   * appended to the database.
+   * If Record doesn't exist, nothing will be changed. If the key already
+   * exists, the existing key-value pair will be deleted and the new key-value
+   * will be appended to the database.
    *
    * @param recordName String identifier of the Record.
-   * @param keyName String key of the key-val entry being updated.
-   * @param value String value of the associated key.
+   * @param keyName    String key of the key-val entry being updated.
+   * @param value      String value of the associated key.
    */
-  public void updateAddRecordKeyVal(String recordName,
-                                    String keyName, String value){
+  public void updateAddRecordKeyVal(String recordName, String keyName,
+      String value) {
 
     Record theRecord = this.theHashTable.getRecord(recordName);
 
     if (theRecord != null) {
       theRecord.addRecordKeyVal(new RecordKeyVal(keyName, value));
       System.out.println("Updated Record: |" + theRecord.toString() + "|");
-    } else {
+    }
+    else {
       System.out.println("|" + recordName
           + "| not updated because it does not exist in the Name database.");
     }
@@ -101,21 +103,23 @@ class Communicator {
    * nothing will be changed.
    *
    * @param recordName String identifier of the Record.
-   * @param keyName String key of the key-val entry being deleted.
+   * @param keyName    String key of the key-val entry being deleted.
    */
-  public void updateDeleteRecordKeyVal(String recordName, String keyName){
+  public void updateDeleteRecordKeyVal(String recordName, String keyName) {
     Record theRecord = this.theHashTable.getRecord(recordName);
 
     if (theRecord != null) {
       boolean deleted = theRecord.deleteRecordKeyVal(keyName);
       if (deleted) {
         System.out.println("Updated Record: |" + theRecord.toString() + "|");
-      } else {
-        System.out.println(
-            "|" + recordName + "| not updated because the field |"
-            + keyName + "| does not exist");
       }
-    } else {
+      else {
+        System.out
+            .println("|" + recordName + "| not updated because the field |"
+                + keyName + "| does not exist");
+      }
+    }
+    else {
       System.out.println("|" + recordName
           + "| not updated because it does not exist in the Name database.");
     }

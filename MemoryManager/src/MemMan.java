@@ -68,15 +68,18 @@ public class MemMan {
         if (commandLine.equals("print hashtable")) {
           memManCommunicator.printHashTable();
 
-        } else if (commandLine.startsWith("add")) {
+        }
+        else if (commandLine.startsWith("add")) {
           String recordName = commandLine.substring(4);
           memManCommunicator.addRecordToHashTable(recordName);
 
-        } else if (commandLine.startsWith("delete")) {
+        }
+        else if (commandLine.startsWith("delete")) {
           String recordName = commandLine.substring(7);
           memManCommunicator.deleteRecordFromHashTable(recordName);
 
-        } else if (commandLine.startsWith("update add")) {
+        }
+        else if (commandLine.startsWith("update add")) {
           String pattern = "^update add(.*?)<SEP>(.*?)<SEP>(.*)$";
           Pattern r = Pattern.compile(pattern);
           Matcher m = r.matcher(commandLine);
@@ -87,7 +90,8 @@ public class MemMan {
 
           memManCommunicator.updateAddRecordKeyVal(name, fieldName, fieldValue);
 
-        } else if (commandLine.startsWith("update delete")) {
+        }
+        else if (commandLine.startsWith("update delete")) {
           String pattern = "^update delete(.*?)<SEP>(.*?)$";
           Pattern r = Pattern.compile(pattern);
           Matcher m = r.matcher(commandLine);
@@ -96,7 +100,7 @@ public class MemMan {
           String fieldNameString = m.group(2).trim();
 
           memManCommunicator.updateDeleteRecordKeyVal(nameString,
-                                                      fieldNameString);
+              fieldNameString);
         }
       }
       sc.close();
@@ -105,4 +109,4 @@ public class MemMan {
       return;
     }
   } // main
-}   // class MemMan
+} // class MemMan

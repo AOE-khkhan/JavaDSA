@@ -38,32 +38,32 @@ public class CommunicatorTest extends TestCase {
     this.aCommunicator.addRecordToHashTable("Poochie");
     this.aCommunicator.addRecordToHashTable("Polly");
     String message = systemOut().getHistory();
-    assertFuzzyEquals(message, "|Poochie| has been added to the Name database.\n"
-        + "|Poochie| duplicates a record already in the Name database.\n"
-        + "|Polly| has been added to the Name database.\n"
-        + "Name hash table size doubled to 6 slots.");
+    assertFuzzyEquals(message,
+        "|Poochie| has been added to the Name database.\n"
+            + "|Poochie| duplicates a record already in the Name database.\n"
+            + "|Polly| has been added to the Name database.\n"
+            + "Name hash table size doubled to 6 slots.");
   }
 
   /**
    * Test the deleteRecordFromHashTable method.
    */
-  public void testDeleteRecordFromHashTable(){
+  public void testDeleteRecordFromHashTable() {
     this.aCommunicator.deleteRecordFromHashTable("Poochie");
     this.aCommunicator.addRecordToHashTable("Poochie");
     this.aCommunicator.deleteRecordFromHashTable("Poochie");
 
-    String expectedMessage =
-                       "|Poochie| not deleted because it does not "
-                       + "exist in the Name database.\n"
-                       + "|Poochie| has been added to the Name database.\n"
-                       + "|Poochie| has been deleted from the Name database.";
+    String expectedMessage = "|Poochie| not deleted because it does not "
+        + "exist in the Name database.\n"
+        + "|Poochie| has been added to the Name database.\n"
+        + "|Poochie| has been deleted from the Name database.";
     assertFuzzyEquals(expectedMessage, systemOut().getHistory());
   }
 
   /**
    * Test the updateAddRecordKeyVal method.
    */
-  public void testUpdateAddRecordKeyVal(){
+  public void testUpdateAddRecordKeyVal() {
     this.aCommunicator.updateAddRecordKeyVal("Death Note", "Genre", "Anime");
     this.aCommunicator.addRecordToHashTable("Death Note");
     this.aCommunicator.updateAddRecordKeyVal("Death Note", "Genre", "Anime");
@@ -71,29 +71,28 @@ public class CommunicatorTest extends TestCase {
     String message = systemOut().getHistory();
     assertFuzzyEquals(message,
         "|Death Note| not updated because it does not exist "
-        + "in the Name database.\n"
-        + "|Death Note| has been added to the Name database.\n"
-        + "Updated Record: |Death Note<SEP>Genre<SEP>Anime|");
+            + "in the Name database.\n"
+            + "|Death Note| has been added to the Name database.\n"
+            + "Updated Record: |Death Note<SEP>Genre<SEP>Anime|");
   }
 
   /**
    * Test the updateDeleteRecordKeyVal method.
    */
-  public void testUpdateDeleteRecordKeyVal(){
+  public void testUpdateDeleteRecordKeyVal() {
     this.aCommunicator.updateDeleteRecordKeyVal("Death Note", "Genre");
     this.aCommunicator.addRecordToHashTable("Death Note");
     this.aCommunicator.updateDeleteRecordKeyVal("Death Note", "Genre");
     this.aCommunicator.updateAddRecordKeyVal("Death Note", "Genre", "Anime");
     this.aCommunicator.updateDeleteRecordKeyVal("Death Note", "Genre");
 
-    String expectedMessage =
-                        "|Death Note| not updated because it does not "
-                        + "exist in the Name database.\n"
-                        + "|Death Note| has been added to the Name database.\n"
-                        + "|Death Note| not updated because the field |Genre|"
-                        + " does not exist\n"
-                        + "Updated record: |Death Note<SEP>Genre<SEP>Anime|\n"
-                        + "Updated record: |Death Note|";
+    String expectedMessage = "|Death Note| not updated because it does not "
+        + "exist in the Name database.\n"
+        + "|Death Note| has been added to the Name database.\n"
+        + "|Death Note| not updated because the field |Genre|"
+        + " does not exist\n"
+        + "Updated record: |Death Note<SEP>Genre<SEP>Anime|\n"
+        + "Updated record: |Death Note|";
     assertFuzzyEquals(expectedMessage, systemOut().getHistory());
   }
 }

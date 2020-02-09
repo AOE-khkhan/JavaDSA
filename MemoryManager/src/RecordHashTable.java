@@ -59,8 +59,8 @@ public class RecordHashTable {
   }
 
   /**
-   * Add a Record entry to the hash table. If the Record's name already exists in
-   * the database no changes will be made.
+   * Add a Record entry to the hash table. If the Record's name already exists
+   * in the database no changes will be made.
    * 
    * @param record a Record object
    * @return true if addition is successful, false otherwise.
@@ -77,7 +77,8 @@ public class RecordHashTable {
       this.tableData[validSlot] = new TableEntry(record);
       ++this.countActive;
       --this.countDeleted;
-    } else {
+    }
+    else {
       if ((this.countActive + this.countDeleted >= this.getSize() / 2)) {
         this.doubleTableSize();
         validSlot = this.getSlotForInsertion(record.getName());
@@ -123,7 +124,8 @@ public class RecordHashTable {
   }
 
   /**
-   * Print the hashtable. Prints each Record's name and the position on the table.
+   * Print the hashtable. Prints each Record's name and the position on the
+   * table.
    */
   public void print() {
     for (int i = 0; i < this.getSize(); ++i) {
@@ -154,12 +156,12 @@ public class RecordHashTable {
    * Return a slot index in the hashtable for insertion.
    *
    * Candidate positions will be computed using hashing and probing as needed. A
-   * free slot or a deleted slot (given that no duplicate exists after the deleted
-   * slot) are valid slot indices. Whichever comes first is reurned.
+   * free slot or a deleted slot (given that no duplicate exists after the
+   * deleted slot) are valid slot indices. Whichever comes first is reurned.
    * 
    * @param key Record name String used for hashing and lookup.
-   * @return A valid slot index eligible for insertion, -1 if insertion cannot be
-   *         performed.
+   * @return A valid slot index eligible for insertion, -1 if insertion cannot
+   *         be performed.
    */
   private int getSlotForInsertion(String key) {
     int homeSlot = RecordHashTable.getHomeSlot(key, this.getSize());
@@ -179,11 +181,13 @@ public class RecordHashTable {
         return -1;
       }
 
-      if ((tombstoneSlot == -1) && curEntry.isDeleted() && curEntry.getRecordName().equals(key)) {
+      if ((tombstoneSlot == -1) && curEntry.isDeleted()
+          && curEntry.getRecordName().equals(key)) {
         tombstoneSlot = runningSlot;
       }
 
-      runningSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel, this.getSize());
+      runningSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel,
+          this.getSize());
 
       ++sanityCounter;
 
@@ -195,9 +199,9 @@ public class RecordHashTable {
    * Return a slot index from the hashtable that has a key being looked for.
    *
    * Candidate positions will be computed using hashing and probing as needed.
-   * Only active slots will be considered and the key will be matched against such
-   * a slot's key. If a free slot is encountered, then it will be implied that no
-   * key is present in the table and -1 will be returned.
+   * Only active slots will be considered and the key will be matched against
+   * such a slot's key. If a free slot is encountered, then it will be implied
+   * that no key is present in the table and -1 will be returned.
    * 
    * @param key Record name string used for hashing and lookup.
    * @return The slot index if the key exists, -1 otherwise.
@@ -218,15 +222,16 @@ public class RecordHashTable {
       if (curEntry.getRecordName().equals(key)) {
         return runningSlot;
       }
-      runningSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel, this.getSize());
+      runningSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel,
+          this.getSize());
       ++sanityCounter;
     } while (sanityCounter < this.getSize());
     return -1;
   }
 
   /**
-   * Compute the hash function. Uses the "sfold" method from the OpenDSA module on
-   * hash functions.
+   * Compute the hash function. Uses the "sfold" method from the OpenDSA module
+   * on hash functions.
    *
    * @param string The string to be hashed
    * @return The home slot for string
@@ -259,9 +264,11 @@ public class RecordHashTable {
    *
    * @param homeSlot   The home slot position without probing.
    * @param probeLevel Number of times position finding is attempted.
-   * @param tableSize  The size of the table on which the position is to be found.
+   * @param tableSize  The size of the table on which the position is to be
+   *                   found.
    */
-  private static int getProbedSlot(int homeSlot, int probeLevel, int tableSize) {
+  private static int getProbedSlot(int homeSlot, int probeLevel,
+      int tableSize) {
     return (homeSlot + probeLevel * probeLevel) % tableSize;
   }
 

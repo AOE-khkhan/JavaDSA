@@ -49,14 +49,16 @@ public class Record {
     if (this.getHeadRecordKV() == null) {
       this.setHeadRecordKV(kv);
       return true;
-    } else {
+    }
+    else {
       boolean del_dup = this.deleteRecordKeyVal(kv.getKey());
       if (this.getHeadRecordKV() == null) {
         this.setHeadRecordKV(kv);
-      } else {
+      }
+      else {
         this.getHeadRecordKV().appendKeyVal(kv);
       }
-      return (! del_dup);
+      return (!del_dup);
     }
   }
 
@@ -72,7 +74,8 @@ public class Record {
     if (this.getHeadRecordKV().getKey().equals(key)) {
       this.setHeadRecordKV(this.getHeadRecordKV().getNextKeyVal());
       return true;
-    } else {
+    }
+    else {
       boolean deleted = this.getHeadRecordKV().deleteKeyVal(key);
       return deleted;
     }
