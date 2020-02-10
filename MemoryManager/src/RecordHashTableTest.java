@@ -50,9 +50,9 @@ public class RecordHashTableTest extends TestCase {
    * Test hash collisions.
    */
   public void testHashCollision() {
-    // for the strings "aaaazzzz", "bbbbyyyy", "ccccxxxx"
-    // and "ddddwwww" the home slot is computed to be 1
-    // for a hash table of size 10.
+    // for the strings "aaaazzzz", "bbbbyyyy", "ccccxxxx",
+    // "ddddwwww", "eeeevvvv" and so on have the home slot
+    // is computed to be 1 for a hash table of size 10.
     // So, if our hashtable algorithm works as expected
     // aaaazzzz -> 1
     // bbbbyyyy -> 2 // because it collided once

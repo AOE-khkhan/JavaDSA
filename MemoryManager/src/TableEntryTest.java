@@ -66,6 +66,4 @@ public class TableEntryTest extends TestCase {
   public void testGetRecordName() {
     assertEquals(anEntry.getRecordName(), anEntry.getRecord().getName());
   }
-
-  // public void
 }
