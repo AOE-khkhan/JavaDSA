@@ -19,13 +19,23 @@ public class MemoryManagerTest extends TestCase {
   public void testConstructor() {
     assertNotNull(this.aMemManager);
   }
+
+  /** Test private methods. */
+  public void testMethods() {
+    assertFuzzyEquals("32: 0", aMemManager.toString());
+    aMemManager.splitBlock(0, 32, 1);
+    String expectedOutput = "1: 0 1\n"
+                            + "2: 2\n"
+                            + "4: 4\n"
+                            + "8: 8\n"
+                            + "16: 16";
+    assertFuzzyEquals(expectedOutput, aMemManager.toString());
+    aMemManager.splitBlock(4, 4, 1);
+    expectedOutput = "1: 0 1 4 5\n"
+                            + "2: 2 6\n"
+                            + "8: 8\n"
+                            + "16: 16";
+    aMemManager.doublePoolSize();
+    assertFuzzyEquals(expectedOutput + "\n32: 32", aMemManager.toString());
+  }
 }
-    // this.splitBlock(0, this.poolSize, 1);
-    // this.splitBlock(16, 16, 1);
-    // System.out.println(this.toString());
-    // System.out.println("doubling the size..");
-    // this.doublePoolSize();
-    // System.out.println(this.toString());
-    // System.out.println("merging buddies..");
-    // this.mergeBuddy(1, 16);
-    // System.out.println(this.toString());

@@ -91,7 +91,7 @@ public class MemoryManager {
    * @param blockSize  Size of the memory block that is being split up.
    * @param targetSize Memory block size desired to be obtained by splitting up.
    */
-  private void splitBlock(int blockPos, int blockSize, int targetSize) {
+  public void splitBlock(int blockPos, int blockSize, int targetSize) {
     assert (blockSize > targetSize);
     this.removePos(blockSize, blockPos);
     while (blockSize != targetSize) {
@@ -122,7 +122,7 @@ public class MemoryManager {
    *                  merger.
    * @return true if any merger occured, false otherwise.
    */
-  private boolean mergeBuddy(int blockSize, int pos) {
+  public boolean mergeBuddy(int blockSize, int pos) {
     int initBlockSize = blockSize;
     while (blockSize < this.poolSize) {
       int buddyPos = this.getBuddyPos(pos, blockSize);
@@ -142,10 +142,11 @@ public class MemoryManager {
   }
 
   /** Double the capacity of the memory poolsize. */
-  private void doublePoolSize() {
+  public void doublePoolSize() {
     // initialize a new MemoryManager object with double capacity
     MemoryManager biggerMemoryManager = new MemoryManager(
         MemoryManager.getLog2(this.poolSize) + 1);
+    biggerMemoryManager.removePos(this.poolSize*2, 0);
     // copy all the bytes
     for (int i = 0; i < this.byteArray.length; ++i) {
       biggerMemoryManager.byteArray[i] = this.byteArray[i];
