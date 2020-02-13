@@ -49,5 +49,12 @@ public class LinkedListTest extends TestCase {
     assertEquals(strList.hasData("Address"), false);
     assertEquals(strList.isEmpty(), true);
     assertEquals(strList.toString(), "");
+
+    strList.insert("Apple");
+    assertEquals(strList.toString(), "Apple");
+    strList.insert("Cat");
+    assertEquals(strList.toString(), "Apple<SEP>Cat");
+    strList.insert("Ball");
+    assertEquals(strList.toString(), "Apple<SEP>Ball<SEP>Cat");
   }
 }

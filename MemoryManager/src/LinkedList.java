@@ -6,7 +6,7 @@
  * @author Bimal Gaudel
  * @version 2020-02-09
  */
-public class LinkedList<E> {
+public class LinkedList<E extends Comparable<E>> {
   /** The head node of the list. */
   private Node headNode;
 
@@ -49,6 +49,31 @@ public class LinkedList<E> {
       currNode = currNode.next;
     }
     return false;
+  }
+
+  /**
+   * Insert data to the list at a position that comes before the first occuring
+   * data that is greater than the data being inserted.
+   * 
+   * @param dt The datum being inserted.
+   */
+  public void insert(E dt) {
+    if (this.isEmpty()) {
+      this.append(dt);
+      return;
+    }
+    Node currNode = headNode;
+    while (currNode.next != tailNode) {
+      if (currNode.next.data.compareTo(dt) >= 0) {
+        Node prevNext = currNode.next;
+        currNode.next = new Node();
+        currNode.next.data = dt;
+        currNode.next.next = prevNext;
+        return;
+      }
+      currNode = currNode.next;
+    }
+    this.append(dt);
   }
 
   /**
