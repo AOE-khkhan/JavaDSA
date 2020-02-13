@@ -34,12 +34,20 @@ public class LinkedListTest extends TestCase {
 
     strList.remove("Name");
     assertEquals(strList.toString(), "Class");
+    
+    boolean removed = strList.remove("Name");
+    assertEquals(removed, false);
 
     strList.remove("Class");
     assertEquals(strList.toString(), "");
 
     strList.append("Address");
+    assertEquals(strList.isEmpty(), false);
+    assertEquals(strList.hasData("Address"), true);
+    assertEquals(strList.hasData("Class"), false);
     strList.remove("Address");
+    assertEquals(strList.hasData("Address"), false);
+    assertEquals(strList.isEmpty(), true);
     assertEquals(strList.toString(), "");
   }
 }

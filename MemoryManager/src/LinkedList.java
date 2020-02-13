@@ -27,6 +27,31 @@ public class LinkedList<E> {
   }
 
   /**
+   * Check if the list is empty.
+   * 
+   * @return true if empty, false otherwise.
+   */
+  public boolean isEmpty() {
+    return (this.headNode.next.data == null);
+  }
+
+  /**
+   * Check if the list has a datum.
+   * 
+   * @param dt The datum being checked for.
+   */
+  public boolean hasData(E dt) {
+    Node currNode = headNode;
+    while (currNode.next != null) {
+      if (currNode.next.data == dt) {
+        return true;
+      }
+      currNode = currNode.next;
+    }
+    return false;
+  }
+
+  /**
    * Append data to the list.
    * 
    * @param dt data to be appended.
@@ -44,11 +69,12 @@ public class LinkedList<E> {
    */
   public boolean remove(E dt) {
     Node currNode = headNode;
-    while (currNode.next != null) {
+    while (currNode.next != tailNode) {
       if (currNode.next.data == dt) {
         currNode.next = currNode.next.next;
         return true;
       }
+      currNode = currNode.next;
     }
     return false;
   }
