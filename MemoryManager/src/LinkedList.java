@@ -104,6 +104,13 @@ public class LinkedList<E extends Comparable<E>> {
     return false;
   }
 
+  /** Pop the datum at the beginning of the list. */
+  public E popFront() {
+    E data = this.headNode.next.data;
+    this.remove(data);
+    return data;
+  }
+
   /**
    * Get a string representation of the current list.
    *

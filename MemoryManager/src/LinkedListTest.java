@@ -56,5 +56,10 @@ public class LinkedListTest extends TestCase {
     assertEquals(strList.toString(), "Apple<SEP>Cat");
     strList.insert("Ball");
     assertEquals(strList.toString(), "Apple<SEP>Ball<SEP>Cat");
+
+    assertEquals(strList.popFront(), "Apple");
+    assertEquals(strList.popFront(), "Ball");
+    assertEquals(strList.popFront(), "Cat");
+    assertEquals(strList.isEmpty(), true);
   }
 }
