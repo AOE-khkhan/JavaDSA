@@ -23,12 +23,13 @@ public class MemoryHandleTest extends TestCase {
   }
 
   /** Test the size getter. */
-  public void testGetSize() {
-    assertEquals(64, aHandle.getSize());
+  public void testGetBlockSize() {
+    assertEquals(64, aHandle.getBlockSize());
   }
 
   /** Test toString method. */
   public void testToString() {
-    assertEquals(aHandle.toString(), "64: 1024");
+    aHandle = new MemoryHandle(1024, 64, 33);
+    assertEquals(aHandle.toString(), "64: 1024 33");
   }
 }

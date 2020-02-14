@@ -10,37 +10,59 @@
 public class MemoryHandle {
   /** The position in the bytes array where the block starts. */
   private int pos;
+
   /** The size of the block. */
-  private int size;
+  private int blockSize;
+
+  /** The size of the data associated with this handle. */
+  private int dataSize;
+
+  /**
+   * Construct MemoryHandle.
+   * 
+   * @param pos       Memory block position in the byte array.
+   * @param blockSize Size of the memory block.
+   * @param dataSize  Size of the data actually stored: never greater than
+   *                  blockSize.
+   */
+  MemoryHandle(int pos, int blockSize, int dataSize) {
+    this.pos = pos;
+    this.blockSize = blockSize;
+    this.dataSize = dataSize;
+  }
 
   /**
    * Construct MemoryHandle.
    * 
    * @param pos  Memory block position in the byte array.
-   * @param size Size of the memory block.
+   * @param size Size of the memory block and the data.
    */
   MemoryHandle(int pos, int size) {
-    this.pos = pos;
-    this.size = size;
+    this(pos, size, size);
   }
 
   /** Getter method for the field pos. */
-  int getPos() {
+  public int getPos() {
     return this.pos;
   }
 
-  /** Getter method for the field size. */
-  int getSize() {
-    return this.size;
+  /** Getter method for the field blockSize. */
+  int getBlockSize() {
+    return this.blockSize;
+  }
+
+  public int getDataSize() {
+    return this.dataSize;
   }
 
   /**
-   * Overriden method toString.
+   * Overridden method toString.
    * 
    * @return String representation of the handle.
    */
   @Override
   public String toString() {
-    return "" + this.getSize() + ": " + this.getPos();
+    return "" + this.getBlockSize() + ": " + this.getPos() + " "
+        + this.getDataSize();
   }
 }
