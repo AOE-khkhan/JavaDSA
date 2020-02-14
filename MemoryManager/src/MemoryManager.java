@@ -39,6 +39,50 @@ public class MemoryManager {
   }
 
   /**
+   * Store information and return a handle. The handle should be used for future
+   * retrieval or freeing up the occupied space.
+   */
+  public MemoryHandle storeBytes(byte[] bytes) {
+    int size = bytes.length;
+    int expectedBlockPos = MemoryManager.getLog2(size);
+
+    // get rid of under estimation
+    int storedSize = 1 << expectedBlockPos;
+    expectedBlockPos = size > storedSize ? expectedBlockPos + 1
+        : expectedBlockPos;
+    storedSize = 1 << expectedBlockPos;
+
+    int blockPos = expectedBlockPos;
+
+    while (blockPos < this.blocks.length) {
+      if (!this.blocks[blockPos].isEmpty()) {
+        break;
+      }
+      ++blockPos;
+    }
+
+    // double the poolsize
+    while ((blockPos >= this.blocks.length)
+        || this.blocks[blockPos].isEmpty()) {
+      this.doublePoolSize();
+    }
+
+    int insertionPos = this.blocks[blockPos].getPos();
+
+    if (blockPos > expectedBlockPos) {
+      this.splitBlock(insertionPos, 1 << blockPos, storedSize);
+    }
+
+    for (int i = 0; i < bytes.length; ++i) {
+      this.byteArray[insertionPos + i] = bytes[i];
+    }
+
+    this.blocks[expectedBlockPos].deletePos(insertionPos);
+
+    return new MemoryHandle(insertionPos, storedSize);
+  }
+
+  /**
    * String representation of the memory manager. It shows currently free blocks
    * and their starting positions.
    */
@@ -91,7 +135,7 @@ public class MemoryManager {
    * @param blockSize  Size of the memory block that is being split up.
    * @param targetSize Memory block size desired to be obtained by splitting up.
    */
-  public void splitBlock(int blockPos, int blockSize, int targetSize) {
+  private void splitBlock(int blockPos, int blockSize, int targetSize) {
     assert (blockSize > targetSize);
     this.removePos(blockSize, blockPos);
     while (blockSize != targetSize) {
@@ -120,9 +164,9 @@ public class MemoryManager {
    * @param blockSize The size of the memory block where merger started.
    * @param pos       The position of the memory block that initiated the
    *                  merger.
-   * @return true if any merger occured, false otherwise.
+   * @return true if any merger occurred, false otherwise.
    */
-  public boolean mergeBuddy(int blockSize, int pos) {
+  private boolean mergeBuddy(int blockSize, int pos) {
     int initBlockSize = blockSize;
     while (blockSize < this.poolSize) {
       int buddyPos = this.getBuddyPos(pos, blockSize);
@@ -142,11 +186,11 @@ public class MemoryManager {
   }
 
   /** Double the capacity of the memory poolsize. */
-  public void doublePoolSize() {
+  private void doublePoolSize() {
     // initialize a new MemoryManager object with double capacity
     MemoryManager biggerMemoryManager = new MemoryManager(
         MemoryManager.getLog2(this.poolSize) + 1);
-    biggerMemoryManager.removePos(this.poolSize*2, 0);
+    biggerMemoryManager.removePos(this.poolSize * 2, 0);
     // copy all the bytes
     for (int i = 0; i < this.byteArray.length; ++i) {
       biggerMemoryManager.byteArray[i] = this.byteArray[i];
@@ -163,10 +207,12 @@ public class MemoryManager {
     this.poolSize = biggerMemoryManager.poolSize;
     this.byteArray = biggerMemoryManager.byteArray;
     this.blocks = biggerMemoryManager.blocks;
+    this.mergeBuddy(this.poolSize / 2, this.poolSize / 2);
   }
 
   /**
-   * Get the log based two. Eg. getLog2(4) = 2, getLog2(31) = 4, getLog2(32) = 5
+   * Get the log based two. E.g. getLog2(4) = 2, getLog2(31) = 4, getLog2(32) =
+   * 5
    * 
    * @param num The positive number to calculate log2 of.
    * @return The number which is to be raised to the power of two.
@@ -212,6 +258,17 @@ public class MemoryManager {
     public boolean deletePos(int pos) {
       boolean deleted = this.blockPos.remove(pos);
       return deleted;
+    }
+
+    /**
+     * Get a free position from the positions record for the current blocksize.
+     * It will also remove the position from the database.
+     * 
+     * @return The first occuring position.
+     */
+    public int getPos() {
+      int pos = this.blockPos.popFront();
+      return pos;
     }
 
     /**
