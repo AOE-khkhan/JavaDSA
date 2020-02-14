@@ -78,8 +78,53 @@ public class MemoryManager {
     }
 
     this.blocks[expectedBlockPos].deletePos(insertionPos);
+    return new MemoryHandle(insertionPos, storedSize, bytes.length);
+  }
 
-    return new MemoryHandle(insertionPos, storedSize);
+  /**
+   * Retain the bytes from the memory. Handle is used to get reading positions
+   * and bytes will be overrwritten with the read data.
+   *
+   * @param bytes  A reference to an array of bytes that will be overrwritten
+   *               with the retained data.
+   * @param handle A MemoryHandle object that tells where to start and stop
+   *               reading.
+   */
+  public void getBytes(byte[] bytes, MemoryHandle handle) {
+    // copy the number of bytes that is equal to the smaller of bytes length
+    // and stored bytes length
+    for (int i = 0; ((i < bytes.length) && (i < handle.getDataSize())); ++i) {
+      bytes[i] = this.byteArray[handle.getPos() + i];
+    }
+  }
+
+  /**
+   * Free a memory block associated with a memory handle.
+   * 
+   * @param handle A MemoryHandle object.
+   */
+  public void freeBlock(MemoryHandle handle) {
+    // simply mark the block as free by storing
+    // the position of the handle's database into
+    // the block size's position database
+    int blockArrayPos = MemoryManager.getLog2(handle.getBlockSize());
+
+    // first attempt mergin buddies
+    // if it succeeds, then nothing needs to be done
+    boolean merged = this.mergeBuddy(handle.getBlockSize(), handle.getPos());
+
+    if (!merged) {
+      this.blocks[blockArrayPos].insertPos(handle.getPos());
+    }
+  }
+
+  /**
+   * Getter method for the field poolSize.
+   * 
+   * @return Total number of bytes being handled.
+   */
+  public int getPoolSize() {
+    return this.poolSize;
   }
 
   /**
@@ -264,7 +309,7 @@ public class MemoryManager {
      * Get a free position from the positions record for the current blocksize.
      * It will also remove the position from the database.
      * 
-     * @return The first occuring position.
+     * @return The first occurring position.
      */
     public int getPos() {
       int pos = this.blockPos.popFront();
