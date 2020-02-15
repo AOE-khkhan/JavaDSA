@@ -17,7 +17,8 @@ public class CommunicatorTest extends TestCase {
    */
   public void setUp() {
     RecordHashTable aHashTable = new RecordHashTable(3);
-    this.aCommunicator = new Communicator(aHashTable);
+    MemoryManager aMemoryManager = new MemoryManager(4);
+    this.aCommunicator = new Communicator(aHashTable, aMemoryManager);
     assertNotNull(this.aCommunicator);
   }
 
@@ -95,4 +96,5 @@ public class CommunicatorTest extends TestCase {
         + "Updated record: |Death Note|";
     assertFuzzyEquals(expectedMessage, systemOut().getHistory());
   }
+
 }

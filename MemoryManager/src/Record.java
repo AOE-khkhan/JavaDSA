@@ -3,7 +3,10 @@
  * Record represents a record object specific to the MemMan project.
  *
  * A Record can have none or a number of key-value pairs associated with it.
- * These key-values can be updated or deleted.
+ * These key-values can be updated or deleted. Note this class however doesn't
+ * store the key-value pairs directly. Instead stores the MemoryHandle objects
+ * that point to a MemoryManager's database locations where the key-value pairs
+ * are stored in bytes form.
  * 
  * @author Bimal Gaudel
  * @version 2020-02-03
@@ -17,117 +20,71 @@ public class Record {
   /**
    * Reference to the first RecordKeyVal object. Null by default.
    */
-  private RecordKeyVal headRecordKeyVal;
+  private LinkedList<MemoryHandle> handleList;
 
   /**
-   * Construct a Record object from its name.
+   * Construct a Record object from its name handle.
    * 
-   * @param n name of the record
+   * @param n The name of the Record object.
    */
   public Record(String n) {
     this.name = n;
-    headRecordKeyVal = null;
+    handleList = new LinkedList<MemoryHandle>();
   }
 
   /**
    * Get the name of this Record object.
    * 
-   * @return String that is the name of this record.
+   * @return Name of this record.
    */
   public String getName() {
     return this.name;
   }
 
   /**
-   * Add a RecordKeyVal entry.
+   * Test if the handleList is empty.
    * 
-   * @param kv the RecordKeyVal object to be added.
-   * @return true if no deletion occurred, false if an existing RecordKeyVal was
-   *         first deleted and a new RecordKeyVal was appended.
+   * @return true if the list has no handle entries, false otherwise.
    */
-  public boolean addRecordKeyVal(RecordKeyVal kv) {
-    if (this.getHeadRecordKV() == null) {
-      this.setHeadRecordKV(kv);
-      return true;
-    }
-    else {
-      boolean deleteDuplicate = this.deleteRecordKeyVal(kv.getKey());
-      if (this.getHeadRecordKV() == null) {
-        this.setHeadRecordKV(kv);
-      }
-      else {
-        this.getHeadRecordKV().appendKeyVal(kv);
-      }
-      return (!deleteDuplicate);
-    }
+  public boolean isEmpty() {
+    return this.handleList.isEmpty();
   }
 
   /**
-   * Delete a key-value entry if key exists.
+   * Add a MemoryHandle object for the current Record.
    * 
-   * @param key key to be looked for
-   * @return true if any deletion occurs, false otherwise.
+   * @param handle A MemoryHandle object.
    */
-  public boolean deleteRecordKeyVal(String key) {
-    if (this.getHeadRecordKV() == null) {
-      return false;
-    }
-    if (this.getHeadRecordKV().getKey().equals(key)) {
-      this.setHeadRecordKV(this.getHeadRecordKV().getNextKeyVal());
-      return true;
-    }
-    else {
-      boolean deleted = this.getHeadRecordKV().deleteKeyVal(key);
-      return deleted;
-    }
+  public void addHandle(MemoryHandle handle) {
+    this.handleList.append(handle);
   }
 
   /**
-   * Find a key value entry in the current record.
+   * Remove a MemoryHandle entry.
    *
-   * @param key the key to search.
-   * @return RecordKeyVal if found, null otherwise.
+   * @param handle A MemoryHandle object.
+   * @return true if removed, false otherwise.
    */
-  public RecordKeyVal findRecordKeyVal(String key) {
-    if (this.getHeadRecordKV() == null) {
-      return null;
-    }
-    RecordKeyVal found = this.getHeadRecordKV().findKeyVal(key);
-    return found;
+  public boolean removeHandle(MemoryHandle handle) {
+    return this.handleList.remove(handle);
+  }
+
+  /** Move to the first handle in the handleList. */
+  public void moveToFirstHandle() {
+    this.handleList.moveToFront();
+  }
+
+  /** Move to the next handle in the handleList. */
+  public void curseToNextHandle() {
+    this.handleList.curseToNext();
   }
 
   /**
-   * Override the toString method.
+   * Get the MemoryHandle at current position in the handleList.
    * 
-   * @return String representation of the Record object.
+   * @return MemoryHandle object at the current position in the handleList.
    */
-  @Override
-  public String toString() {
-    String result = this.getName();
-    RecordKeyVal curRecordKV = this.getHeadRecordKV();
-    while (curRecordKV != null) {
-      result += "<SEP>" + curRecordKV.toString();
-      curRecordKV = curRecordKV.getNextKeyVal();
-    }
-    return result;
+  public MemoryHandle yieldHandle() {
+    return this.handleList.yieldNode();
   }
-
-  /**
-   * Get the filed headRecordKeyVal.
-   * 
-   * @return RecordKeyVal linked list.
-   */
-  private RecordKeyVal getHeadRecordKV() {
-    return this.headRecordKeyVal;
-  }
-
-  /**
-   * Set the RecordKeyVal data member of this object.
-   * 
-   * @param kv RecordKeyVal linked list.
-   */
-  private void setHeadRecordKV(RecordKeyVal kv) {
-    this.headRecordKeyVal = kv;
-  }
-
 }

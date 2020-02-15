@@ -51,7 +51,7 @@ public class RecordHashTableTest extends TestCase {
    */
   public void testHashCollision() {
     // for the strings "aaaazzzz", "bbbbyyyy", "ccccxxxx",
-    // "ddddwwww", "eeeevvvv" and so on have the home slot
+    // "ddddwwww", "eeeevvvv" and so on the home slot
     // is computed to be 1 for a hash table of size 10.
     // So, if our hashtable algorithm works as expected
     // aaaazzzz -> 1
@@ -66,11 +66,9 @@ public class RecordHashTableTest extends TestCase {
     sampleTable.deleteRecord("bbbbyyyy");
     sampleTable.addRecord(new Record("ddddwwww"));
     sampleTable.print();
-    String expectedOutput = "|aaaazzzz| 1\n"
-                          + "|ddddwwww| 2\n"
-                          // + "|bbbbyyyy| 2\n"
-                          + "|ccccxxxx| 5\n"
-                          + "Total records: 3";
+    String expectedOutput = "|aaaazzzz| 1\n" + "|ddddwwww| 2\n"
+    // + "|bbbbyyyy| 2\n"
+        + "|ccccxxxx| 5\n" + "Total records: 3";
     assertFuzzyEquals(expectedOutput, systemOut().getHistory());
   }
 
@@ -85,8 +83,6 @@ public class RecordHashTableTest extends TestCase {
     Record found = sampleTable.getRecord("Charlie");
     assertNotNull(found);
     assertEquals(found.getName(), "Charlie");
-    found.addRecordKeyVal(new RecordKeyVal("Class", "Animal"));
-    assertNotNull(found.findRecordKeyVal("Class"));
     found = sampleTable.getRecord("Toby");
     assertNull(found);
   }

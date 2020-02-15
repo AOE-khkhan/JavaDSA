@@ -47,7 +47,7 @@ public class MemMan {
     // This is the main file for the program.
 
     // the initial memory size
-    // int initMemSize = Integer.parseInt(args[0]);
+    int initMemSizeInTwosPower = Integer.parseInt(args[0]);
 
     // the initial hashtable size
     int initHashTblSize = Integer.parseInt(args[1]);
@@ -59,15 +59,22 @@ public class MemMan {
     try {
       // scans the command file
       Scanner sc = new Scanner(commandFile);
+      // our memory manager
+      MemoryManager memoryManager = new MemoryManager(initMemSizeInTwosPower);
       // our hashtable
       RecordHashTable hashTable = new RecordHashTable(initHashTblSize);
-      Communicator memManCommunicator = new Communicator(hashTable);
+
+      Communicator memManCommunicator = new Communicator(hashTable,
+          memoryManager);
       while (sc.hasNext()) {
         String commandLine = sc.nextLine().trim().replaceAll("\\s+", " ");
 
         if (commandLine.equals("print hashtable")) {
           memManCommunicator.printHashTable();
 
+        }
+        else if (commandLine.equals("print blocks")) {
+          memManCommunicator.printMemoryPool();
         }
         else if (commandLine.startsWith("add")) {
           String recordName = commandLine.substring(4);
@@ -103,9 +110,9 @@ public class MemMan {
               fieldNameString);
         }
       }
+      // sc has been read thoroughly
       sc.close();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       // can't read commands, then quit
       return;
     }

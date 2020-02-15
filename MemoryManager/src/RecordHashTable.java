@@ -79,7 +79,7 @@ public class RecordHashTable {
       --this.countDeleted;
     }
     else {
-      if ((this.countActive + this.countDeleted >= this.getSize() / 2)) {
+      if ((this.countActive + this.countDeleted) >= this.getSize() / 2) {
         this.doubleTableSize();
         validSlot = this.getSlotForInsertion(record.getName());
       }

@@ -13,11 +13,15 @@ public class LinkedList<E extends Comparable<E>> {
   /** The tail node of the list. */
   private Node tailNode;
 
+  /** The current node used for iterating. */
+  private Node currNode;
+
   /** Empty parameter LinkedList constructor. */
   LinkedList() {
     tailNode = new Node();
     headNode = new Node();
-    headNode.next = tailNode;
+    currNode = headNode;
+    headNode.setNext(tailNode);
   }
 
   /** Construct list with a datum. */
@@ -32,7 +36,7 @@ public class LinkedList<E extends Comparable<E>> {
    * @return true if empty, false otherwise.
    */
   public boolean isEmpty() {
-    return (this.headNode.next.data == null);
+    return (this.headNode.getNext().getData() == null);
   }
 
   /**
@@ -41,12 +45,10 @@ public class LinkedList<E extends Comparable<E>> {
    * @param dt The datum being checked for.
    */
   public boolean hasData(E dt) {
-    Node currNode = headNode;
-    while (currNode.next != null) {
-      if (currNode.next.data == dt) {
+    for (moveToFront(); (!(currNode.getData() == null)); curseToNext()) {
+      if (currNode.getData().equals(dt)) {
         return true;
       }
-      currNode = currNode.next;
     }
     return false;
   }
@@ -62,16 +64,16 @@ public class LinkedList<E extends Comparable<E>> {
       this.append(dt);
       return;
     }
-    Node currNode = headNode;
-    while (currNode.next != tailNode) {
-      if (currNode.next.data.compareTo(dt) >= 0) {
-        Node prevNext = currNode.next;
-        currNode.next = new Node();
-        currNode.next.data = dt;
-        currNode.next.next = prevNext;
+    Node runningNode = headNode;
+    while (runningNode.getNext() != tailNode) {
+      if (runningNode.getNext().getData().compareTo(dt) >= 0) {
+        Node prevNext = runningNode.getNext();
+        runningNode.setNext(new Node());
+        runningNode.getNext().setData(dt);
+        runningNode.getNext().setNext(prevNext);
         return;
       }
-      currNode = currNode.next;
+      runningNode = runningNode.getNext();
     }
     this.append(dt);
   }
@@ -82,33 +84,58 @@ public class LinkedList<E extends Comparable<E>> {
    * @param dt data to be appended.
    */
   public void append(E dt) {
-    tailNode.data = dt;
-    tailNode.next = new Node();
-    tailNode = tailNode.next;
+    tailNode.setData(dt);
+    tailNode.setNext(new Node());
+    tailNode = tailNode.getNext();
   }
 
   /**
-   * Remove the first occurence of data if exists.
+   * Remove the first occurrence of data if exists.
    * 
    * @return true if removed, false otherwise.
    */
   public boolean remove(E dt) {
-    Node currNode = headNode;
-    while (currNode.next != tailNode) {
-      if (currNode.next.data == dt) {
-        currNode.next = currNode.next.next;
+    currNode = this.headNode;
+    while (currNode.getNext() != tailNode) {
+      if (currNode.getNext().getData().equals(dt)) {
+        currNode.setNext(currNode.getNext().getNext());
         return true;
       }
-      currNode = currNode.next;
+      currNode = currNode.getNext();
     }
     return false;
   }
 
   /** Pop the datum at the beginning of the list. */
   public E popFront() {
-    E data = this.headNode.next.data;
+    E data = this.headNode.getNext().getData();
     this.remove(data);
     return data;
+  }
+
+  /** Move the cursor node to the head of the list. */
+  public void moveToFront() {
+    this.currNode = this.headNode.getNext();
+  }
+
+  /**
+   * Move the cursor node towards the end. Moving stops once the cursor hits the
+   * tailNode.
+   */
+  public void curseToNext() {
+    if (currNode == tailNode) {
+      return;
+    }
+    this.currNode = currNode.getNext();
+  }
+
+  /**
+   * Get the data from the Node pointed by the currNode.
+   *
+   * @return Data in the current node pointed to by currNode.
+   */
+  public E yieldNode() {
+    return this.currNode.getData();
   }
 
   /**
@@ -118,20 +145,17 @@ public class LinkedList<E extends Comparable<E>> {
    */
   @Override
   public String toString() {
-    String result = "";
-    Node currNode = headNode;
-
-    while (currNode.next.data != null) {
-      currNode = currNode.next;
-      result += "<SEP>" + currNode.data.toString();
+    if (isEmpty()) {
+      return "";
     }
-
-    if (result.isBlank()) {
-      return result;
+    moveToFront();
+    String result = yieldNode().toString();
+    curseToNext();
+    while (!(currNode.getData() == null)) {
+      result += "<SEP>" + yieldNode();
+      curseToNext();
     }
-    else {
-      return result.substring(5);
-    }
+    return result;
   }
 
   /** A node data structure. */
@@ -145,6 +169,26 @@ public class LinkedList<E extends Comparable<E>> {
     Node() {
       this.data = null;
       this.next = null;
+    }
+
+    /** Getter for data. */
+    public E getData() {
+      return this.data;
+    }
+
+    /** Getter for next. */
+    public Node getNext() {
+      return this.next;
+    }
+
+    /** Setter for data. */
+    public void setData(E data) {
+      this.data = data;
+    }
+
+    /** Setter for next. */
+    public void setNext(Node next) {
+      this.next = next;
     }
   } // class Node
 }

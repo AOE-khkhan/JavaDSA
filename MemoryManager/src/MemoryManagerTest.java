@@ -22,7 +22,7 @@ public class MemoryManagerTest extends TestCase {
 
   /** Test the storeBytes method. */
   public void testRecordBytes() {
-    // intially there was a single 32 sized blocks starting at 0
+    // initially there was a single 32 sized blocks starting at 0
     assertFuzzyEquals(aMemManager.toString(), "32: 0");
 
     // some data we will store
@@ -98,7 +98,7 @@ public class MemoryManagerTest extends TestCase {
 
   /** Free the freeBlock method. */
   public void testFreeBlock() {
-    // intially there was a single 32 sized blocks starting at 0
+    // initially there was a single 32 sized blocks starting at 0
     assertFuzzyEquals(aMemManager.toString(), "32: 0");
 
     // some data we will store
