@@ -15,10 +15,10 @@ public class MemoryManagerTest extends TestCase {
     this.aMemManager = new MemoryManager(5);
   }
 
-  /** Test the constructor of the MemoryManager class. */
-  public void testConstructor() {
-    assertNotNull(this.aMemManager);
-  }
+  // /** Test the constructor of the MemoryManager class. */
+  // public void testConstructor() {
+  // assertNotNull(this.aMemManager);
+  // }
 
   /** Test the storeBytes method. */
   public void testRecordBytes() {
@@ -33,7 +33,7 @@ public class MemoryManagerTest extends TestCase {
 
     // the memory block has now split up into multiple chunks
     assertFuzzyEquals(aMemManager.toString(),
-        "2: 2\n" + "4: 4\n" + "8: 8\n" + "16: 16\n");
+        "2: 2\n" + "4: 4\n" + "8: 8\n" + "16: 16");
 
     // the handle should start at zero and have a size of two
     assertFuzzyEquals(handle.toString(), "2: 0 2");
@@ -41,14 +41,14 @@ public class MemoryManagerTest extends TestCase {
     // let's add another size two data
     handle = aMemManager.storeBytes(data);
     // notice how the first available size two block is now used up
-    assertFuzzyEquals(aMemManager.toString(), "4: 4\n" + "8: 8\n" + "16: 16\n");
+    assertFuzzyEquals(aMemManager.toString(), "4: 4\n" + "8: 8\n" + "16: 16");
     // the handle now starts at pos 2 as expected
     assertFuzzyEquals(handle.toString(), "2: 2 2");
 
     // let's add another size two data
     handle = aMemManager.storeBytes(data);
     // notice how the size 4 block is now split up
-    assertFuzzyEquals(aMemManager.toString(), "2: 6\n" + "8: 8\n" + "16: 16\n");
+    assertFuzzyEquals(aMemManager.toString(), "2: 6\n" + "8: 8\n" + "16: 16");
     // the handle now starts at pos 4 as expected
     assertFuzzyEquals(handle.toString(), "2: 4 2");
 
@@ -62,9 +62,8 @@ public class MemoryManagerTest extends TestCase {
     // 64, then that size 64 block is used for storage
     handle = aMemManager.storeBytes(new byte[33]);
     assertFuzzyEquals(aMemManager.toString(),
-        "2: 6\n" + "8: 8\n" + "16: 16\n" + "32: 32\n");
+        "2: 6\n" + "8: 8\n" + "16: 16\n" + "32: 32");
     assertFuzzyEquals(handle.toString(), "64: 64 33");
-
   }
 
   /** Test the getBytes method. */
@@ -96,7 +95,7 @@ public class MemoryManagerTest extends TestCase {
     assertEquals(course, retainedString);
   }
 
-  /** Free the freeBlock method. */
+  /** Test the freeBlock method. */
   public void testFreeBlock() {
     // initially there was a single 32 sized blocks starting at 0
     assertFuzzyEquals(aMemManager.toString(), "32: 0");
@@ -138,5 +137,36 @@ public class MemoryManagerTest extends TestCase {
   /** Test the method getPoolSize. */
   public void testGetPoolSize() {
     assertEquals(32, aMemManager.getPoolSize());
+  }
+
+  /** Test whether the poolsize gets expanded as expected. */
+  public void testPoolSizeExpansion() {
+    int initPoolSize = aMemManager.getPoolSize();
+
+    // started with free 32 byte block, and storing a 32 byte data
+    // no expansion should be observed
+    MemoryHandle handle = aMemManager.storeBytes(new byte[32]);
+    assertEquals(initPoolSize, aMemManager.getPoolSize());
+
+    // freeing up the stored block
+    // no expansion should be observed
+    aMemManager.freeBlock(handle);
+    assertEquals(initPoolSize, aMemManager.getPoolSize());
+
+    // freed-up space should be reclaimed
+    // no expansion should be observed
+    handle = aMemManager.storeBytes(new byte[32]);
+    assertEquals(initPoolSize, aMemManager.getPoolSize());
+
+    aMemManager.freeBlock(handle);
+    aMemManager.storeBytes(new byte[33]);
+    // poolsize should now be doubled
+    assertEquals(initPoolSize * 2, aMemManager.getPoolSize());
+
+    aMemManager = new MemoryManager(5);
+    aMemManager.storeBytes("Death Note".getBytes()); // 10 bytes
+    aMemManager.storeBytes("Genre<SEP>Anime".getBytes()); // 15 bytes
+    aMemManager.storeBytes("Can You Handle?".getBytes()); // 15 bytes
+    assertEquals(aMemManager.getPoolSize(), 64);
   }
 }

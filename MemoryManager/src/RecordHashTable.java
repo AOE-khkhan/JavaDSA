@@ -12,6 +12,11 @@ public class RecordHashTable {
   private int size;
 
   /**
+   * The MemoryManager object for this hashtable.
+   */
+  private MemoryManager memoryManager;
+
+  /**
    * The number of active records the table holds.
    */
   private int countActive;
@@ -29,15 +34,17 @@ public class RecordHashTable {
   /**
    * Construct RecordHashTable by giving table size.
    * 
-   * @param tableSize The size of the hash table.
+   * @param tableSize           The size of the hash table.
+   * @param poolSizeInTwosPower The memorypool size given in the powers of two.
    */
-  public RecordHashTable(int tableSize) {
+  public RecordHashTable(int tableSize, int poolSizeInTwosPower) {
     this.size = tableSize;
     // initialize the table data
     this.tableData = new TableEntry[this.getSize()];
     for (int i = 0; i < this.getSize(); ++i) {
       this.tableData[i] = new TableEntry();
     }
+    this.memoryManager = new MemoryManager(poolSizeInTwosPower);
   }
 
   /**
@@ -47,6 +54,15 @@ public class RecordHashTable {
    */
   public int getSize() {
     return this.size;
+  }
+
+  /**
+   * Get the poolsize of the memoryManager.
+   * 
+   * @return Number of bytes that the memoryManager handles right now.
+   */
+  public int getMemoryPoolSize() {
+    return memoryManager.getPoolSize();
   }
 
   /**
@@ -62,46 +78,36 @@ public class RecordHashTable {
    * Add a Record entry to the hash table. If the Record's name already exists
    * in the database no changes will be made.
    * 
-   * @param record a Record object
+   * @param recordName String name handle of the Record.
    * @return true if addition is successful, false otherwise.
    */
-  public boolean addRecord(Record record) {
+  public boolean addRecord(String recordName) {
 
-    int validSlot = this.getSlotForInsertion(record.getName());
+    int validSlot = this.getSlotForInsertion(recordName);
 
     if (validSlot == -1) {
       return false;
     }
 
     if (this.tableData[validSlot].isDeleted()) {
-      this.tableData[validSlot] = new TableEntry(record);
+      MemoryHandle recordHandle = memoryManager
+          .storeBytes(recordName.getBytes());
+      this.tableData[validSlot] = new TableEntry(new Record(recordHandle));
       ++this.countActive;
       --this.countDeleted;
     }
     else {
       if ((this.countActive + this.countDeleted) >= this.getSize() / 2) {
         this.doubleTableSize();
-        validSlot = this.getSlotForInsertion(record.getName());
+        validSlot = this.getSlotForInsertion(recordName);
       }
-      this.tableData[validSlot] = new TableEntry(record);
+      MemoryHandle recordHandle = memoryManager
+          .storeBytes(recordName.getBytes());
+      this.tableData[validSlot] = new TableEntry(new Record(recordHandle));
       ++this.countActive;
     }
-    return true;
-  }
 
-  /**
-   * Get a reference to the Record if the Record exists.
-   * 
-   * @param key The name field of the Record to be returned.
-   * @return Record object reference if found, null otherwise.
-   */
-  public Record getRecord(String key) {
-    int recordPos = this.getSlotForLookUp(key);
-    if (recordPos == -1) {
-      return null;
-    }
-    Record found = this.tableData[recordPos].getRecord();
-    return found;
+    return true;
   }
 
   /**
@@ -117,10 +123,50 @@ public class RecordHashTable {
       return false;
     }
 
+    Record freedRecord = tableData[recordPos].getRecord();
+    this.memoryManager.freeBlock(freedRecord.getNameHandle());
+    for(freedRecord.moveToFirstHandle(); (!(freedRecord.yieldHandle() == null));
+        freedRecord.curseToNextHandle()) {
+      this.memoryManager.freeBlock(freedRecord.yieldHandle());
+    }
     this.tableData[recordPos].markDeleted();
     ++this.countDeleted;
     --this.countActive;
     return true;
+  }
+
+  /**
+   * Delete a key-val pair from a Record's database, if the pair exists.
+   * 
+   * @param record Non-null Record object that must exist on the hashtable.
+   * @param key    String key name of the key-value pair.
+   * @return true if any deletion occurs, false otherwise.
+   */
+  public boolean deleteRecordKeyVal(Record record, String key) {
+    for (record.moveToFirstHandle(); (!(record.yieldHandle() == null)); record
+        .curseToNextHandle()) {
+      if (getStrFromMemory(record.yieldHandle()).startsWith(key + "<SEP>")) {
+        this.memoryManager.freeBlock(record.yieldHandle());
+        record.removeHandle(record.yieldHandle());
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Add a key-val pair to a Record's database, deleting any pre-existing entry
+   * with the same name.
+   * 
+   * @param record Non-null Record object that must exist on the hashtable.
+   * @param key    String key name being updated or added.
+   * @param val    String value being replaced or added.
+   */
+  public void addRecordKeyVal(Record record, String key, String val) {
+    deleteRecordKeyVal(record, key);
+    MemoryHandle keyvalHandle = memoryManager
+        .storeBytes((key + "<SEP>" + val).getBytes());
+    record.addHandle(keyvalHandle);
   }
 
   /**
@@ -130,26 +176,61 @@ public class RecordHashTable {
   public void print() {
     for (int i = 0; i < this.getSize(); ++i) {
       if (this.tableData[i].isActive()) {
-        System.out.println("|" + this.tableData[i].getRecordName() + "| " + i);
+        System.out.println("|"
+            + getStrFromMemory(tableData[i].getRecordNameHandle()) + "| " + i);
       }
     }
     System.out.println("Total records: " + this.getCount());
   }
 
   /**
-   * Double the size of the hashtable. Rehashes existing active entries.
-   * 
+   * Prints the block sizes and their starting positions in the memory bytes
+   * pool.
    */
-  private void doubleTableSize() {
-    RecordHashTable newHashTable = new RecordHashTable(this.getSize() * 2);
-    for (int i = 0; i < this.getSize(); ++i) {
-      if (this.tableData[i].isActive()) {
-        newHashTable.addRecord(this.tableData[i].getRecord());
-      }
+  public void printMemoryPool() {
+    System.out.println(memoryManager);
+  }
+
+  /**
+   * Print a Record with its key-val pairs by reading them from the memory
+   * manager.
+   * 
+   * @param record A non-null Record object to print contents of.
+   */
+  public void printRecord(Record record) {
+    System.out.print(getStrFromMemory(record.getNameHandle()));
+    record.moveToFirstHandle();
+    MemoryHandle handle = record.yieldHandle();
+    while (handle != null) {
+      System.out.print("<SEP>");
+      System.out.print(getStrFromMemory(handle));
+      record.curseToNextHandle();
+      handle = record.yieldHandle();
     }
-    this.tableData = newHashTable.tableData;
-    this.size = newHashTable.size;
-    this.countActive = newHashTable.countActive;
+  }
+
+  /**
+   * Get a reference to the Record if the Record exists.
+   * 
+   * @param key The name field of the Record to be returned.
+   * @return Record object reference if found, null otherwise.
+   */
+  public Record getRecord(String key) {
+    int recordPos = this.getSlotForLookUp(key);
+    if (recordPos == -1) {
+      return null;
+    }
+    return this.tableData[recordPos].getRecord();
+  }
+
+  /**
+   * Add a Record object to the hashtable. Useful when doubling the table size.
+   */
+  private void addRecord(Record record) {
+    int position = getSlotForInsertion(
+        getStrFromMemory(record.getNameHandle()));
+    tableData[position] = new TableEntry(record);
+    ++this.countActive;
   }
 
   /**
@@ -187,7 +268,8 @@ public class RecordHashTable {
         tombstoneSlot = runningSlot;
       }
 
-      if (curEntry.isActive() && curEntry.getRecordName().equals(key)) {
+      if (curEntry.isActive()
+          && getStrFromMemory(curEntry.getRecordNameHandle()).equals(key)) {
         return -1;
       }
 
@@ -198,6 +280,34 @@ public class RecordHashTable {
 
     } while (sanityCounter < this.getSize());
     return -1;
+  }
+
+  // /**
+  //  * Store a key-val string in the memoryManager and return the handle.
+  //  * 
+  //  * @return MemoryHandle object for the stored key-val.
+  //  */
+  // private MemoryHandle addKeyVal(String keyval) {
+  //   return memoryManager.storeBytes(keyval.getBytes());
+  // }
+
+  /**
+   * Double the size of the hashtable. Rehashes existing active entries.
+   * 
+   */
+  private void doubleTableSize() {
+    RecordHashTable newHashTable = new RecordHashTable(this.getSize() * 2,
+        MemoryManager.getLog2(memoryManager.getPoolSize()));
+    for (int i = 0; i < this.getSize(); ++i) {
+      if (this.tableData[i].isActive()) {
+        Record oldRecord = tableData[i].getRecord();
+        //memoryManager.freeBlock(oldRecord.getNameHandle());
+        newHashTable.addRecord(oldRecord);
+      }
+    }
+    this.tableData = newHashTable.tableData;
+    this.size = newHashTable.size;
+    this.countActive = newHashTable.countActive;
   }
 
   /**
@@ -224,7 +334,7 @@ public class RecordHashTable {
         break;
       }
 
-      if (curEntry.getRecordName().equals(key)) {
+      if (getStrFromMemory(curEntry.getRecordNameHandle()).equals(key)) {
         return runningSlot;
       }
       runningSlot = RecordHashTable.getProbedSlot(homeSlot, ++probeLevel,
@@ -232,6 +342,17 @@ public class RecordHashTable {
       ++sanityCounter;
     } while (sanityCounter < this.getSize());
     return -1;
+  }
+
+  /**
+   * Obtain the bytes from the MemoryManager as String and return.
+   * 
+   * @return String key-value pair.
+   */
+  private String getStrFromMemory(MemoryHandle handle) {
+    byte[] data = new byte[handle.getDataSize()];
+    this.memoryManager.getBytes(data, handle);
+    return new String(data);
   }
 
   /**

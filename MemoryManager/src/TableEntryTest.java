@@ -17,7 +17,7 @@ public class TableEntryTest extends TestCase {
    * Sets up the tests that follow.
    */
   public void setUp() {
-    anEntry = new TableEntry(new Record("Poochie"));
+    anEntry = new TableEntry(new Record(new MemoryHandle(0, 4)));
   }
 
   /**
@@ -33,7 +33,7 @@ public class TableEntryTest extends TestCase {
    */
   public void testGetRecord() {
     Record gotRecord = anEntry.getRecord();
-    assertEquals(gotRecord.getName(), "Poochie");
+    assertEquals(gotRecord.getNameHandle(), new MemoryHandle(0, 4));
   }
 
   /**
@@ -63,7 +63,8 @@ public class TableEntryTest extends TestCase {
    * Test the method to get the name field of the Record object present in the
    * TableEntry object.
    */
-  public void testGetRecordName() {
-    assertEquals(anEntry.getRecordName(), anEntry.getRecord().getName());
+  public void testGetRecordNameHandle() {
+    assertEquals(anEntry.getRecordNameHandle(),
+        anEntry.getRecord().getNameHandle());
   }
 }

@@ -9,32 +9,23 @@ class Communicator {
   /** The hashtable we are working with. */
   private RecordHashTable theHashTable;
 
-  /** The memory manager we are working with. */
-  private MemoryManager theMemoryManager;
-
   /**
    * Initialize the communicator.
    *
    * @param ht Reference to a RecordHashTable object.
    */
-  public Communicator(RecordHashTable ht, MemoryManager mm) {
+  public Communicator(RecordHashTable ht) {
     this.theHashTable = ht;
-    this.theMemoryManager = mm;
   }
 
-  /**
-   * Prints theHashTable.
-   */
+  /** Print the Record names and their positions in the hashtable. */
   public void printHashTable() {
-    this.theHashTable.print();
+    theHashTable.print();
   }
 
-  /**
-   * Prints the block sizes and their starting positions in the memory bytes
-   * pool.
-   */
+  /** Print the memory blocks and their starting positions. */
   public void printMemoryPool() {
-    System.out.print(theMemoryManager);
+    theHashTable.printMemoryPool();
   }
 
   /**
@@ -43,10 +34,16 @@ class Communicator {
    * @param recordName A String name that identifies a Record.
    */
   public void addRecordToHashTable(String recordName) {
+    int poolSize = theHashTable.getMemoryPoolSize();
     int tableSize = this.theHashTable.getSize();
-    boolean added = this.theHashTable.addRecord(new Record(recordName));
+    boolean added = this.theHashTable.addRecord(recordName);
 
     if (added) {
+      if (this.theHashTable.getMemoryPoolSize() > poolSize) {
+        System.out.println("Memory pool expanded to be "
+            + theHashTable.getMemoryPoolSize() + " bytes.");
+      }
+
       System.out
           .println("|" + recordName + "| has been added to the Name database.");
 
@@ -60,7 +57,6 @@ class Communicator {
       System.out.println("|" + recordName
           + "| duplicates a record already in the Name database.");
     }
-
   }
 
   /**
@@ -102,29 +98,15 @@ class Communicator {
       return;
     }
 
-    theRecord.moveToFirstHandle();
-    MemoryHandle runningHandle = theRecord.yieldHandle();
-    while (runningHandle != null) {
-      String thisHandlesKV = this.retainKeyValFromMemory(runningHandle);
-      if (thisHandlesKV.startsWith(keyName + "<SEP>")) {
-        theRecord.removeHandle(runningHandle);
-        break;
-      }
-      theRecord.curseToNextHandle();
-      runningHandle = theRecord.yieldHandle();
+    int poolSize = theHashTable.getMemoryPoolSize();
+    theHashTable.addRecordKeyVal(theRecord, keyName, value);
+    if (poolSize < theHashTable.getMemoryPoolSize()) {
+      System.out.println("Memory pool expanded to be "
+          + theHashTable.getMemoryPoolSize() + " bytes.");
     }
-
-    int poolSize = this.theMemoryManager.getPoolSize();
-    String serializedKeyVal = keyName + "<SEP>" + value;
-    runningHandle = theMemoryManager.storeBytes(serializedKeyVal.getBytes());
-    theRecord.addHandle(runningHandle);
     System.out.print("Updated Record: |");
-    this.printRecord(theRecord);
+    theHashTable.printRecord(theRecord);
     System.out.println("|");
-    if (poolSize < this.theMemoryManager.getPoolSize()) {
-      System.out.println("Memory pool expanded to "
-          + this.theMemoryManager.getPoolSize() + " bytes.");
-    }
   }
 
   /**
@@ -145,58 +127,16 @@ class Communicator {
       return;
     }
 
-    boolean deleted = false;
-    theRecord.moveToFirstHandle();
-    MemoryHandle handle = theRecord.yieldHandle();
-    while (handle != null) {
-      String thisHandlesKV = this.retainKeyValFromMemory(handle);
-      if (thisHandlesKV.startsWith(keyName + "<SEP>")) {
-        theRecord.removeHandle(handle);
-        deleted = true;
-        break;
-      }
-      theRecord.curseToNextHandle();
-      handle = theRecord.yieldHandle();
-    }
+    boolean deleted = theHashTable.deleteRecordKeyVal(theRecord, keyName);
 
     if (deleted) {
       System.out.print("Updated Record: |");
-      this.printRecord(theRecord);
+      theHashTable.printRecord(theRecord);
       System.out.println("|");
     }
     else {
       System.out.println("|" + recordName + "| not updated because the field |"
           + keyName + "| does not exist");
-    }
-  }
-
-  /**
-   * Given a MemoryHandle, obtain the bytes as string from the MemoryManager and
-   * return.
-   * 
-   * @return String key-value pair.
-   */
-  private String retainKeyValFromMemory(MemoryHandle handle) {
-    byte[] data = new byte[handle.getDataSize()];
-    this.theMemoryManager.getBytes(data, handle);
-    return new String(data);
-  }
-
-  /**
-   * Print a Record with its key-val pairs by reading them from the memory
-   * manager.
-   * 
-   * @param record A Record object to print contents of.
-   */
-  private void printRecord(Record record) {
-    System.out.print(record.getName());
-    record.moveToFirstHandle();
-    MemoryHandle handle = record.yieldHandle();
-    while (handle != null) {
-      System.out.print("<SEP>");
-      System.out.print(this.retainKeyValFromMemory(handle));
-      record.curseToNextHandle();
-      handle = record.yieldHandle();
     }
   }
 

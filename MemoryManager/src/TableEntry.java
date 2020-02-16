@@ -41,12 +41,12 @@ public class TableEntry {
   }
 
   /**
-   * Get the name field of the Record object held by this TableEntry.
+   * Get the name handle of the Record object held by this TableEntry.
    * 
-   * @return name field of the Record object held by this object.
+   * @return MemoryHandle object corresponding to the Record's name handle.
    */
-  public String getRecordName() {
-    return this.getRecord().getName();
+  public MemoryHandle getRecordNameHandle() {
+    return this.getRecord().getNameHandle();
   }
 
   /**

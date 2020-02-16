@@ -14,7 +14,7 @@ public class RecordTest extends TestCase {
 
   /** Sets up the tests that follow. */
   public void setUp() {
-    aRecord = new Record("Death Note");
+    aRecord = new Record(new MemoryHandle(0, 4));
   }
 
   /** Test the construction. */
@@ -25,7 +25,7 @@ public class RecordTest extends TestCase {
 
   /** Test the getName method. */
   public void testGetName() {
-    assertEquals(aRecord.getName(), "Death Note");
+    assertEquals(aRecord.getNameHandle(),new MemoryHandle(0, 4));
   }
 
   /** Test isEmpty. */

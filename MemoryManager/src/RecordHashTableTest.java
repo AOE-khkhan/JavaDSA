@@ -18,7 +18,7 @@ public class RecordHashTableTest extends TestCase {
    * Sets up the tests that follow.
    */
   public void setUp() {
-    sampleTable = new RecordHashTable(10);
+    sampleTable = new RecordHashTable(10, 5);
   }
 
   /**
@@ -39,10 +39,10 @@ public class RecordHashTableTest extends TestCase {
    * Test the methods for adding Record objects to the RecordHashTable.
    */
   public void testAddRecord() {
-    sampleTable.addRecord(new Record("Poochie"));
-    sampleTable.addRecord(new Record("Pie"));
+    sampleTable.addRecord("Poochie");
+    sampleTable.addRecord("Pie");
     sampleTable.deleteRecord("Pie");
-    sampleTable.addRecord(new Record("Pie"));
+    sampleTable.addRecord("Pie");
     assertEquals(sampleTable.getCount(), 2);
   }
 
@@ -60,11 +60,11 @@ public class RecordHashTableTest extends TestCase {
     // delete bbbbyyyy
     // ddddwwww -> 2 // tombstone is reclaimed
     //
-    sampleTable.addRecord(new Record("aaaazzzz"));
-    sampleTable.addRecord(new Record("bbbbyyyy"));
-    sampleTable.addRecord(new Record("ccccxxxx"));
+    sampleTable.addRecord("aaaazzzz");
+    sampleTable.addRecord("bbbbyyyy");
+    sampleTable.addRecord("ccccxxxx");
     sampleTable.deleteRecord("bbbbyyyy");
-    sampleTable.addRecord(new Record("ddddwwww"));
+    sampleTable.addRecord("ddddwwww");
     sampleTable.print();
     String expectedOutput = "|aaaazzzz| 1\n" + "|ddddwwww| 2\n"
     // + "|bbbbyyyy| 2\n"
@@ -76,13 +76,12 @@ public class RecordHashTableTest extends TestCase {
    * Test the Record getter method.
    */
   public void testGetRecord() {
-    sampleTable.addRecord(new Record("Charlie"));
-    sampleTable.addRecord(new Record("Max"));
-    sampleTable.addRecord(new Record("Buddy"));
+    sampleTable.addRecord("Charlie");
+    sampleTable.addRecord("Max");
+    sampleTable.addRecord("Buddy");
 
     Record found = sampleTable.getRecord("Charlie");
     assertNotNull(found);
-    assertEquals(found.getName(), "Charlie");
     found = sampleTable.getRecord("Toby");
     assertNull(found);
   }
@@ -91,17 +90,17 @@ public class RecordHashTableTest extends TestCase {
    * Test if the hashtable doubles in size as expected.
    */
   public void testDoubleTableSize() {
-    RecordHashTable aTable = new RecordHashTable(3);
-    aTable.addRecord(new Record("Charlie"));
+    RecordHashTable aTable = new RecordHashTable(3, 5);
+    aTable.addRecord("Charlie");
     assertEquals(aTable.getSize(), 3);
     assertEquals(aTable.getCount(), 1);
     aTable.deleteRecord("Charlie");
     assertEquals(aTable.getSize(), 3);
     assertEquals(aTable.getCount(), 0);
-    aTable.addRecord(new Record("Charlie"));
+    aTable.addRecord("Charlie");
     assertEquals(aTable.getSize(), 3);
     assertEquals(aTable.getCount(), 1);
-    aTable.addRecord(new Record("Poochie"));
+    aTable.addRecord("Poochie");
     assertEquals(aTable.getSize(), 6);
     // assertEquals(aTable.getCount(), 2);
   }
@@ -110,8 +109,8 @@ public class RecordHashTableTest extends TestCase {
    * Test the hashtable print method.
    */
   public void testPrint() {
-    sampleTable.addRecord(new Record("Death Note"));
-    sampleTable.addRecord(new Record("Can you handle?"));
+    sampleTable.addRecord("Death Note");
+    sampleTable.addRecord("Can you handle?");
     sampleTable.print();
     String output = systemOut().getHistory();
     assertFuzzyEquals(output,
@@ -122,8 +121,8 @@ public class RecordHashTableTest extends TestCase {
    * Test the method to delete a Record from the table.
    */
   public void testDeleteRecord() {
-    sampleTable.addRecord(new Record("Bailey"));
-    sampleTable.addRecord(new Record("Frankie"));
+    sampleTable.addRecord("Bailey");
+    sampleTable.addRecord("Frankie");
     boolean deleted = sampleTable.deleteRecord("Bailey");
     assertEquals(deleted, true);
     deleted = sampleTable.deleteRecord("Maggie");

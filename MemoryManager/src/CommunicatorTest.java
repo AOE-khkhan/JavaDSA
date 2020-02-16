@@ -16,9 +16,8 @@ public class CommunicatorTest extends TestCase {
    * Sets up the tests that follow.
    */
   public void setUp() {
-    RecordHashTable aHashTable = new RecordHashTable(3);
-    MemoryManager aMemoryManager = new MemoryManager(4);
-    this.aCommunicator = new Communicator(aHashTable, aMemoryManager);
+    RecordHashTable aHashTable = new RecordHashTable(3, 4);
+    this.aCommunicator = new Communicator(aHashTable);
     assertNotNull(this.aCommunicator);
   }
 
@@ -74,6 +73,7 @@ public class CommunicatorTest extends TestCase {
         "|Death Note| not updated because it does not exist "
             + "in the Name database.\n"
             + "|Death Note| has been added to the Name database.\n"
+            + "Memory pool expanded to 32 bytes.\n"
             + "Updated Record: |Death Note<SEP>Genre<SEP>Anime|");
   }
 
@@ -92,6 +92,7 @@ public class CommunicatorTest extends TestCase {
         + "|Death Note| has been added to the Name database.\n"
         + "|Death Note| not updated because the field |Genre|"
         + " does not exist\n"
+        + "Memory pool expanded to 32 bytes.\n"
         + "Updated record: |Death Note<SEP>Genre<SEP>Anime|\n"
         + "Updated record: |Death Note|";
     assertFuzzyEquals(expectedMessage, systemOut().getHistory());

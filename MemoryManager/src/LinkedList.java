@@ -151,8 +151,8 @@ public class LinkedList<E extends Comparable<E>> {
     moveToFront();
     String result = yieldNode().toString();
     curseToNext();
-    while (!(currNode.getData() == null)) {
-      result += "<SEP>" + yieldNode();
+    while (!(yieldNode() == null)) {
+      result += "<SEP>" + yieldNode().toString();
       curseToNext();
     }
     return result;

@@ -59,13 +59,12 @@ public class MemMan {
     try {
       // scans the command file
       Scanner sc = new Scanner(commandFile);
-      // our memory manager
-      MemoryManager memoryManager = new MemoryManager(initMemSizeInTwosPower);
-      // our hashtable
-      RecordHashTable hashTable = new RecordHashTable(initHashTblSize);
 
-      Communicator memManCommunicator = new Communicator(hashTable,
-          memoryManager);
+      // our hashtable
+      RecordHashTable hashTable = new RecordHashTable(initHashTblSize,
+          initMemSizeInTwosPower);
+
+      Communicator memManCommunicator = new Communicator(hashTable);
       while (sc.hasNext()) {
         String commandLine = sc.nextLine().trim().replaceAll("\\s+", " ");
 

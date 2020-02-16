@@ -61,10 +61,9 @@ public class MemoryManager {
       ++blockPos;
     }
 
-    // double the poolsize
-    while ((blockPos >= this.blocks.length)
-        || this.blocks[blockPos].isEmpty()) {
+    if (blockPos >= this.blocks.length) {
       this.doublePoolSize();
+      return this.storeBytes(bytes);
     }
 
     int insertionPos = this.blocks[blockPos].getPos();
@@ -142,9 +141,9 @@ public class MemoryManager {
       }
     }
     if (result.isEmpty()) {
-      result = "No free blocks are available.";
+      return "No free blocks are available.";
     }
-    return result;
+    return result.trim();
   }
 
   /**
@@ -262,7 +261,7 @@ public class MemoryManager {
    * @param num The positive number to calculate log2 of.
    * @return The number which is to be raised to the power of two.
    */
-  private static int getLog2(int num) {
+  public static int getLog2(int num) {
     int result = -1;
     while (num != 0) {
       num = num >> 1;
