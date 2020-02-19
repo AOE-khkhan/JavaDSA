@@ -180,7 +180,6 @@ public class MemoryManager {
    * @param targetSize Memory block size desired to be obtained by splitting up.
    */
   private void splitBlock(int blockPos, int blockSize, int targetSize) {
-    assert (blockSize > targetSize);
     this.removePos(blockSize, blockPos);
     while (blockSize != targetSize) {
       blockSize /= 2;

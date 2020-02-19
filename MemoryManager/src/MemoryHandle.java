@@ -41,10 +41,6 @@ public class MemoryHandle implements Comparable<MemoryHandle> {
     this(pos, size, size);
   }
 
-  MemoryHandle(MemoryHandle other) {
-    this(other.getPos(), other.getBlockSize(), other.getDataSize());
-  }
-
   /** Getter method for the field pos. */
   public int getPos() {
     return this.pos;

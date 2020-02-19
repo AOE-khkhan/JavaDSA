@@ -51,7 +51,6 @@ class Communicator {
         System.out.println("Name hash table size doubled to "
             + this.theHashTable.getSize() + " slots.");
       }
-
     }
     else {
       System.out.println("|" + recordName

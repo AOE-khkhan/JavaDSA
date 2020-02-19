@@ -24,11 +24,11 @@ public class LinkedList<E extends Comparable<E>> {
     headNode.setNext(tailNode);
   }
 
-  /** Construct list with a datum. */
-  LinkedList(E dt) {
-    this();
-    this.append(dt);
-  }
+  // /** Construct list with a datum. */
+  // LinkedList(E dt) {
+  //   this();
+  //   this.append(dt);
+  // }
 
   /**
    * Check if the list is empty.
@@ -161,9 +161,9 @@ public class LinkedList<E extends Comparable<E>> {
   /** A node data structure. */
   private class Node {
     /** Data stored by this Node. */
-    public E data;
+    private E data;
     /** Reference to the linked Node. */
-    public Node next;
+    private Node next;
 
     /** Construct from null. */
     Node() {

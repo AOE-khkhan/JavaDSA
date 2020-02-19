@@ -125,8 +125,8 @@ public class RecordHashTable {
 
     Record freedRecord = tableData[recordPos].getRecord();
     this.memoryManager.freeBlock(freedRecord.getNameHandle());
-    for(freedRecord.moveToFirstHandle(); (!(freedRecord.yieldHandle() == null));
-        freedRecord.curseToNextHandle()) {
+    for (freedRecord.moveToFirstHandle(); (!(freedRecord
+        .yieldHandle() == null)); freedRecord.curseToNextHandle()) {
       this.memoryManager.freeBlock(freedRecord.yieldHandle());
     }
     this.tableData[recordPos].markDeleted();
@@ -224,9 +224,10 @@ public class RecordHashTable {
   }
 
   /**
-   * Add a Record object to the hashtable. Useful when doubling the table size.
+   * Add an active Record object to the hashtable. Useful when doubling the
+   * table size.
    */
-  private void addRecord(Record record) {
+  private void addActiveRecord(Record record) {
     int position = getSlotForInsertion(
         getStrFromMemory(record.getNameHandle()));
     tableData[position] = new TableEntry(record);
@@ -282,15 +283,6 @@ public class RecordHashTable {
     return -1;
   }
 
-  // /**
-  //  * Store a key-val string in the memoryManager and return the handle.
-  //  * 
-  //  * @return MemoryHandle object for the stored key-val.
-  //  */
-  // private MemoryHandle addKeyVal(String keyval) {
-  //   return memoryManager.storeBytes(keyval.getBytes());
-  // }
-
   /**
    * Double the size of the hashtable. Rehashes existing active entries.
    * 
@@ -299,10 +291,9 @@ public class RecordHashTable {
     RecordHashTable newHashTable = new RecordHashTable(this.getSize() * 2,
         MemoryManager.getLog2(memoryManager.getPoolSize()));
     for (int i = 0; i < this.getSize(); ++i) {
-      if (this.tableData[i].isActive()) {
+      if (tableData[i].isActive()) {
         Record oldRecord = tableData[i].getRecord();
-        //memoryManager.freeBlock(oldRecord.getNameHandle());
-        newHashTable.addRecord(oldRecord);
+        newHashTable.addActiveRecord(oldRecord);
       }
     }
     this.tableData = newHashTable.tableData;

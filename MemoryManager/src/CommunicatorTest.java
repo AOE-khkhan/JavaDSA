@@ -73,7 +73,7 @@ public class CommunicatorTest extends TestCase {
         "|Death Note| not updated because it does not exist "
             + "in the Name database.\n"
             + "|Death Note| has been added to the Name database.\n"
-            + "Memory pool expanded to 32 bytes.\n"
+            + "Memory pool expanded to be 32 bytes.\n"
             + "Updated Record: |Death Note<SEP>Genre<SEP>Anime|");
   }
 
@@ -92,7 +92,7 @@ public class CommunicatorTest extends TestCase {
         + "|Death Note| has been added to the Name database.\n"
         + "|Death Note| not updated because the field |Genre|"
         + " does not exist\n"
-        + "Memory pool expanded to 32 bytes.\n"
+        + "Memory pool expanded to be 32 bytes.\n"
         + "Updated record: |Death Note<SEP>Genre<SEP>Anime|\n"
         + "Updated record: |Death Note|";
     assertFuzzyEquals(expectedMessage, systemOut().getHistory());
