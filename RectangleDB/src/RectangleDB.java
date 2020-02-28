@@ -32,67 +32,65 @@ import java.util.Scanner;
  * Project 2 COMP 5040 Spring 2020, Virginia Tech.
  * 
  * 
- * @author Bimal Gaudel
+ * @author  Bimal Gaudel
  * 
  * @version Feb 2020
  */
 public class RectangleDB {
-  /**
-   * @param args [0] The file which contains commands to be executed.
-   * 
-   * @throws IOException
-   */
-  public static void main(String[] args) {
+    /**
+     * @param  args        [0] The file which contains commands to be executed.
+     * 
+     * @throws IOException
+     */
+    public static void main(String[] args) {
 
-    if (args.length != 1) {
-      System.out.println("Bad argument count. Usage: "
-                         + "RectangleDB <command-file>");
-      return;
+        if (args.length != 1) {
+            System.out.println("Bad argument count. Usage: "
+                    + "RectangleDB <command-file>");
+            return;
+        }
+
+        // scanner object to parse the command file
+        Scanner sc;
+
+        try {
+            sc = new Scanner(new File(args[0]));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        /** The world object for this session is now initialized. */
+        World world = new World();
+
+        /** A handler object to channel commands to the World object. */
+        RequestHandler requestHandler = new RequestHandler(world);
+
+        while (sc.hasNext()) {
+            String cmd = sc.next();
+
+            if (cmd.equals("dump")) {
+                requestHandler.dump();
+            }
+            else if (cmd.equals("intersections")) {
+                requestHandler.intersections();
+            }
+            else if (cmd.equals("regionsearch")) {
+                requestHandler.regionsearch(sc.nextLine());
+            }
+            else if (cmd.equals("remove")) {
+                requestHandler.remove(sc.next(), sc.nextLine());
+            }
+            else if (cmd.equals("insert")) {
+                requestHandler.insert(sc.next(), sc.nextLine());
+            }
+            else {
+                System.out.println("Unrecognized input: |" + cmd + "|");
+            }
+        }
+
+        // done with the scanner object
+        sc.close();
     }
-
-    // scanner object to parse the command file
-    Scanner sc;
-
-    try {
-      sc = new Scanner(new File(args[0]));
-    }
-    catch (Exception e) {
-      // error opening file.
-      System.out.println("Error opening file!");
-      System.out.println(e.getMessage());
-      return;
-    }
-
-    /** The world object for this session is now initialized. */
-    World world = new World();
-
-    /** A handler object to channel commands to the World object. */
-    RequestHandler requestHandler = new RequestHandler(world);
-
-    while (sc.hasNext()) {
-      String cmd = sc.next();
-
-      if (cmd.equals("dump")) {
-        requestHandler.dump();
-      }
-      else if (cmd.equals("intersections")) {
-        requestHandler.intersections();
-      }
-      else if (cmd.equals("regionsearch")) {
-        requestHandler.regionsearch(sc.nextLine());
-      }
-      else if (cmd.equals("remove")) {
-        requestHandler.remove(sc.next(), sc.nextLine());
-      }
-      else if (cmd.equals("insert")) {
-        requestHandler.insert(sc.next(), sc.nextLine());
-      }
-      else {
-        System.out.println("Unrecognized input: |" + cmd + "|");
-      }
-    }
-
-    // done with the scanner object
-    sc.close();
-  }
 }
