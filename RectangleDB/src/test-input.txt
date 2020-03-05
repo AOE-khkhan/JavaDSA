@@ -1,12 +1,15 @@
 
 insert Rec_A 0 0 100 100
 
-remove Rec_A 0 0 100 100
+
+
+
+                                   remove Rec_A 0 0 100 100
 
 regionsearch -5 -5 400 400
 
-intersections
+  intersections
 
 dump
 
-dump1
+             dump1

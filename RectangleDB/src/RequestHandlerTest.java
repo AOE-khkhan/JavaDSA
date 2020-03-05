@@ -43,37 +43,74 @@ public class RequestHandlerTest extends TestCase {
                         + " <x> <y> <width> <height>");
     }
 
+    /** Test the duplicate insertion of rectangles. */
+    public void testDuplicateInsert() {
+        // good enough rectangle for insertion
+        theHandler.insert("Rec_A", " 0 0 50 30");
+        // duplicate insertion
+        theHandler.insert("Rec_A", " 0 0 50 30");
+
+        //@formatter:off
+        assertFuzzyEquals(systemOut().getHistory(),
+                "Rectangle inserted: (Rec_A, 0, 0, 50, 30)\n"
+              + "Duplicate rectangle rejected: (Rec_A, 0, 0, 50, 30)");
+        //@formatter:on
+
+    }
+
     /** Test the remove() method. */
     public void testRemove() {
 
+        String expectedOutput;
+
+        // insert a rectangle to remove it successfully
+        theHandler.insert("Rec_A", " 0 0 50 30");
+        expectedOutput = "Rectangle inserted: (Rec_A, 0, 0, 50, 30)\n";
+
         // good enough rectangle for removal (if it's present)
         theHandler.remove("Rec_A", " 0 0 50 30");
+        expectedOutput += "Rectangle removed: (Rec_A, 0, 0, 50, 30)\n";
+
+        // removing twice
+        theHandler.remove("Rec_A", " 0 0 50 30");
+        expectedOutput += "Rectangle not in database: (Rec_A, 0, 0, 50, 30)\n";
+
         // rectangle with negative coordinate
         theHandler.remove("Rec_A", "-1 0 50 30");
+        expectedOutput += "Rectangle rejected: (Rec_A, -1, 0, 50, 30)\n";
+
         // rectangle with size bigger than world's
         theHandler.remove("Rec_A", "0 1200 50 30");
+        expectedOutput += "Rectangle rejected: (Rec_A, 0, 1200, 50, 30)\n";
+        //
         theHandler.remove("Rec_A", "500 500 600 600");
+        expectedOutput += "Rectangle rejected: (Rec_A, 500, 500, 600, 600)\n";
+
         // rectangle with negative width
         theHandler.remove("Rec_A", "0 1 -50 30");
+        expectedOutput += "Rectangle rejected: (Rec_A, 0, 1, -50, 30)\n";
+        //
         theHandler.remove("Rec_A", "0 1 50 -30");
-        // rectangle with insufficient specs
-        theHandler.remove("Rec_A", "0 1 50 ");
+        expectedOutput += "Rectangle rejected: (Rec_A, 0, 1, 50, -30)\n";
 
-        assertFuzzyEquals(systemOut().getHistory(),
-                "Rectangle removed: (Rec_A, 0, 0, 50, 30)\n"
-                        + "Rectangle rejected: (Rec_A, -1, 0, 50, 30)\n"
-                        + "Rectangle rejected: (Rec_A, 0, 1200, 50, 30)\n"
-                        + "Rectangle rejected: (Rec_A, 500, 500, 600, 600)\n"
-                        + "Rectangle rejected: (Rec_A, 0, 1, -50, 30)\n"
-                        + "Rectangle rejected: (Rec_A, 0, 1, 50, -30)\n"
-                        + "Bad arguments! Use: remove <rect_name>"
-                        + " <x> <y> <width> <height>");
+        // rectangle with insufficient specs
+        // @formatter:off
+        theHandler.remove("Rec_A", "0 1 50 ");
+        expectedOutput += "Bad arguments! Use: remove <rect_name>"
+                       +  " <x> <y> <width> <height>\n";
+        // @formatter:on
+
+        assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
     }
 
     /** Test the dump() method. */
     public void testDump() {
         theHandler.dump();
-        assertFuzzyEquals(systemOut().getHistory(), "QuadTree dump:");
+        //@formatter:off
+        assertFuzzyEquals(systemOut().getHistory(), "QuadTree dump:\n"
+                                                  + "Node at 0, 0, 1024: Empty\n"
+                                                  + "1. quadtree nodes visited");
+        //@formatter:on
     }
 
     /** Test the regionsearch() method. */
@@ -83,7 +120,7 @@ public class RequestHandlerTest extends TestCase {
         theHandler.regionsearch("0 0 -10 60");
         // rectangle with negative height
         theHandler.regionsearch("0 0 10 -60");
-        // rectangle with negative cooordinates but good enough for a
+        // rectangle with negative coordinates but good enough for a
         // regionsearch query
         theHandler.regionsearch("-10 -10 100 100");
         // rectangle with size bigger than world's

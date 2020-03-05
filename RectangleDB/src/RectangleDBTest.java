@@ -53,7 +53,10 @@ public class RectangleDBTest extends TestCase {
                 + "Rectangle removed: (Rec_A, 0, 0, 100, 100)\n"
                 + "Rectangles intersecting rectangle (-5, -5, 400, 400):\n"
                 + "Rectangle intersections in the database:\n"
-                + "QuadTree dump:\n" + "Unrecognized input: |dump1|";
+                + "QuadTree dump:\n"
+                + "Node at 0, 0, 1024: Empty\n"
+                + "1. quadtree nodes visited\n"
+                + "Unrecognized input: |dump1|";
 
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
     }

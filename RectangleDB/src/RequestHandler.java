@@ -28,19 +28,19 @@ public class RequestHandler {
     /**
      * Insert a rectangle in the database.
      *
-     * A rectangle to be inserted is specified by its name, x and y cooordinate
+     * A rectangle to be inserted is specified by its name, x and y coordinates
      * of the starting point, and the width and height that are horizontal and
      * vertical lengths of the rectangle respectively.
      *
      * Duplicate rectangles will not be inserted. A duplicate rectangle is a
-     * rectangle that has the same name, origin and the size of one of the
-     * pre-existing cooordinates. Note that two unique rectangles can have the
+     * rectangle that has the same name, origin and the size as one of the
+     * pre-existing coordinates. Note that two unique rectangles can have the
      * same name, or the same spatial specifications but not both.
      * 
      * 
      * @param rectName A String name for the rectangle. eg. "Rec_A"
      * @param args     Arguments String that will be parsed to get the starting
-     *                 cooordinates of the rectangle together with the width and
+     *                 coordinates of the rectangle together with the width and
      *                 the height. eg. "110 100 50 70" are x, y, width and
      *                 height respectively.
      *
@@ -55,9 +55,25 @@ public class RequestHandler {
                 System.out.println("Rectangle rejected: " + recSpecPrint);
                 return;
             }
-            // TO-suppressed-DO
-            // if duplicate println("Duplicate rectangle rejected: " +
-            // recSpecPrint);
+
+            RectangleRecord toInsert =
+                    new RectangleRecord(rectName, specs[X_COORD],
+                            specs[Y_COORD], specs[WIDTH], specs[HEIGHT]);
+
+            // context for insertion we need a quadtree and a canvas
+            QuadTree tree = world.getQuadTree();
+            SquareCanvas canvas = world.getCanvas();
+
+
+            // if duplicate
+            if (tree.hasRecord(toInsert)) {
+                System.out.println(
+                        "Duplicate rectangle rejected: " + recSpecPrint);
+                return;
+            }
+
+            tree = tree.insertRectangle(toInsert, canvas);
+            world.setQuadTree(tree);
             System.out.println("Rectangle inserted: " + recSpecPrint);
         }
         catch (Exception e) {
@@ -72,7 +88,7 @@ public class RequestHandler {
      * 
      * @param rectName A String name for the rectangle. eg. "Rec_A"
      * @param args     Arguments String that will be parsed to get the starting
-     *                 cooordinates of the rectangle together with the width and
+     *                 coordinates of the rectangle together with the width and
      *                 the height. eg. "110 100 50 70" are x, y, width and
      *                 height respectively.
      */
@@ -86,9 +102,24 @@ public class RequestHandler {
                 System.out.println("Rectangle rejected: " + recSpecPrint);
                 return;
             }
-            // TO-suppressed-DO
-            // if rectangle not found
-            // println("Rectangle not in database: " + recSpecPrint)
+
+            RectangleRecord toRemove =
+                    new RectangleRecord(rectName, specs[X_COORD],
+                            specs[Y_COORD], specs[WIDTH], specs[HEIGHT]);
+
+            // context for deletion we need a quadtree and a canvas
+            QuadTree tree = world.getQuadTree();
+            SquareCanvas canvas = world.getCanvas();
+
+
+            // if non-existent
+            if (!tree.hasRecord(toRemove)) {
+                System.out
+                        .println("Rectangle not in database: " + recSpecPrint);
+                return;
+            }
+            tree = tree.removeRectangle(toRemove, canvas);
+            world.setQuadTree(tree);
             System.out.println("Rectangle removed: " + recSpecPrint);
         }
         catch (Exception e) {
@@ -101,7 +132,8 @@ public class RequestHandler {
     /** Print out the database. */
     public void dump() {
         System.out.println("QuadTree dump:");
-        // TO-suppressed-DO
+        int nodesVisited = world.getQuadTree().dump(world.getCanvas());
+        System.out.println(nodesVisited + ". quadtree nodes visited");
     }
 
     /**
@@ -109,7 +141,7 @@ public class RequestHandler {
      * rectangle specified by the parameters passed.
      * 
      * @param args Arguments String that will be parsed to get the starting
-     *             cooordinates of the rectangle together with the width and the
+     *             coordinates of the rectangle together with the width and the
      *             height. eg. "110 100 50 70" are x, y, width and height
      *             respectively.
      */
@@ -123,8 +155,10 @@ public class RequestHandler {
             return;
         }
 
-        System.out.println(String
-                .format("Rectangles intersecting rectangle %s:", recSpecPrint));
+        //@formatter:off
+        System.out.println( String.format(
+                    "Rectangles intersecting rectangle %s:", recSpecPrint));
+        //@formatter:on
         // TO-suppressed-DO
     }
 
@@ -138,7 +172,7 @@ public class RequestHandler {
      * Reject a rectangle when attempted for insertion or deletion, if its size
      * specification exceeds the size of the maximum allowed rectangle.
      * 
-     * @param  specs An array of four integers that are x, y cooordinates, the
+     * @param  specs An array of four integers that are x, y coordinates, the
      *               width and the height of the rectangle respectively.
      * 
      * @return       True if the rectangle specification is invalid and should
@@ -154,8 +188,8 @@ public class RequestHandler {
             }
         }
 
-        // x + width should not exceed max cooordinate
-        // y + height should not exceed max cooordinate
+        // x + width should not exceed max coordinate
+        // y + height should not exceed max coordinate
         // @formatter:off
         return ((specs[X_COORD] + specs[WIDTH] > World.MAX_COORDINATE_VALUE)
             || (specs[Y_COORD] + specs[HEIGHT] > World.MAX_COORDINATE_VALUE));
@@ -163,7 +197,7 @@ public class RequestHandler {
     }
 
     /**
-     * Given a rectangle specification, scans for the x and y cooordinates for
+     * Given a rectangle specification, scans for the x and y coordinates for
      * the starting point, the width and the height of the rectangle in that
      * order.
      *
@@ -171,7 +205,7 @@ public class RequestHandler {
      *              assumed to be four numbers separated by space.
      * 
      * @return      An array of ints that are the specifications of the
-     *              rectangle in the order of x and y cooordinates, width and
+     *              rectangle in the order of x and y coordinates, width and
      *              the height.
      */
     private static int[] scanSpecs(String args) {

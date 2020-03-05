@@ -31,7 +31,6 @@ import java.util.Scanner;
  * Rectangle data base manager's main method lives in this class. Programming
  * Project 2 COMP 5040 Spring 2020, Virginia Tech.
  * 
- * 
  * @author  Bimal Gaudel
  * 
  * @version Feb 2020
