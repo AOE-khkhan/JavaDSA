@@ -60,11 +60,11 @@ public class QuadTreeTest extends TestCase {
     /** Test complex insertion. */
     public void testComplexInsertion() {
         //@formatter:off
-        String header = "---------------------------\n" 
-                        + "Testing complex insertions";
+        String header = "\nTesting complex insertions\n" +
+                        "--------------------------\n"; 
         //@formatter:on
-        System.out.println(header);
-        String expectedOutput = header + "\n";
+        System.out.print(header);
+        String expectedOutput = header;
 
         // lets insert two non-overlapping rectangles
         RectangleRecord recordA = new RectangleRecord("A", 0, 0, 400, 400);
@@ -78,7 +78,7 @@ public class QuadTreeTest extends TestCase {
         // rectangles inserted so far
         RectangleRecord recordC = new RectangleRecord("C", 0, 512, 400, 400);
         qtree = qtree.insertRecord(recordC, rootCanvas);
-        // 
+        //
         // now there should be splitting
         //
         // lets add another rectangle that intersects all of the pre-existing
@@ -131,10 +131,6 @@ public class QuadTreeTest extends TestCase {
                        + "Node at 512, 512, 512:\n"
                        + recordABC.toString() + "\n";
         //@formatter:on
-
-        String footer = "---------------------------";
-        System.out.println(footer);
-        expectedOutput += footer + "\n";
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
     }
 
@@ -180,6 +176,92 @@ public class QuadTreeTest extends TestCase {
         assertEquals(qtree, QuadTreeInternalNode.FLYWEIGHT);
     }
 
+    /** Test searchRegion. */
+    public void testRegionSearch() {
+        //@formatter:off
+        String header = "\nTesting region search\n" +
+                        "---------------------\n"; 
+        //@formatter:on
+        System.out.print(header);
+        String expectedOutput = header;
+
+        // inserting example rectangles given on the project description
+        RectangleRecord recordA = new RectangleRecord("A", 200, 200, 400, 300);
+        RectangleRecord recordB = new RectangleRecord("B", 250, 250, 500, 500);
+        RectangleRecord recordC = new RectangleRecord("C", 600, 600, 400, 400);
+        RectangleRecord recordD = new RectangleRecord("D", 650, 650, 300, 300);
+        qtree = qtree.insertRecord(recordA, rootCanvas);
+        qtree = qtree.insertRecord(recordB, rootCanvas);
+        qtree = qtree.insertRecord(recordC, rootCanvas);
+        qtree = qtree.insertRecord(recordD, rootCanvas);
+
+        // there's only one rectangle on the south west quadrant
+        qtree.searchRegion(new Rectangle(0, 512, 512, 512), rootCanvas);
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordB.toString());
+
+        // on the north west canvas there are two rectangles A and B
+        // they should be reported here
+        // on the north east canvas there are two rectangles A and B
+        // however they shouldn't be reported here because they are
+        // already reported from the north west canvas
+        qtree.searchRegion(new Rectangle(0, 0, 1024, 512), rootCanvas);
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordA.toString());
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordB.toString());
+
+        // now we test a rectangle that intersects with B but not A
+        // at the north east canvas
+        qtree.searchRegion(new Rectangle(660, 260, 20, 20), rootCanvas);
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordB.toString());
+
+        // now we test for one of the records themselves
+        qtree.searchRegion(recordD.getRectangle(), rootCanvas);
+        // rectangle D should intersect with B, C and D
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordB.toString());
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordC.toString());
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordD.toString());
+
+        // qtree.searchRegion(new Rectangle(210, 210, 800, 800), rootCanvas);
+        assertFuzzyEquals(expectedOutput, systemOut().getHistory());
+    }
+
+    /**Test listIntersections method. */
+    public void testListIntersections() {
+        //@formatter:off
+        String header = "\nTesting intersections\n" +
+                        "---------------------\n"; 
+        //@formatter:on
+        System.out.print(header);
+        String expectedOutput = header;
+
+        // inserting example rectangles given on the project description
+        RectangleRecord recordA = new RectangleRecord("A", 200, 200, 400, 300);
+        RectangleRecord recordB = new RectangleRecord("B", 250, 250, 500, 500);
+        RectangleRecord recordC = new RectangleRecord("C", 600, 600, 400, 400);
+        RectangleRecord recordD = new RectangleRecord("D", 650, 650, 300, 300);
+        // rectangle E doesn't intersect with any of the other rectangles
+        RectangleRecord recordE = new RectangleRecord("E", 0, 768, 10, 10);
+        qtree = qtree.insertRecord(recordA, rootCanvas);
+        qtree = qtree.insertRecord(recordB, rootCanvas);
+        qtree = qtree.insertRecord(recordC, rootCanvas);
+        qtree = qtree.insertRecord(recordD, rootCanvas);
+        qtree = qtree.insertRecord(recordE, rootCanvas);
+
+        qtree.listIntersections(rootCanvas);
+        expectedOutput += String.format("%s and %s\n", recordA, recordB);
+        expectedOutput += String.format("%s and %s\n", recordB, recordC);
+        expectedOutput += String.format("%s and %s\n", recordB, recordD);
+        expectedOutput += String.format("%s and %s\n", recordC, recordD);
+
+        assertFuzzyEquals(expectedOutput, systemOut().getHistory());
+    }
+
     /** Get code coverage for the unexcuted functions and statements. */
     public void testGetCodeCoverage() {
         QuadTree flyNode = new QuadTreeFlyweightNode();
@@ -187,8 +269,9 @@ public class QuadTreeTest extends TestCase {
         RectangleRecord toRemove = new RectangleRecord("Rec", 0, 0, 10, 10);
         assertEquals(flyNode.removeRecord(toRemove, rootCanvas), flyNode);
 
+        assertEquals(
+                flyNode.searchRegion(new Rectangle(0, 0, 1, 1), rootCanvas), 1);
+
         assertTrue(flyNode.isEmpty());
     }
-
-    // Test dump of the quadtree.
 }

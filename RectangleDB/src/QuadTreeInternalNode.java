@@ -104,6 +104,46 @@ public class QuadTreeInternalNode extends QuadTree {
     }
 
     /**
+     * Print rectangles that intersect with the query @c rectangle.
+     * 
+     * @param  rectangle A rectangle object with which intersections of existing
+     *                   rectangles will be checked.
+     *
+     * @param  canvas    A SquareCanvas object to guide the visiting of nodes.
+     * 
+     * @return           Number of nodes visited.
+     */
+    @Override
+    public int searchRegion(Rectangle rectangle, SquareCanvas canvas) {
+        int numVisited = 1; // visited this internal node
+        for (int i = 0; i < children.length; ++i) {
+            SquareCanvas childCanvas = canvas.getQuadrant(i);
+            if (rectangle.intersects(childCanvas)) {
+                numVisited += children[i].searchRegion(rectangle, childCanvas);
+            }
+        }
+        return numVisited; // this node plus any child nodes visit count
+    }
+
+    /**
+     * List the overlapping rectangles in the tree.
+     * 
+     * @param  canvas SquareCanvas object is the quadrant information of the
+     *                current that guides when to print to avoid duplicacy.
+     * 
+     * @return        Number of nodes visited.
+     */
+    @Override
+    public int listIntersections(SquareCanvas canvas) {
+        int visitCount = 1; // visited this node
+        for (int i = 0; i < children.length; ++i) {
+            SquareCanvas childCanvas = canvas.getQuadrant(i);
+            visitCount += children[i].listIntersections(childCanvas);
+        }
+        return visitCount;
+    }
+
+    /**
      * Print the rectangles present in the tree by pre-order traversal.
      * 
      * @param  canvas A SquareCanvas object to designate which canvas does the

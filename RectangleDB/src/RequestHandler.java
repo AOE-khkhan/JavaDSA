@@ -151,23 +151,38 @@ public class RequestHandler {
         int[] specs = RequestHandler.scanSpecs(args);
         String recSpecPrint = specsToString(specs);
 
+        int x = specs[X_COORD];
+        int y = specs[Y_COORD];
+        int width = specs[WIDTH];
+        int height = specs[HEIGHT];
+
+        Rectangle queryRectangle = new Rectangle(x, y, width, height);
+
         // rectangles with negative width or height spec should be rejected
-        if ((specs[WIDTH] < 0) || (specs[HEIGHT] < 0)) {
-            System.out.println("Rectangle rejected: " + recSpecPrint);
+        // on the other hand if the query rectangle doesn't overlap with the
+        // world, it should be rejected too
+        if ((width < 0) || (height < 0)
+                || (!queryRectangle.intersects(world.getCanvas()))) {
+            System.out.println("Search rectangle rejected: " + recSpecPrint);
             return;
         }
 
         //@formatter:off
         System.out.println( String.format(
                     "Rectangles intersecting rectangle %s:", recSpecPrint));
+        int visitCount = world.getQuadTree().searchRegion(queryRectangle,
+                                                        world.getCanvas());
+        System.out.println(visitCount + ". quadtree nodes visited");
         //@formatter:on
-        // TO-suppressed-DO
+
     }
 
     /** Report all pairs of rectangles within the database that intersect. */
     public void intersections() {
         System.out.println("Rectangle intersections in the database:");
-        // TO-suppressed-DO
+        int numVisitedNodes =
+                world.getQuadTree().listIntersections(world.getCanvas());
+        System.out.println(numVisitedNodes + ". quadtree nodes visited");
     }
 
     /**

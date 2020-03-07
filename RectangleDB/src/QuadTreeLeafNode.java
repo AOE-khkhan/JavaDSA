@@ -127,6 +127,78 @@ public class QuadTreeLeafNode extends QuadTree {
     }
 
     /**
+     * Print rectangles that intersect with the query @c rectangle.
+     * 
+     * @param  rectangle A rectangle object with which intersections of existing
+     *                   rectangles will be checked.
+     *
+     * @param  canvas    A SquareCanvas object to guide the visiting of nodes.
+     * 
+     * @return           Number of nodes visited.
+     */
+    @Override
+    public int searchRegion(Rectangle rectangle, SquareCanvas canvas) {
+        // iter through the existing rectangles and print them out if they
+        // intersect with the param rectangle
+        recordList.moveToHead();
+        while (!recordList.atEnd()) {
+
+            RectangleRecord record = recordList.yieldNode();
+
+            if (record.getRectangle().intersects(rectangle)) {
+                Rectangle isecRec =
+                        record.getRectangle().getIntersection(rectangle);
+                // avoid duplicate printing
+                if (canvas.hasPoint(isecRec.getX(), isecRec.getY())) {
+                    System.out.println("Rectangle found: " + record.toString());
+                }
+            }
+            recordList.curseToNext();
+        }
+        return 1; // visited this leaf node
+    }
+
+    /**
+     * List the overlapping rectangles in the tree.
+     * 
+     * @param  canvas SquareCanvas object is the quadrant information of the
+     *                current that guides when to print to avoid duplicacy.
+     * 
+     * @return        Number of nodes visited.
+     */
+    @Override
+    public int listIntersections(SquareCanvas canvas) {
+        int outerLoopCount = 0;
+        recordList.moveToHead();
+        while (!recordList.atEnd()) {
+            //formatter:off
+            for (int innerLoopCount = outerLoopCount + 1;
+                    innerLoopCount < recordList.getCount(); ++innerLoopCount) {
+            //formatter:on
+                // a pair of rectangles to check intersection for.
+                // this rectangle record is received by cursing the linked list
+                RectangleRecord rec1 = recordList.yieldNode();
+                // this rectangle record is received by index number
+                RectangleRecord rec2 = recordList.yieldIndex(innerLoopCount);
+                // check if the two rectangles intersect
+                if (rec1.getRectangle().intersects(rec2.getRectangle())) {
+                    Rectangle isecRec = rec1.getRectangle()
+                            .getIntersection(rec2.getRectangle());
+                    // so they intersect, but is it the right place to print
+                    // them as a intersecting pair?
+                    if (canvas.hasPoint(isecRec.getX(), isecRec.getY())) {
+                        System.out.println(rec1 + " and " + rec2);
+                    }
+                }
+            }
+            recordList.curseToNext();
+            ++outerLoopCount;
+        }
+        //
+        return 1; // visited this leaf node
+    }
+
+    /**
      * Print the rectangles present in the tree by pre-order traversal.
      * 
      * @param  canvas A SquareCanvas object to designate which canvas does the

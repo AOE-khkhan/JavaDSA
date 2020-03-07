@@ -58,9 +58,32 @@ abstract class QuadTree {
 
     /**
      * Check if the tree is empty.
+     * 
      * @return True if the tree is empty.
      */
     public abstract boolean isEmpty();
+
+    /**
+     * Print rectangles that intersect with the query @c rectangle.
+     * 
+     * @param  rectangle A rectangle object with which intersections of existing
+     *                   rectangles will be checked.
+     *
+     * @param  canvas    A SquareCanvas object to guide the visiting of nodes.
+     * 
+     * @return           Number of nodes visited.
+     */
+    public abstract int searchRegion(Rectangle rectangle, SquareCanvas canvas);
+
+    /**
+     * List the overlapping rectangles in the tree.
+     * 
+     * @param  canvas SquareCanvas object is the quadrant information of the
+     *                current that guides when to print to avoid duplicacy.
+     * 
+     * @return        Number of nodes visited.
+     */
+    public abstract int listIntersections(SquareCanvas canvas);
 
     /**
      * Print the rectangles present in the tree by pre-order traversal.

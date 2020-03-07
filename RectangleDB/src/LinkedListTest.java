@@ -57,7 +57,7 @@ public class LinkedListTest extends TestCase {
         assertEquals(strList.isEmpty(), true);
     }
 
-    /** Test the method exists. */
+    /** Test the exists method. */
     public void testExists() {
         strList.append("Address");
         assertEquals(strList.exists("Address"), true);
@@ -78,6 +78,31 @@ public class LinkedListTest extends TestCase {
         assertEquals(strList.getCount(), 1);
         strList.remove("Class");
         assertEquals(strList.getCount(), 0);
+    }
+
+    /** Test yieldIndex method. */
+    public void testYieldIndex() {
+        strList.append("Name");
+        strList.append("Address");
+        strList.append("Year");
+
+        assertTrue(strList.yieldIndex(0).equals("Name"));
+        assertTrue(strList.yieldIndex(1).equals("Address"));
+        assertTrue(strList.yieldIndex(2).equals("Year"));
+
+        assertNull(strList.yieldIndex(-1));
+        assertNull(strList.yieldIndex(3));
+
+        // validate current node state is not mutated
+        strList.moveToHead();
+        strList.curseToNext(); // set curr node to "Address"
+        strList.yieldIndex(2);
+        assertTrue(strList.yieldNode().equals("Address"));
+
+        strList = new LinkedList<String>();
+        assertNull(strList.yieldIndex(0));
+        assertNull(strList.yieldIndex(-1));
+        assertNull(strList.yieldIndex(1));
     }
 
     /** Get code coverage for unexecuted statemetns. */

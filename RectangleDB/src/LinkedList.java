@@ -121,6 +121,38 @@ public class LinkedList<E> {
     }
 
     /**
+     * Yield the data stored at a given position when counted from the head.
+     *
+     * The counting is zero based. @note It is not an efficient method and
+     * should be avoided whenever possible.
+     * 
+     * @param  index The node index to be yielded. The head node's index is
+     *               zero.
+     * 
+     * @return       Data stored by the node at index position. Null if invalid
+     *               position is passed.
+     */
+    public E yieldIndex(int index) {
+        // check invalid index
+        if ((index >= getCount()) || (index < 0)) {
+            return null;
+        }
+        // we don't want to mutate the current node
+        // that was set on the list before this method
+        // was called
+        Node currentNodeBeforeProcessing = currNode;
+        moveToHead();
+        while (index > 0) {
+            --index;
+            curseToNext();
+        }
+        E data = yieldNode();
+        // unmutate the current node
+        currNode = currentNodeBeforeProcessing;
+        return data;
+    }
+
+    /**
      * Check if the current node is at the end of the list.
      * 
      * @return True if cursor is at the end of the list.

@@ -52,12 +52,16 @@ public class RectangleDBTest extends TestCase {
         String expectedOutput = "Rectangle inserted: (Rec_A, 0, 0, 100, 100)\n"
                 + "Rectangle removed: (Rec_A, 0, 0, 100, 100)\n"
                 + "Rectangles intersecting rectangle (-5, -5, 400, 400):\n"
+                + "1. quadtree nodes visited\n"
                 + "Rectangle intersections in the database:\n"
+                + "1. quadtree nodes visited\n"
                 + "QuadTree dump:\n"
                 + "Node at 0, 0, 1024: Empty\n"
                 + "1. quadtree nodes printed\n"
                 + "Unrecognized input: |dump1|";
 
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
+        RectangleDB newSession = new RectangleDB();
+        assertNotNull(newSession);
     }
 }

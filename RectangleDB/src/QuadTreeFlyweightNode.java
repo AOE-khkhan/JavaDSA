@@ -60,6 +60,34 @@ public class QuadTreeFlyweightNode extends QuadTreeLeafNode {
     }
 
     /**
+     * Print rectangles that intersect with the query @c rectangle.
+     * 
+     * @param  rectangle A rectangle object with which intersections of existing
+     *                   rectangles will be checked.
+     *
+     * @param  canvas    A SquareCanvas object to guide the visiting of nodes.
+     * 
+     * @return           Number of nodes visited.
+     */
+    @Override
+    public int searchRegion(Rectangle rectangle, SquareCanvas canvas) {
+        return 1; // just visited the flyweight node
+    }
+
+    /**
+     * List the overlapping rectangles in the tree.
+     * 
+     * @param  canvas SquareCanvas object is the quadrant information of the
+     *                current that guides when to print to avoid duplicacy.
+     * 
+     * @return        Number of nodes visited.
+     */
+    @Override
+    public int listIntersections(SquareCanvas canvas) {
+        return 1; // just visited the flyweight node.
+    }
+
+    /**
      * Print the rectangles present in the tree by pre-order traversal.
      * 
      * @param  canvas A SquareCanvas object to designate which canvas does the

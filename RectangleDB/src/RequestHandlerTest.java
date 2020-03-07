@@ -106,7 +106,7 @@ public class RequestHandlerTest extends TestCase {
     /** Test the dump() method. */
     public void testDump() {
         // let's first insert a bunch of records
-        String header = "------------------\nTesting dump method\n";
+        String header = "\nTesting dump method\n------------------\n";
         System.out.print(header);
         String expectedOutput = header;
         theHandler.insert("Rec_A", "0 0 10 10");
@@ -145,30 +145,75 @@ public class RequestHandlerTest extends TestCase {
 
     /** Test the regionsearch() method. */
     public void testRegionsearch() {
+        //@formatter:off
+        String header = "\nTesting region search\n" +
+                        "---------------------\n"; 
+        //@formatter:on
+        System.out.print(header);
+        String expectedOutput = header;
+
+        // inserting example rectangles given on the project description
+        RectangleRecord recordA = new RectangleRecord("A", 200, 200, 400, 300);
+        RectangleRecord recordB = new RectangleRecord("B", 250, 250, 500, 500);
+        RectangleRecord recordC = new RectangleRecord("C", 600, 600, 400, 400);
+        RectangleRecord recordD = new RectangleRecord("D", 650, 650, 300, 300);
+        RectangleRecord[] toInsert =
+                new RectangleRecord[] {recordA, recordB, recordC, recordD};
+        for (RectangleRecord record : toInsert) {
+            int x = record.getRectangle().getX();
+            int y = record.getRectangle().getY();
+            int width = record.getRectangle().getWidth();
+            int height = record.getRectangle().getHeight();
+            theHandler.insert(record.getName(),
+                    String.format("%d %d %d %d", x, y, width, height));
+            expectedOutput += "Rectangle inserted: " + record.toString() + "\n";
+        }
 
         // rectangle with negative width
         theHandler.regionsearch("0 0 -10 60");
+        expectedOutput += "Search rectangle rejected: (0, 0, -10, 60)\n";
         // rectangle with negative height
         theHandler.regionsearch("0 0 10 -60");
+        expectedOutput += "Search rectangle rejected: (0, 0, 10, -60)\n";
+        // proper rectangle that doesn't intersect the world canvas
+        theHandler.regionsearch("-5 -5 1 1");
+        theHandler.regionsearch("1024 1024 10 10");
+        expectedOutput += "Search rectangle rejected: (-5, -5, 1, 1)\n";
+        expectedOutput += "Search rectangle rejected: (1024 1024 10 10)\n";
+
         // rectangle with negative coordinates but good enough for a
         // regionsearch query
         theHandler.regionsearch("-10 -10 100 100");
-        // rectangle with size bigger than world's
-        theHandler.regionsearch("700 900 1200 1600");
+        expectedOutput +=
+                "Rectangles intersecting rectangle (-10, -10, 100, 100):\n";
+        // there are no rectangles that intersect (-10, -10, 100, 100)
+        // should only print num of nodes visited
+        // the root internal node was visited
+        // and the first quadrant of tha node was visited in accordance with the
+        // query rectangle's dimension
+        expectedOutput += "2. quadtree nodes visited.\n";
 
-        assertFuzzyEquals(systemOut().getHistory(),
-                "Rectangle rejected: (0, 0, -10, 60)\n"
-                        + "Rectangle rejected: (0, 0, 10, -60)\n"
-                        + "Rectangles intersecting rectangle "
-                        + "(-10, -10, 100, 100):\n"
-                        + "Rectangles intersecting rectangle "
-                        + "(700, 900, 1200, 1600):");
+        // rectangle with size bigger than world's but
+        // intersects nevertheless
+        theHandler.regionsearch("700 900 1200 1600");
+        // rectangle C and D should've been printed
+        expectedOutput +=
+                "Rectangles intersecting rectangle (700, 900, 1200, 1600):\n";
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordC.toString());
+        expectedOutput +=
+                String.format("Rectangle found: %s\n", recordD.toString());
+        // still two quadtree nodes were visited
+        expectedOutput += "2. quadtree nodes visited.\n";
+
+        assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
     }
 
     /** Test the intersections() method. */
     public void testIntersections() {
         theHandler.intersections();
         assertFuzzyEquals(systemOut().getHistory(),
-                "Rectangle intersections in the database:");
+                "Rectangle intersections in the database:\n"
+                + "1. quadtree nodes visited");
     }
 }
