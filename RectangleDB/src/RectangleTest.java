@@ -91,21 +91,22 @@ public class RectangleTest extends TestCase {
     public void testHasPoint() {
         assertTrue(rec.hasPoint(0, 5));
         assertTrue(rec.hasPoint(1, 5));
+        assertTrue(rec.hasPoint(0, 6));
         assertFalse(rec.hasPoint(0, 0));
+        assertFalse(rec.hasPoint(0, 410));
 
-        assertFalse(rec.hasPoint(1, 400));
-        assertFalse(rec.hasPoint(5, 400));
-        assertFalse(rec.hasPoint(200, 400));
-        assertTrue(rec.hasPoint(199, 399));
-        assertFalse(rec.hasPoint(1, 399));
-        assertFalse(rec.hasPoint(5, 399));
+        assertTrue(rec.hasPoint(199, 404));
+        assertTrue(rec.hasPoint(0, 404));
+        assertFalse(rec.hasPoint(200, 405));
+        assertFalse(rec.hasPoint(200, 5));
+        assertFalse(rec.hasPoint(201, 5));
     }
 
     /** Test the getIntersection method. */
     public void testGetIntersection() {
         Rectangle rec1 = new Rectangle(100, 200, 200, 400);
-        assertTrue(rec.intersectsRectangle(rec1));
+        assertTrue(rec.intersects(rec1));
         Rectangle insec = rec.getIntersection(rec1);
-        assertTrue(insec.equals(new Rectangle(100, 200, 100, 300)));
+        assertTrue(insec.equals(new Rectangle(100, 200, 100, 205)));
     }
 }

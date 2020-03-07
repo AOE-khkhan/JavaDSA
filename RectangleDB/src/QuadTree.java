@@ -33,7 +33,7 @@ abstract class QuadTree {
      * 
      * @return        The quadtree root after insertion.
      */
-    public abstract QuadTree insertRectangle(RectangleRecord record,
+    public abstract QuadTree insertRecord(RectangleRecord record,
             SquareCanvas canvas);
 
     /**
@@ -44,7 +44,7 @@ abstract class QuadTree {
      * 
      * @return        The quadtree root after insertion.
      */
-    public abstract QuadTree removeRectangle(RectangleRecord record,
+    public abstract QuadTree removeRecord(RectangleRecord record,
             SquareCanvas canvas);
 
     /**

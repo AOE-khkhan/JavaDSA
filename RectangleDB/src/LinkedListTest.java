@@ -81,7 +81,7 @@ public class LinkedListTest extends TestCase {
     }
 
     /** Get code coverage for unexecuted statemetns. */
-    public void getCodeCoverage() {
+    public void testGetCodeCoverage() {
         LinkedList<String> myList = new LinkedList<String>();
         myList.append("data");
         myList.moveToHead();

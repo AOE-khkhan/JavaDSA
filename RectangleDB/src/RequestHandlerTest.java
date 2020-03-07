@@ -105,12 +105,42 @@ public class RequestHandlerTest extends TestCase {
 
     /** Test the dump() method. */
     public void testDump() {
+        // let's first insert a bunch of records
+        String header = "------------------\nTesting dump method\n";
+        System.out.print(header);
+        String expectedOutput = header;
+        theHandler.insert("Rec_A", "0 0 10 10");
+        expectedOutput += "Rectangle inserted: " + "(Rec_A, 0, 0, 10, 10)\n";
+
+        theHandler.insert("Rec_B", "0 0 20 20");
+        expectedOutput += "Rectangle inserted: " + "(Rec_B, 0, 0, 20, 20)\n";
+
+        theHandler.insert("Rec_C", "512 512 20 20");
+        expectedOutput +=
+                "Rectangle inserted: " + "(Rec_C, 512, 512, 20, 20)\n";
+
+        // three rectangles inserted only two of which overlap
+        // so they should've splitted
         theHandler.dump();
+
         //@formatter:off
-        assertFuzzyEquals(systemOut().getHistory(), "QuadTree dump:\n"
-                                                  + "Node at 0, 0, 1024: Empty\n"
-                                                  + "1. quadtree nodes visited");
+        expectedOutput += "QuadTree dump:\n"
+                        + "Node at 0, 0, 1024 internal:\n"
+                        //
+                        + "Node at 0, 0, 512:\n"
+                        + "(Rec_A, 0, 0, 10, 10)\n"
+                        + "(Rec_B, 0, 0, 20, 20)\n"
+                        //
+                        + "Node at 512, 0, 512: Empty\n"
+                        //
+                        + "Node at 0, 512, 512: Empty\n"
+                        //
+                        + "Node at 512, 512, 512:\n"
+                        + "(Rec_C, 512, 512, 20, 20)\n";
         //@formatter:on
+
+        expectedOutput += "5. quadtree nodes printed\n";
+        assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
     }
 
     /** Test the regionsearch() method. */

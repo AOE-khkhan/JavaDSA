@@ -12,9 +12,22 @@ public class QuadTreeLeafNode extends QuadTree {
     /** The RectangleRecord objects this leaf node points. */
     private LinkedList<RectangleRecord> recordList;
 
-    /** Construct a leaf node. */
+    /**
+     * Construct an empty leaf node. So that the default constructor of
+     * QuadTreeFlyweightNode is defined too
+     */
     QuadTreeLeafNode() {
+        recordList = null;
+    }
+
+    /**
+     * Construct a leaf node from a record.
+     * 
+     * @param record A RectangleRecord object to initialize this leaf node with.
+     */
+    QuadTreeLeafNode(RectangleRecord record) {
         recordList = new LinkedList<RectangleRecord>();
+        recordList.append(record);
     }
 
     /**
@@ -26,37 +39,40 @@ public class QuadTreeLeafNode extends QuadTree {
      * @return        The quadtree root after insertion.
      */
     @Override
-    public QuadTree insertRectangle(RectangleRecord record,
-            SquareCanvas canvas) {
+    public QuadTree insertRecord(RectangleRecord record, SquareCanvas canvas) {
         // implements the decomposition rule
         // the decomposition rule says there might be as many rectangles in a
         // leaf if all of them overlap at least at one point
-        // however if there are more than 3 rectangles and at least one of them
+        // however if there are 3 or more rectangles and at least one of them
         // does not overlap with all of them, then split the node
+
+        // start by just appending the record the record list
+        recordList.append(record);
+        // if less than three records, nothing needs to be done
         if (recordList.getCount() < 3) {
-            recordList.append(record);
             return this;
         }
         // at this point there are at least three rectangle records
-        // in the list. now we check if the rectangle to be inserted has no
-        // intersection with at least one of the existing rectangles
-        // if that turns out to be true, then we split up this leaf node
-        if (shouldSplit(record.getRectangle())) {
+        // in the list.
+        // now we check if the splitting should be carried out
+        //
+        if (shouldSplit()) {
             QuadTree splitTree = new QuadTreeInternalNode();
             // iterate through the existing records and insert them into the new
             recordList.moveToHead();
             while (!recordList.atEnd()) {
-                splitTree.insertRectangle(recordList.yieldNode(), canvas);
+
+                //@formatter:off
+                splitTree = splitTree.insertRecord(recordList.yieldNode(),
+                                                                    canvas);
+                //@formatter:on
+
                 recordList.curseToNext();
             }
-            // don't forget to insert the record passed as the param
-            splitTree.insertRectangle(record, canvas);
             return splitTree;
         }
-        // if we are here, it means the rectangle to be inserted intersects with
-        // all of the existing rectangles, no need to split, just append the
-        // record and return
-        recordList.append(record);
+        // else no splitting required as all of the
+        // rectangles overlap with each other
         return this;
     }
 
@@ -69,8 +85,7 @@ public class QuadTreeLeafNode extends QuadTree {
      * @return        The quadtree root after insertion.
      */
     @Override
-    public QuadTree removeRectangle(RectangleRecord record,
-            SquareCanvas canvas) {
+    public QuadTree removeRecord(RectangleRecord record, SquareCanvas canvas) {
         recordList.remove(record);
 
         if (isEmpty()) {
@@ -122,40 +137,43 @@ public class QuadTreeLeafNode extends QuadTree {
     @Override
     public int dump(SquareCanvas canvas) {
         recordList.moveToHead();
-        System.out.println(String.format("Node at %d, %d, %d:", canvas.getX(),
-                canvas.getY(), canvas.getSize()));
+        System.out.println(String.format("Node at %s:", canvas.toString()));
         while (!recordList.atEnd()) {
             System.out.println(recordList.yieldNode().toString());
             recordList.curseToNext();
         }
-        return 1;
+        return 1; // no. of nodes visited (counts only this node)
     }
 
     /**
-     * Check if a rectangle doesn't intersect any of the rectangles present in a
-     * record list.
+     * Check if the leaf node should split according to the decomposition rule.
      * 
-     * @param  toCheck The rectangle to be checked for intersection with.
-     * 
-     * @return         True if the decomposition rule is met.
+     * @return True if the decomposition rule is met.
      */
-    private boolean shouldSplit(Rectangle toCheck) {
+    private boolean shouldSplit() {
         // iterating through the rectangle records present
-        // and seeing if all of them intersect with each other
+        // and seeing if each of them intersects with each of themselves
         //
         // move to the head node and set it as the intersection to begin with
         recordList.moveToHead();
         Rectangle intersection = recordList.yieldNode().getRectangle();
         //
         // starting from the second node, update the intersection
-        // if not all of them intersect, return false
-        recordList.curseToNext();
+        // as soon as a non-intersection is encountered, return true
+        // to indicate that splitting should happen
         while (!recordList.atEnd()) {
+            //@formatter:off
+            // System.out.println("intersection now: "
+            //         + intersection.getX() + ", "
+            //         + intersection.getY() + ", "
+            //         + intersection.getWidth() + ", "
+            //         + intersection.getHeight());
+            //@formatter:on
             // record rectangle pointed by current node of the list
             Rectangle inListRectangle = recordList.yieldNode().getRectangle();
 
             // found a set of rectangles which do not overlap with each other
-            if (!intersection.intersectsRectangle(inListRectangle)) {
+            if (!intersection.intersects(inListRectangle)) {
                 return true;
             }
 
@@ -164,9 +182,7 @@ public class QuadTreeLeafNode extends QuadTree {
             recordList.curseToNext();
         }
         // At this point all the rectangles in the record list overlap with each
-        // other. Now we decide by checking if the param rectangle also overlaps
-        // with them all. If it does, there's no point in splitting up, else we
-        // should split.
-        return !intersection.intersectsRectangle(toCheck);
+        // other. No need to split up the leaf node.
+        return false;
     }
 }

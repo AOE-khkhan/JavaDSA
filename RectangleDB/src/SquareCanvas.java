@@ -68,6 +68,17 @@ public class SquareCanvas extends Rectangle {
         return null;
     }
 
+    /**
+     * Get a string representation of the canvas.
+     * 
+     * @return String representation of the canvas suitable for printing for
+     *         debugging purpose.
+     */
+    @Override
+    public String toString() {
+        return String.format("%d, %d, %d", getX(), getY(), getSize());
+    }
+
     /** Array indices for the four quadrants. */
 
     /** The north-west node index. */

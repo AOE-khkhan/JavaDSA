@@ -41,83 +41,83 @@ public class SquareCanvasTest extends TestCase {
         Rectangle rect = new Rectangle(0, 0, 10, 10);
 
         // (0, 0, 1024) canvas must hold rect
-        assertTrue(canvas.intersectsRectangle(rect));
+        assertTrue(canvas.intersects(rect));
 
         // rect falls on the NW quadrant
-        assertTrue(canvas.getQuadrant(0).intersectsRectangle(rect));
+        assertTrue(canvas.getQuadrant(0).intersects(rect));
         // but not on the NE quadrant
-        assertFalse(canvas.getQuadrant(1).intersectsRectangle(rect));
+        assertFalse(canvas.getQuadrant(1).intersects(rect));
         // or on the SW quadrant
-        assertFalse(canvas.getQuadrant(2).intersectsRectangle(rect));
+        assertFalse(canvas.getQuadrant(2).intersects(rect));
         // or on the SE quadrant
-        assertFalse(canvas.getQuadrant(3).intersectsRectangle(rect));
+        assertFalse(canvas.getQuadrant(3).intersects(rect));
 
         rect = new Rectangle(510, 510, 4, 4);
 
         // rect falls on all four quadrants
-        assertTrue(canvas.getQuadrant(0).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(1).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(2).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(3).intersectsRectangle(rect));
+        assertTrue(canvas.getQuadrant(0).intersects(rect));
+        assertTrue(canvas.getQuadrant(1).intersects(rect));
+        assertTrue(canvas.getQuadrant(2).intersects(rect));
+        assertTrue(canvas.getQuadrant(3).intersects(rect));
 
         rect = new Rectangle(260, 260, 550, 550);
-        assertTrue(canvas.getQuadrant(0).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(1).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(2).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(3).intersectsRectangle(rect));
+        assertTrue(canvas.getQuadrant(0).intersects(rect));
+        assertTrue(canvas.getQuadrant(1).intersects(rect));
+        assertTrue(canvas.getQuadrant(2).intersects(rect));
+        assertTrue(canvas.getQuadrant(3).intersects(rect));
 
         SquareCanvas canv = canvas.getQuadrant(0).getQuadrant(3);
-        assertTrue(canv.intersectsRectangle(rect));
+        assertTrue(canv.intersects(rect));
 
         canv = canvas.getQuadrant(1).getQuadrant(2);
-        assertTrue(canv.intersectsRectangle(rect));
+        assertTrue(canv.intersects(rect));
         canv = canvas.getQuadrant(1).getQuadrant(3);
-        assertTrue(canv.intersectsRectangle(rect));
+        assertTrue(canv.intersects(rect));
 
         canv = canvas.getQuadrant(2).getQuadrant(1);
-        assertTrue(canv.intersectsRectangle(rect));
+        assertTrue(canv.intersects(rect));
         canv = canvas.getQuadrant(2).getQuadrant(3);
-        assertTrue(canv.intersectsRectangle(rect));
+        assertTrue(canv.intersects(rect));
 
         canv = canvas.getQuadrant(3).getQuadrant(0);
-        assertTrue(canv.intersectsRectangle(rect));
+        assertTrue(canv.intersects(rect));
         canv = canvas.getQuadrant(3).getQuadrant(1);
-        assertTrue(canv.intersectsRectangle(rect));
+        assertTrue(canv.intersects(rect));
         canv = canvas.getQuadrant(3).getQuadrant(2);
-        assertTrue(canv.intersectsRectangle(rect));
+        assertTrue(canv.intersects(rect));
 
         canv = canvas.getQuadrant(0).getQuadrant(0);
-        assertFalse(canv.intersectsRectangle(rect));
+        assertFalse(canv.intersects(rect));
         canv = canvas.getQuadrant(0).getQuadrant(1);
-        assertFalse(canv.intersectsRectangle(rect));
+        assertFalse(canv.intersects(rect));
         canv = canvas.getQuadrant(0).getQuadrant(2);
-        assertFalse(canv.intersectsRectangle(rect));
+        assertFalse(canv.intersects(rect));
 
         canv = canvas.getQuadrant(1).getQuadrant(0);
-        assertFalse(canv.intersectsRectangle(rect));
+        assertFalse(canv.intersects(rect));
         canv = canvas.getQuadrant(1).getQuadrant(1);
-        assertFalse(canv.intersectsRectangle(rect));
+        assertFalse(canv.intersects(rect));
 
         canv = canvas.getQuadrant(2).getQuadrant(0);
-        assertFalse(canv.intersectsRectangle(rect));
+        assertFalse(canv.intersects(rect));
         canv = canvas.getQuadrant(2).getQuadrant(2);
-        assertFalse(canv.intersectsRectangle(rect));
+        assertFalse(canv.intersects(rect));
 
 
         // these rectangles might be queried for region search
         rect = new Rectangle(-10, 1000, 1200, 1200);
-        assertTrue(canvas.intersectsRectangle(rect));
-        assertFalse(canvas.getQuadrant(0).intersectsRectangle(rect));
-        assertFalse(canvas.getQuadrant(1).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(2).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(3).intersectsRectangle(rect));
+        assertTrue(canvas.intersects(rect));
+        assertFalse(canvas.getQuadrant(0).intersects(rect));
+        assertFalse(canvas.getQuadrant(1).intersects(rect));
+        assertTrue(canvas.getQuadrant(2).intersects(rect));
+        assertTrue(canvas.getQuadrant(3).intersects(rect));
 
         // testing more edge cases
         rect = new Rectangle(0, 0, 512, 512);
-        assertFalse(canvas.getQuadrant(1).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(0).intersectsRectangle(rect));
+        assertFalse(canvas.getQuadrant(1).intersects(rect));
+        assertTrue(canvas.getQuadrant(0).intersects(rect));
         rect = new Rectangle(512, 0, 512, 512);
-        assertFalse(canvas.getQuadrant(0).intersectsRectangle(rect));
-        assertTrue(canvas.getQuadrant(1).intersectsRectangle(rect));
+        assertFalse(canvas.getQuadrant(0).intersects(rect));
+        assertTrue(canvas.getQuadrant(1).intersects(rect));
     }
 }

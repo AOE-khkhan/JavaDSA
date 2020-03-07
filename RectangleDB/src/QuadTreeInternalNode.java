@@ -17,8 +17,8 @@ public class QuadTreeInternalNode extends QuadTree {
         children = new QuadTree[SquareCanvas.NUM_QUADRANTS];
         // all the children are empty leaf nodes
         // for that a flyweight object is used
-        for (int pos = 0; pos < SquareCanvas.NUM_QUADRANTS; ++pos) {
-            children[pos] = FLYWEIGHT;
+        for (int pos = 0; pos < children.length; ++pos) {
+            children[pos] = QuadTreeInternalNode.FLYWEIGHT;
         }
     }
 
@@ -31,12 +31,15 @@ public class QuadTreeInternalNode extends QuadTree {
      * @return        The quadtree root after insertion.
      */
     @Override
-    public QuadTree insertRectangle(RectangleRecord record,
-            SquareCanvas canvas) {
+    public QuadTree insertRecord(RectangleRecord record, SquareCanvas canvas) {
+
+        Rectangle recordRectangle = record.getRectangle();
         for (int i = 0; i < children.length; ++i) {
+
             SquareCanvas childCanvas = canvas.getQuadrant(i);
-            if (childCanvas.intersectsRectangle(record.getRectangle())) {
-                children[i] = children[i].insertRectangle(record, childCanvas);
+
+            if (childCanvas.intersects(recordRectangle)) {
+                children[i] = children[i].insertRecord(record, childCanvas);
             }
         }
         return this;
@@ -51,12 +54,11 @@ public class QuadTreeInternalNode extends QuadTree {
      * @return        The quadtree root after insertion.
      */
     @Override
-    public QuadTree removeRectangle(RectangleRecord record,
-            SquareCanvas canvas) {
+    public QuadTree removeRecord(RectangleRecord record, SquareCanvas canvas) {
         for (int i = 0; i < children.length; ++i) {
             SquareCanvas childCanvas = canvas.getQuadrant(i);
-            if (childCanvas.intersectsRectangle(record.getRectangle())) {
-                children[i] = children[i].removeRectangle(record, childCanvas);
+            if (childCanvas.intersects(record.getRectangle())) {
+                children[i] = children[i].removeRecord(record, childCanvas);
             }
         }
 
@@ -111,11 +113,13 @@ public class QuadTreeInternalNode extends QuadTree {
      */
     @Override
     public int dump(SquareCanvas canvas) {
-        int vistCount = 1;
+        System.out.println(
+                String.format("Node at %s internal:", canvas.toString()));
+        int visitCount = 1; // visited this node
         for (int i = 0; i < children.length; ++i) {
-            vistCount += children[i].dump(canvas.getQuadrant(i));
+            visitCount += children[i].dump(canvas.getQuadrant(i));
         }
-        return vistCount;
+        return visitCount;
     }
 
     /**

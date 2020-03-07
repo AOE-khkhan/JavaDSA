@@ -72,7 +72,7 @@ public class RequestHandler {
                 return;
             }
 
-            tree = tree.insertRectangle(toInsert, canvas);
+            tree = tree.insertRecord(toInsert, canvas);
             world.setQuadTree(tree);
             System.out.println("Rectangle inserted: " + recSpecPrint);
         }
@@ -118,7 +118,7 @@ public class RequestHandler {
                         .println("Rectangle not in database: " + recSpecPrint);
                 return;
             }
-            tree = tree.removeRectangle(toRemove, canvas);
+            tree = tree.removeRecord(toRemove, canvas);
             world.setQuadTree(tree);
             System.out.println("Rectangle removed: " + recSpecPrint);
         }
@@ -132,8 +132,10 @@ public class RequestHandler {
     /** Print out the database. */
     public void dump() {
         System.out.println("QuadTree dump:");
+
         int nodesVisited = world.getQuadTree().dump(world.getCanvas());
-        System.out.println(nodesVisited + ". quadtree nodes visited");
+
+        System.out.println(nodesVisited + ". quadtree nodes printed");
     }
 
     /**

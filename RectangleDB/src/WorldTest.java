@@ -37,7 +37,7 @@ public class WorldTest extends TestCase {
         QuadTree workingTree = myWorld.getQuadTree();
 
         // insert the rectangle by calling insert method on the workingTree
-        workingTree = workingTree.insertRectangle(toInsert, rootCanvas);
+        workingTree = workingTree.insertRecord(toInsert, rootCanvas);
 
         // verify that myWorld's tree doesn't yet have the rectangle that was
         // just inserted, because we haven't modified its tree yet

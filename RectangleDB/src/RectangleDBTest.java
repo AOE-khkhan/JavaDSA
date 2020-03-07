@@ -55,7 +55,7 @@ public class RectangleDBTest extends TestCase {
                 + "Rectangle intersections in the database:\n"
                 + "QuadTree dump:\n"
                 + "Node at 0, 0, 1024: Empty\n"
-                + "1. quadtree nodes visited\n"
+                + "1. quadtree nodes printed\n"
                 + "Unrecognized input: |dump1|";
 
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);

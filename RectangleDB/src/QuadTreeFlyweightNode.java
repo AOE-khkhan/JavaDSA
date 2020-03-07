@@ -16,9 +16,8 @@ public class QuadTreeFlyweightNode extends QuadTreeLeafNode {
      * @return        A QuadTreeLeafNode pointer.
      */
     @Override
-    public QuadTree insertRectangle(RectangleRecord record,
-            SquareCanvas canvas) {
-        return new QuadTreeLeafNode().insertRectangle(record, canvas);
+    public QuadTree insertRecord(RectangleRecord record, SquareCanvas canvas) {
+        return new QuadTreeLeafNode(record);
     }
 
     /**
@@ -30,8 +29,7 @@ public class QuadTreeFlyweightNode extends QuadTreeLeafNode {
      * @return        The quadtree root after insertion.
      */
     @Override
-    public QuadTree removeRectangle(RectangleRecord record,
-            SquareCanvas canvas) {
+    public QuadTree removeRecord(RectangleRecord record, SquareCanvas canvas) {
         // because no data exists in a flyweight
         // just return itself
         return this;
@@ -71,9 +69,8 @@ public class QuadTreeFlyweightNode extends QuadTreeLeafNode {
      */
     @Override
     public int dump(SquareCanvas canvas) {
-        System.out.print(String.format("Node at %d, %d, %d:", canvas.getX(),
-                canvas.getY(), canvas.getSize()));
-        System.out.println(" Empty");
+        System.out
+                .println(String.format("Node at %s: Empty", canvas.toString()));
         return 1;
     }
 }

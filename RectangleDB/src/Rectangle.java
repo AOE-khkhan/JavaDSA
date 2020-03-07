@@ -95,7 +95,7 @@ public class Rectangle implements Comparable<Rectangle> {
      * 
      * @return           True if rectangle intersects this canvas.
      */
-    public boolean intersectsRectangle(Rectangle rectangle) {
+    public boolean intersects(Rectangle rectangle) {
         return !(getX() >= rectangle.getX() + rectangle.getWidth()
                 || rectangle.getX() >= getX() + getWidth()
                 || getY() >= rectangle.getY() + rectangle.getHeight()
@@ -125,11 +125,13 @@ public class Rectangle implements Comparable<Rectangle> {
         //
         // the width starts from the intersection's origin and
         // ends wherever the shorter of the widths of the two rectangles ends
-        int isecWidth = Math.min(getWidth(), rectangle.getWidth()) - isecX;
+        int isecWidth = Math.min(getX() + getWidth(),
+                rectangle.getX() + rectangle.getWidth()) - isecX;
         //
         // the height starts from the intersection's origin and
         // ends wherever the shorter of the heights of the two rectangles ends
-        int isecHeight = Math.min(getHeight(), rectangle.getHeight()) - isecX;
+        int isecHeight = Math.min(getY() + getHeight(),
+                rectangle.getY() + rectangle.getHeight()) - isecY;
 
         return new Rectangle(isecX, isecY, isecWidth, isecHeight);
     }
