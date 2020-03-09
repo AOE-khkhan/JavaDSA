@@ -7,20 +7,10 @@
  */
 public class World {
     /**
-     * The maximum value for an X or Y coordinate we can handle. Together with
-     * the
-     * MIN_COORDINATE_VALUE it determines the spatial size of the rectangles we
-     * can work with.
-     */
-    public static final int MAX_COORDINATE_VALUE = 1023;
-
-    /**
-     * The minimum value for an X or Y coordinate we can handle. Together with
-     * the
-     * MAX_COORDINATE_VALUE it determines the spatial size of the rectangles we
-     * can work with.
-     */
-    public static final int MIN_COORDINATE_VALUE = 0;
+     * The size of the world in one dimension. Our world is two dimensional with
+     * total size being SIZE_ONE_DIM * SIZE_ONE_DIM
+     * */
+    public static final int SIZE_ONE_DIM = 1024;
 
     /** The root canvas for the quadtree. */
     private final SquareCanvas rootCanvas;
@@ -32,8 +22,7 @@ public class World {
     World() {
         qtree = QuadTreeInternalNode.FLYWEIGHT;
         // The canvas is of 1024 size as specified by the project requirement.
-        rootCanvas = new SquareCanvas(MIN_COORDINATE_VALUE,
-                MIN_COORDINATE_VALUE, MAX_COORDINATE_VALUE + 1);
+        rootCanvas = new SquareCanvas(0, 0, SIZE_ONE_DIM);
     }
 
     /**

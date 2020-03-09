@@ -186,8 +186,9 @@ public class RequestHandler {
     }
 
     /**
-     * Reject a rectangle when attempted for insertion or deletion, if its size
-     * specification exceeds the size of the maximum allowed rectangle.
+     * Reject a rectangle when attempted for insertion or deletion. If its size
+     * specification exceeds the size of the maximum allowed rectangle
+     * originating from the requested point.
      * 
      * @param  specs An array of four integers that are x, y coordinates, the
      *               width and the height of the rectangle respectively.
@@ -198,9 +199,7 @@ public class RequestHandler {
     private boolean rejectRectangle(int[] specs) {
         // negative or too large values are no good
         for (int i : specs) {
-            if ((i < World.MIN_COORDINATE_VALUE)
-                    || (i > World.MAX_COORDINATE_VALUE)) {
-
+            if ((i < 0) || (i >= World.SIZE_ONE_DIM)) {
                 return true;
             }
         }
@@ -208,8 +207,8 @@ public class RequestHandler {
         // x + width should not exceed max coordinate
         // y + height should not exceed max coordinate
         // @formatter:off
-        return ((specs[X_COORD] + specs[WIDTH] > World.MAX_COORDINATE_VALUE)
-            || (specs[Y_COORD] + specs[HEIGHT] > World.MAX_COORDINATE_VALUE));
+        return ((specs[X_COORD] + specs[WIDTH] > World.SIZE_ONE_DIM)
+            || (specs[Y_COORD] + specs[HEIGHT] > World.SIZE_ONE_DIM));
         // @formatter:on
     }
 

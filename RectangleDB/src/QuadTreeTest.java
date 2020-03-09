@@ -58,7 +58,7 @@ public class QuadTreeTest extends TestCase {
     }
 
     /** Test complex insertion. */
-    public void testComplexInsertion() {
+    public void testComplexInsert() {
         //@formatter:off
         String header = "\nTesting complex insertions\n" +
                         "--------------------------\n"; 
@@ -231,7 +231,7 @@ public class QuadTreeTest extends TestCase {
         assertFuzzyEquals(expectedOutput, systemOut().getHistory());
     }
 
-    /**Test listIntersections method. */
+    /** Test listIntersections method. */
     public void testListIntersections() {
         //@formatter:off
         String header = "\nTesting intersections\n" +

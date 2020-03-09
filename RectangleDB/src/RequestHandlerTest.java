@@ -25,7 +25,9 @@ public class RequestHandlerTest extends TestCase {
         theHandler.insert("Rec_A", "-1 0 50 30");
         theHandler.insert("Rec_A", "0 -1 50 30");
         // rectangle with size bigger than world's
-        theHandler.remove("Rec_A", "0 500 600 600");
+        theHandler.insert("Rec_A", "0 500 600 600");
+        // rectangle size that results into off-by-one too big size
+        theHandler.insert("Rec_A", "1 1 1024 1024");
         // rectangle with negative width
         theHandler.insert("Rec_A", "0 1 -50 30");
         theHandler.insert("Rec_A", "0 1 50 -30");
@@ -37,6 +39,7 @@ public class RequestHandlerTest extends TestCase {
                         + "Rectangle rejected: (Rec_A, -1, 0, 50, 30)\n"
                         + "Rectangle rejected: (Rec_A, 0, -1, 50, 30)\n"
                         + "Rectangle rejected: (Rec_A, 0, 500, 600, 600)\n"
+                        + "Rectangle rejected: (Rec_A, 1, 1, 1024, 1024)\n"
                         + "Rectangle rejected: (Rec_A, 0, 1, -50, 30)\n"
                         + "Rectangle rejected: (Rec_A, 0, 1, 50, -30)\n"
                         + "Bad arguments! Use: insert <rect_name>"
