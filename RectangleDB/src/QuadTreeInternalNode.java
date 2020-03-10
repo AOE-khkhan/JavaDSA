@@ -64,10 +64,6 @@ public class QuadTreeInternalNode extends QuadTree {
             }
         }
 
-        if (isEmpty()) {
-            return FLYWEIGHT;
-        }
-
         // loop through children and check if at least one of them is non-leaf
         // then no merger required
         for (QuadTree child : children) {
@@ -113,20 +109,13 @@ public class QuadTreeInternalNode extends QuadTree {
     }
 
     /**
-     * Check if the internal node is empty. An internal node is empty when all
-     * four of its children nodes point to null pointer or a flyweight as in our
-     * case.
+     * Check if the internal node is empty.
      * 
-     * @return True if the internal node is empty.
+     * @return False as an internal node can't be empty.
      */
     @Override
     public boolean isEmpty() {
-        for (QuadTree child : children) {
-            if (child != FLYWEIGHT) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
     /**
@@ -208,6 +197,7 @@ public class QuadTreeInternalNode extends QuadTree {
      *         occur.
      */
     private LinkedList<RectangleRecord> shouldMerge() {
+
         // if the rectangle records are in more than one node the decomposition
         // rule is violated if there are more than two rectangles and not alll
         // of them have an intersection

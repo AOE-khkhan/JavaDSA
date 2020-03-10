@@ -271,12 +271,14 @@ public class QuadTreeTest extends TestCase {
         System.out.print(header);
         String expectedOutput = header;
 
-        RectangleRecord recordA  = new RectangleRecord("A", 0, 0, 10, 10);
+        RectangleRecord recordA = new RectangleRecord("A", 0, 0, 10, 10);
         RectangleRecord recordA1 = new RectangleRecord("A1", 0, 0, 10, 10);
         RectangleRecord recordA2 = new RectangleRecord("A2", 0, 0, 10, 10);
-        RectangleRecord recordB  = new RectangleRecord("B", 512, 0, 10, 10);
-        RectangleRecord recordC  = new RectangleRecord("C", 0, 512, 10, 10);
-        RectangleRecord recordX  = new RectangleRecord("X", 0, 0, 1000, 1000);
+        RectangleRecord recordB = new RectangleRecord("B", 512, 0, 10, 10);
+        RectangleRecord recordB1 = new RectangleRecord("B1", 1010, 0, 10, 10);
+        RectangleRecord recordB2 = new RectangleRecord("B2", 1010, 500, 10, 10);
+        RectangleRecord recordC = new RectangleRecord("C", 0, 512, 10, 10);
+        RectangleRecord recordX = new RectangleRecord("X", 0, 0, 1000, 1000);
 
         RectangleRecord[] recordsToInsert =
                 new RectangleRecord[] {recordA, recordB, recordC};
@@ -323,6 +325,12 @@ public class QuadTreeTest extends TestCase {
         //@formatter:on
         //
         assertFuzzyEquals(expectedOutput, systemOut().getHistory());
+        // get code coverage
+        qtree = qtree.insertRecord(recordB, rootCanvas);
+        qtree = qtree.insertRecord(recordB1, rootCanvas);
+        qtree = qtree.insertRecord(recordB2, rootCanvas);
+        qtree.removeRecord(recordX, rootCanvas);
+        qtree.removeRecord(recordB, rootCanvas);
     }
 
     /** Get code coverage for the non-executed functions and statements. */
@@ -336,5 +344,14 @@ public class QuadTreeTest extends TestCase {
                 flyNode.searchRegion(new Rectangle(0, 0, 1, 1), rootCanvas), 1);
 
         assertTrue(flyNode.isEmpty());
+        assertTrue(flyNode.isLeaf());
+        flyNode = flyNode.insertRecord(
+                new RectangleRecord("Rec1", 0, 0, 10, 10), rootCanvas);
+        flyNode = flyNode.insertRecord(
+                new RectangleRecord("Rec2", 10, 0, 10, 10), rootCanvas);
+        flyNode = flyNode.insertRecord(
+                new RectangleRecord("Rec2", 20, 0, 10, 10), rootCanvas);
+        assertFalse(flyNode.isLeaf());
+        assertFalse(flyNode.isEmpty());
     }
 }
