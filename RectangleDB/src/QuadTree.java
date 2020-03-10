@@ -64,6 +64,13 @@ abstract class QuadTree {
     public abstract boolean isEmpty();
 
     /**
+     * Check if current node is a leaf node.
+     * 
+     * @return True if the tree node is a leaf.
+     */
+    public abstract boolean isLeaf();
+
+    /**
      * Print rectangles that intersect with the query @c rectangle.
      * 
      * @param  rectangle A rectangle object with which intersections of existing

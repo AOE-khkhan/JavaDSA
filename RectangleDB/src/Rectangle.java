@@ -9,7 +9,7 @@
  * 
  * @version Feb 2020
  */
-public class Rectangle implements Comparable<Rectangle> {
+public class Rectangle {
     /* The x coordinate of the origin. */
     private int coordX;
 
@@ -160,40 +160,5 @@ public class Rectangle implements Comparable<Rectangle> {
         return (getX() == other.getX()) && (getY() == other.getY())
                 && (getWidth() == other.getWidth())
                 && (getHeight() == other.getHeight());
-    }
-
-    /**
-     * Implement the compareTo method of the Comparable interface.
-     * 
-     * @param  that A RectangleRecord object being compared to this object.
-     * 
-     * @return      0 if the origins of the Rectangle data match, -1 if the
-     *              origin of this object comes before that of the param
-     *              object's, 1 otherwise.
-     */
-    @Override
-    public int compareTo(Rectangle that) {
-        if (this.equals(that)) {
-            return 0;
-        }
-
-        // case when this rectangle originates earlier on a rectangular canvas
-        if (this.getX() < that.getX()) {
-            return -1;
-        }
-
-        // case when this rectangle originates later on a rectangular canvas
-        if (this.getX() > that.getX()) {
-            return 1;
-        }
-
-        // at this point the x coordinates of both rectangles are the same
-        // decide by comparing the y coordinates
-        if (this.getY() < that.getY()) {
-            return -1;
-        }
-
-        // at this point this must be greater than that
-        return 1;
     }
 }

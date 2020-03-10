@@ -19,15 +19,6 @@ public class RectangleRecord {
     /**
      * Construct RectangleRecord.
      * 
-     * @param name Name of the record.
-     */
-    RectangleRecord(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Construct RectangleRecord.
-     * 
      * @param name      Name of the record.
      * @param rectangle A Rectangle object.
      */
@@ -66,15 +57,6 @@ public class RectangleRecord {
      */
     public Rectangle getRectangle() {
         return rectangle;
-    }
-
-    /**
-     * Setter of the Rectangle object reference.
-     * 
-     * @param rectangle Reference to a Rectangle object.
-     */
-    public void setRectangle(Rectangle rectangle) {
-        this.rectangle = rectangle;
     }
 
     /**

@@ -31,6 +31,15 @@ public class QuadTreeLeafNode extends QuadTree {
     }
 
     /**
+     * Getter of the rectangle record list.
+     * 
+     * @return Rectangle record list of the leaf node.
+     */
+    public final LinkedList<RectangleRecord> getRecords() {
+        return recordList;
+    }
+
+    /**
      * Insert a RectangleRecord in the leaf node.
      * 
      * @param  record A RectangleRecord object to be inserted.
@@ -59,15 +68,15 @@ public class QuadTreeLeafNode extends QuadTree {
         if (shouldSplit()) {
             QuadTree splitTree = new QuadTreeInternalNode();
             // iterate through the existing records and insert them into the new
-            recordList.moveToHead();
-            while (!recordList.atEnd()) {
 
-                //@formatter:off
+            //@formatter:off
+            for (recordList.moveToHead();
+                (!recordList.atEnd());
+                recordList.curseToNext()) {
+
                 splitTree = splitTree.insertRecord(recordList.yieldNode(),
                                                                     canvas);
                 //@formatter:on
-
-                recordList.curseToNext();
             }
             return splitTree;
         }
@@ -104,12 +113,15 @@ public class QuadTreeLeafNode extends QuadTree {
      */
     @Override
     public boolean hasRecord(RectangleRecord record) {
-        recordList.moveToHead();
-        while (!recordList.atEnd()) {
+
+        //@formatter:off
+        for (recordList.moveToHead();
+                (!recordList.atEnd());
+                recordList.curseToNext()) {
+        //@formatter:on
             if (recordList.yieldNode().equals(record)) {
                 return true;
             }
-            recordList.curseToNext();
         }
         return false;
     }
@@ -127,6 +139,16 @@ public class QuadTreeLeafNode extends QuadTree {
     }
 
     /**
+     * Check if current node is a leaf node.
+     * 
+     * @return True for it is a leaf node.
+     */
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
+
+    /**
      * Print rectangles that intersect with the query @c rectangle.
      * 
      * @param  rectangle A rectangle object with which intersections of existing
@@ -140,8 +162,11 @@ public class QuadTreeLeafNode extends QuadTree {
     public int searchRegion(Rectangle rectangle, SquareCanvas canvas) {
         // iter through the existing rectangles and print them out if they
         // intersect with the param rectangle
-        recordList.moveToHead();
-        while (!recordList.atEnd()) {
+        // @formatter:off
+        for (recordList.moveToHead();
+             (!recordList.atEnd());
+             recordList.curseToNext()) {
+        // @formatter:on
 
             RectangleRecord record = recordList.yieldNode();
 
@@ -153,7 +178,6 @@ public class QuadTreeLeafNode extends QuadTree {
                     System.out.println("Rectangle found: " + record.toString());
                 }
             }
-            recordList.curseToNext();
         }
         return 1; // visited this leaf node
     }
@@ -169,12 +193,15 @@ public class QuadTreeLeafNode extends QuadTree {
     @Override
     public int listIntersections(SquareCanvas canvas) {
         int outerLoopCount = 0;
-        recordList.moveToHead();
-        while (!recordList.atEnd()) {
-            //formatter:off
-            for (int innerLoopCount = outerLoopCount + 1;
-                    innerLoopCount < recordList.getCount(); ++innerLoopCount) {
-            //formatter:on
+        //@formatter:off
+        for (recordList.moveToHead();
+            (!recordList.atEnd());
+            recordList.curseToNext()) {
+            for (int innerLoopCount =
+                    outerLoopCount + 1;
+                    innerLoopCount < recordList.getCount();
+                    ++innerLoopCount) {
+            // formatter:on
                 // a pair of rectangles to check intersection for.
                 // this rectangle record is received by cursing the linked list
                 RectangleRecord rec1 = recordList.yieldNode();
@@ -183,7 +210,7 @@ public class QuadTreeLeafNode extends QuadTree {
                 // check if the two rectangles intersect
                 if (rec1.getRectangle().intersects(rec2.getRectangle())) {
                     Rectangle isecRec = rec1.getRectangle()
-                            .getIntersection(rec2.getRectangle());
+                                        .getIntersection(rec2.getRectangle());
                     // so they intersect, but is it the right place to print
                     // them as a intersecting pair?
                     if (canvas.hasPoint(isecRec.getX(), isecRec.getY())) {
@@ -191,7 +218,6 @@ public class QuadTreeLeafNode extends QuadTree {
                     }
                 }
             }
-            recordList.curseToNext();
             ++outerLoopCount;
         }
         //
@@ -208,11 +234,13 @@ public class QuadTreeLeafNode extends QuadTree {
      */
     @Override
     public int dump(SquareCanvas canvas) {
-        recordList.moveToHead();
         System.out.println(String.format("Node at %s:", canvas.toString()));
-        while (!recordList.atEnd()) {
-            System.out.println(recordList.yieldNode().toString());
-            recordList.curseToNext();
+            //@formatter:off
+        for (recordList.moveToHead();
+            (!recordList.atEnd());
+            recordList.curseToNext()) {
+            //@formatter:on
+            System.out.println(recordList.yieldNode());
         }
         return 1; // no. of nodes visited (counts only this node)
     }
@@ -233,14 +261,11 @@ public class QuadTreeLeafNode extends QuadTree {
         // starting from the second node, update the intersection
         // as soon as a non-intersection is encountered, return true
         // to indicate that splitting should happen
-        while (!recordList.atEnd()) {
-            //@formatter:off
-            // System.out.println("intersection now: "
-            //         + intersection.getX() + ", "
-            //         + intersection.getY() + ", "
-            //         + intersection.getWidth() + ", "
-            //         + intersection.getHeight());
-            //@formatter:on
+        //@formatter:off
+        for (recordList.moveToHead();
+                (!recordList.atEnd());
+                recordList.curseToNext()) {
+        //@formatter:on
             // record rectangle pointed by current node of the list
             Rectangle inListRectangle = recordList.yieldNode().getRectangle();
 
@@ -251,7 +276,6 @@ public class QuadTreeLeafNode extends QuadTree {
 
             intersection = intersection.getIntersection(inListRectangle);
             //
-            recordList.curseToNext();
         }
         // At this point all the rectangles in the record list overlap with each
         // other. No need to split up the leaf node.

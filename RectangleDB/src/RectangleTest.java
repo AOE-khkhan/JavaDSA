@@ -62,31 +62,6 @@ public class RectangleTest extends TestCase {
 
     }
 
-    /** Test the compareTo method. */
-    public void testComparator() {
-        Rectangle rec1 = new Rectangle(0, 0, 10, 10);
-
-        Rectangle rec2 = new Rectangle(0, 0, 10, 10);
-
-        // x and y coordinates of both rec1 and rec2 are equal
-        // notice how the name of the rectangles are different but that does not
-        // matter for the comparison
-        assertEquals(rec1.compareTo(rec2), 0);
-
-        // rec2's x coordinates is greater than that of rec1
-        // their y coordinates are equal but should be irrelevant when x
-        // coordinates differ in the first place
-        rec2 = new Rectangle(1, 0, 10, 10);
-        assertEquals(rec1.compareTo(rec2), -1);
-        assertEquals(rec2.compareTo(rec1), 1);
-
-        // rec2's y coordinate is greater than that of rec1
-        // but x coordinates are same
-        rec2 = new Rectangle(0, 1, 10, 10);
-        assertEquals(rec1.compareTo(rec2), -1);
-        assertEquals(rec2.compareTo(rec1), 1);
-    }
-
     /** Test hasPoint method. */
     public void testHasPoint() {
         assertTrue(rec.hasPoint(0, 5));

@@ -262,7 +262,70 @@ public class QuadTreeTest extends TestCase {
         assertFuzzyEquals(expectedOutput, systemOut().getHistory());
     }
 
-    /** Get code coverage for the unexcuted functions and statements. */
+    /** Test when removing a rectangle record causes merging if possible. */
+    public void testMerging() {
+        //@formatter:off
+        String header = "\nTesting merger\n" +
+                        "---------------\n"; 
+        //@formatter:on
+        System.out.print(header);
+        String expectedOutput = header;
+
+        RectangleRecord recordA  = new RectangleRecord("A", 0, 0, 10, 10);
+        RectangleRecord recordA1 = new RectangleRecord("A1", 0, 0, 10, 10);
+        RectangleRecord recordA2 = new RectangleRecord("A2", 0, 0, 10, 10);
+        RectangleRecord recordB  = new RectangleRecord("B", 512, 0, 10, 10);
+        RectangleRecord recordC  = new RectangleRecord("C", 0, 512, 10, 10);
+        RectangleRecord recordX  = new RectangleRecord("X", 0, 0, 1000, 1000);
+
+        RectangleRecord[] recordsToInsert =
+                new RectangleRecord[] {recordA, recordB, recordC};
+
+        for (RectangleRecord record : recordsToInsert) {
+            qtree = qtree.insertRecord(record, rootCanvas);
+        }
+
+        // removing recordC, should trigger a merger
+        qtree = qtree.removeRecord(recordC, rootCanvas);
+
+        qtree.dump(rootCanvas);
+        //@formatter:off
+        expectedOutput += "Node at 0, 0, 1024:\n"
+                        + recordA.toString() + "\n"
+                        + recordB.toString() + "\n";
+        //@formatter:on
+
+        qtree = qtree.insertRecord(recordA1, rootCanvas);
+        qtree = qtree.insertRecord(recordA2, rootCanvas);
+        qtree = qtree.removeRecord(recordB, rootCanvas);
+        qtree.dump(rootCanvas);
+        //@formatter:off
+        expectedOutput += "Node at 0, 0, 1024:\n"
+                        + recordA.toString() + "\n"
+                        + recordA1.toString() + "\n"
+                        + recordA2.toString() + "\n";
+        //@formatter:off
+
+        qtree = QuadTreeInternalNode.FLYWEIGHT;
+        qtree = qtree.insertRecord(recordA, rootCanvas);
+        qtree = qtree.insertRecord(recordA1, rootCanvas);
+        qtree = qtree.insertRecord(recordA2, rootCanvas);
+        qtree = qtree.insertRecord(recordB, rootCanvas);
+        qtree = qtree.insertRecord(recordX, rootCanvas);
+        qtree = qtree.removeRecord(recordB, rootCanvas);
+        qtree.dump(rootCanvas);
+        //@formatter:off
+        expectedOutput += "Node at 0, 0, 1024:\n"
+                        + recordA.toString() + "\n"
+                        + recordA1.toString() + "\n"
+                        + recordA2.toString() + "\n"
+                        + recordX.toString() + "\n";
+        //@formatter:on
+        //
+        assertFuzzyEquals(expectedOutput, systemOut().getHistory());
+    }
+
+    /** Get code coverage for the non-executed functions and statements. */
     public void testGetCodeCoverage() {
         QuadTree flyNode = new QuadTreeFlyweightNode();
         //

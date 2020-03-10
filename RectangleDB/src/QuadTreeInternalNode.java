@@ -39,6 +39,7 @@ public class QuadTreeInternalNode extends QuadTree {
             SquareCanvas childCanvas = canvas.getQuadrant(i);
 
             if (childCanvas.intersects(recordRectangle)) {
+                // inserting
                 children[i] = children[i].insertRecord(record, childCanvas);
             }
         }
@@ -46,7 +47,8 @@ public class QuadTreeInternalNode extends QuadTree {
     }
 
     /**
-     * Remove an existing RectangleRecord in the tree.
+     * Remove an existing RectangleRecord in the tree. Removing might trigger
+     * merger of nodes.
      * 
      * @param  record RectangleRecord object to be removed that.
      * @param  canvas The canvas where the deltion should occur.
@@ -66,7 +68,31 @@ public class QuadTreeInternalNode extends QuadTree {
             return FLYWEIGHT;
         }
 
-        return this;
+        // loop through children and check if at least one of them is non-leaf
+        // then no merger required
+        for (QuadTree child : children) {
+            if (!child.isLeaf()) {
+                return this;
+            }
+        }
+
+        // all of the children are leaf nodes
+        // now decide and merge if we should
+        LinkedList<RectangleRecord> recordsToMerge = shouldMerge();
+        if (recordsToMerge == null) {
+            // no merger required
+            return this;
+        }
+        // now creating a new quadtree with the records to be merged
+        QuadTree merged = FLYWEIGHT;
+        //@formatter:off
+        for (recordsToMerge.moveToHead();
+                (!recordsToMerge.atEnd());
+                recordsToMerge.curseToNext()) {
+        //@formatter:on
+            merged = merged.insertRecord(recordsToMerge.yieldNode(), canvas);
+        }
+        return merged;
     }
 
     /**
@@ -101,6 +127,16 @@ public class QuadTreeInternalNode extends QuadTree {
             }
         }
         return true;
+    }
+
+    /**
+     * Check if current node is a leaf node.
+     * 
+     * @return False for it is an internal node.
+     */
+    @Override
+    public boolean isLeaf() {
+        return false;
     }
 
     /**
@@ -160,6 +196,70 @@ public class QuadTreeInternalNode extends QuadTree {
             visitCount += children[i].dump(canvas.getQuadrant(i));
         }
         return visitCount;
+    }
+
+    /**
+     * Decide whether the children of this internal nodes should be merged.
+     * Decision is based on the decomposition rule given in the project
+     * description.
+     * 
+     * @return Null if no merger is rquired, linked list of unique rectangle
+     *         records if the decomposition rule is violated and merger should
+     *         occur.
+     */
+    private LinkedList<RectangleRecord> shouldMerge() {
+        // if the rectangle records are in more than one node the decomposition
+        // rule is violated if there are more than two rectangles and not alll
+        // of them have an intersection
+
+        // find the unique records in the non-empty leaves
+        LinkedList<RectangleRecord> uniqueRecords =
+                new LinkedList<RectangleRecord>();
+        for (QuadTree child : children) {
+            if (child.isEmpty()) {
+                continue;
+            }
+            QuadTreeLeafNode leaf = (QuadTreeLeafNode) child;
+            LinkedList<RectangleRecord> records = leaf.getRecords();
+            //@formatter:off
+            for (records.moveToHead();
+                    (!records.atEnd());
+                    records.curseToNext()) {
+            //@formatter:on
+                RectangleRecord rec = records.yieldNode();
+                if (!uniqueRecords.exists(rec)) {
+                    uniqueRecords.append(rec);
+                }
+            }
+        }
+        // if there are less than three records merger is must
+        if (uniqueRecords.getCount() < 3) {
+            return uniqueRecords;
+        }
+
+        // now checking if all of rectangles (more than three) have a common
+        // intersection
+        //
+        // set the common intersection to be the first rectangle
+        Rectangle isec = uniqueRecords.yieldNode().getRectangle();
+        uniqueRecords.moveToHead();
+        //@formatter:off
+        for (uniqueRecords.moveToHead();
+                (!uniqueRecords.atEnd());
+                uniqueRecords.curseToNext()) {
+        //@formatter:on
+            Rectangle inListRectangle =
+                    uniqueRecords.yieldNode().getRectangle();
+            if (!isec.intersects(inListRectangle)) {
+                // found at least one non-intersecting rectangle
+                // should not be merged
+                return null;
+            }
+            isec = isec.getIntersection(inListRectangle);
+        }
+        // if we are here, it means all of the rectangles have a common
+        // intersection so should be merged
+        return uniqueRecords;
     }
 
     /**
