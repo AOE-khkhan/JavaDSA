@@ -19,14 +19,14 @@ public class RequestHandler {
      * Construct a handling session for a World.
      * 
      * @param world The World object through which the commands will be
-     *              chanelled.
+     *              channeled.
      */
     RequestHandler(World world) {
         this.world = world;
     }
 
     /**
-     * Insert a rectangle in the database.
+     * Insert a rectangle to the database.
      *
      * A rectangle to be inserted is specified by its name, x and y coordinates
      * of the starting point, and the width and height that are horizontal and

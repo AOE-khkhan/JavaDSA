@@ -89,7 +89,7 @@ public class QuadTreeLeafNode extends QuadTree {
      * Remove an existing RectangleRecord in the tree.
      * 
      * @param  record RectangleRecord object to be removed that.
-     * @param  canvas The canvas where the deltion should occur.
+     * @param  canvas The canvas where the deletion should occur.
      * 
      * @return        The quadtree root after insertion.
      */

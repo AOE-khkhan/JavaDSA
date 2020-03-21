@@ -33,7 +33,8 @@ public class SquareCanvas extends Rectangle {
      * @param  index The index of the quadrant to be returned. Valid arguments
      *               0, 1, ..., n : n less than SquareCanvas.NUM_QUADRANTS.
      * 
-     * @return       A SquareCanvas corresponding to the index.
+     * @return       A SquareCanvas corresponding to the index,
+     *               null if invalid index is passed.
      */
     public SquareCanvas getQuadrant(int index) {
         // @formatter:off

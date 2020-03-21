@@ -89,7 +89,7 @@ public class Rectangle {
     }
 
     /**
-     * Test if a rectangle interesects with this rectangle.
+     * Test if a rectangle intersects with this rectangle.
      * 
      * @param  rectangle Rectangle object.
      * 
@@ -104,7 +104,7 @@ public class Rectangle {
 
     /**
      * Get the rectangle made of the intersection of this rectangle with
-     * another.
+     * another. @note The other rectangle must intersect with this one.
      *
      * @param  rectangle A rectangle that this rectangle intersects with.
      * 
