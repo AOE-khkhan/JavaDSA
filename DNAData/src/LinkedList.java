@@ -58,11 +58,8 @@ public class LinkedList<E extends Comparable<E>> {
      * @param data Data to be inserted.
      */
     public void insert(E data) {
-        if (isEmpty()) {
-            append(data);
-            return;
-        }
-        for (moveToFront(); !atEnd(); curseToNext()) {
+        for (moveToFront(); (currNode
+                .getNext() != trailerNode); curseToNext()) {
             if (currNode.getNext().getData().compareTo(data) > -1) {
                 // found existing data >= the data to be inserted
                 //
