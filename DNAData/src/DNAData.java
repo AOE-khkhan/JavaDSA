@@ -22,6 +22,9 @@
 // during the discussion. I have violated neither the spirit nor
 // letter of this restriction.
 
+import java.io.File;
+import java.util.Scanner;
+
 /**
  * The class with main function for the DNAData project.
  * 
@@ -35,6 +38,7 @@ public class DNAData {
      *             [1] Buffer size.
      *             [2] Initial hash size.
      *             [3] The file with commands to be executed.
+     * 
      */
     public static void main(String[] args) {
         if (args.length != 4) {
@@ -43,5 +47,107 @@ public class DNAData {
                     + "<initial-hash-size> <command-file>");
             return;
         }
+
+        // now we have exactly four arguments passed
+        // let's make sure that they are in order
+        int numBuffs;
+        int buffSize;
+        int numHashSlots;
+        try {
+            numBuffs = Integer.parseInt(args[0]);
+            buffSize = Integer.parseInt(args[1]);
+            numHashSlots = Integer.parseInt(args[2]);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        if (!(isTwosPower(buffSize))) {
+            System.out.println(
+                    "<buffer-size> param must be a positive power of two. Got: |"
+                            + buffSize + "|");
+            return;
+        }
+
+        // now the arguments are in order lets check if the commands file is in
+        // order too
+        //
+        // scanner object to parse the command file
+        Scanner sc;
+
+        try {
+            sc = new Scanner(new File(args[3]));
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        // Now we are ready to obey the commands from the command file
+
+        // The world object for this session is now initialized.
+        World world = new World(numBuffs, buffSize, numHashSlots);
+
+        // A handler object to channel commands to the World object.
+        RequestHandler requestHandler = new RequestHandler(world);
+
+        while (sc.hasNext()) {
+            String cmd = sc.next();
+
+            if (cmd.equals("add")) {
+                requestHandler.addRecord(sc.nextLine());
+            }
+            else if (cmd.equals("delete")) {
+                requestHandler.deleteRecord(sc.nextLine());
+            }
+            else if (cmd.equals("print")) {
+                String printTarget = sc.next();
+                if (printTarget.equals("hashtable")) {
+                    requestHandler.printHashtable();
+                }
+                else if (printTarget.equals("blocks")) {
+                    requestHandler.printBlocks();
+                }
+                else if (printTarget.equals("buffers")) {
+                    requestHandler.printBuffers();
+                }
+                else if (printTarget.equals("record")) {
+                    requestHandler.printRecord(sc.nextLine());
+                }
+                else {
+                    System.out.println("Invalid target |" + printTarget
+                            + "| for printing!");
+                }
+            }
+            else {
+                System.out.println("Unrecognized input: |" + cmd + "|");
+            }
+        }
+
+        // done with the scanner object
+        sc.close();
+    }
+
+    /**
+     * Check if a number is a positive power of two.
+     * 
+     * @param  num An integer.
+     * 
+     * @return     True if num is a positive power of two.
+     */
+    private static boolean isTwosPower(int num) {
+        if (num <= 0) {
+            return false;
+        }
+        while (num != 1) {
+            if (((num / 2) * 2) == num) {
+                num = num / 2;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
     }
 }
