@@ -69,6 +69,8 @@ public class MemoryManager {
         }
 
         if (usedBlockPos >= blocks.length) {
+            // no memory block of appropriate size exists
+            // double the pool size and call storeBytes recursively
             doublePoolSize();
             return storeBytes(bytes);
         }
@@ -336,7 +338,7 @@ public class MemoryManager {
 
         /**
          * Get a free position from the positions record for the current
-         * blocksize. It will also remove the position from the database.
+         * block size. It will also remove the position from the database.
          * 
          * @return The first occurring position.
          */

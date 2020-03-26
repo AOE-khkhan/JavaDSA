@@ -84,36 +84,33 @@ public class DNAData {
             return;
         }
 
-        // Now we are ready to obey the commands from the command file
+        // Now we are ready to execute the commands from the command file
 
         // The world object for this session is now initialized.
         World world = new World(numBuffs, buffSize, numHashSlots);
-
-        // A handler object to channel commands to the World object.
-        RequestHandler requestHandler = new RequestHandler(world);
 
         while (sc.hasNext()) {
             String cmd = sc.next();
 
             if (cmd.equals("add")) {
-                requestHandler.addRecord(sc.nextLine());
+                world.addRecord(sc.nextLine());
             }
             else if (cmd.equals("delete")) {
-                requestHandler.deleteRecord(sc.nextLine());
+                world.deleteRecord(sc.nextLine());
             }
             else if (cmd.equals("print")) {
                 String printTarget = sc.next();
                 if (printTarget.equals("hashtable")) {
-                    requestHandler.printHashtable();
+                    world.printHashtable();
                 }
                 else if (printTarget.equals("blocks")) {
-                    requestHandler.printBlocks();
+                    world.printBlocks();
                 }
                 else if (printTarget.equals("buffers")) {
-                    requestHandler.printBuffers();
+                    world.printBuffers();
                 }
                 else if (printTarget.equals("record")) {
-                    requestHandler.printRecord(sc.nextLine());
+                    world.printRecord(sc.nextLine());
                 }
                 else {
                     System.out.println("Invalid target |" + printTarget

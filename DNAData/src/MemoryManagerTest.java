@@ -54,12 +54,12 @@ public class MemoryManagerTest extends TestCase {
         assertEquals(handle, new MemoryHandle(4, 2, 2));
 
         // let's add another data but size 33 this time
-        // this should expand the whole poolsize twice
+        // this should expand the whole pool size twice
         // because as of right now the largest free block
         // is of size 16, we double once and get another
         // free block of size 32, but that is not enough
         // to store a data of size 33, so we double in
-        // poolsize again, and get a free block of size
+        // pool size again, and get a free block of size
         // 64, then that size 64 block is used for storage
         handle = manager.storeBytes(new byte[33]);
         assertFuzzyEquals(manager.toString(),
@@ -126,8 +126,7 @@ public class MemoryManagerTest extends TestCase {
         // adding size 4 data
         handle = manager.storeBytes(new byte[4]);
         //
-        assertFuzzyEquals(manager.toString(),
-                "2: 2\n" + "8: 8\n" + "16: 16\n");
+        assertFuzzyEquals(manager.toString(), "2: 2\n" + "8: 8\n" + "16: 16\n");
 
         // freeing up the space associated to handle
         manager.freeBlock(handle);
@@ -142,7 +141,7 @@ public class MemoryManagerTest extends TestCase {
         assertEquals(32, manager.getPoolSize());
     }
 
-    /** Test whether the poolsize gets expanded as expected. */
+    /** Test whether the pool size gets expanded as expected. */
     public void testPoolSizeExpansion() {
         int initPoolSize = manager.getPoolSize();
 
@@ -163,7 +162,7 @@ public class MemoryManagerTest extends TestCase {
 
         manager.freeBlock(handle);
         manager.storeBytes(new byte[33]);
-        // poolsize should now be doubled
+        // pool size should now be doubled
         assertEquals(initPoolSize * 2, manager.getPoolSize());
 
         manager = new MemoryManager(32);
@@ -171,5 +170,11 @@ public class MemoryManagerTest extends TestCase {
         manager.storeBytes("Genre<SEP>Anime".getBytes()); // 15 bytes
         manager.storeBytes("Can You Handle?".getBytes()); // 15 bytes
         assertEquals(manager.getPoolSize(), 64);
+    }
+
+    /** Test toString method when the memory pool is full. */
+    public void testToStringWhenFull() {
+        manager.storeBytes(new byte[32]);
+        assertFuzzyEquals(manager.toString(), "No free blocks are available.");
     }
 }
