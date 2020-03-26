@@ -45,8 +45,10 @@ public class MemoryManager {
     /**
      * Store information and return a handle. The handle should be used for
      * future retrieval or freeing up the occupied space.
+     *
+     * @param  bytes An array of byte to be stored in the memory pool.
      * 
-     * @return A MemoryHandle object.
+     * @return       A MemoryHandle object.
      */
     public MemoryHandle storeBytes(byte[] bytes) {
         int dataSize = bytes.length;
@@ -256,8 +258,7 @@ public class MemoryManager {
     /** Double the capacity of the memory poolsize. */
     private void doublePoolSize() {
         // initialize a new MemoryManager object with double capacity
-        MemoryManager biggerMemoryManager =
-                new MemoryManager(2 * poolSize);
+        MemoryManager biggerMemoryManager = new MemoryManager(2 * poolSize);
         biggerMemoryManager.removePos(poolSize * 2, 0);
         // copy all the bytes
         for (int i = 0; i < byteArray.length; ++i) {
@@ -328,9 +329,9 @@ public class MemoryManager {
         /**
          * Delete a position entry for the block.
          * 
-         * @param  Position to be deleted.
+         * @param  pos Position to be deleted.
          * 
-         * @return          true if position deleted, false otherwise.
+         * @return     True if position deleted, false otherwise.
          */
         public boolean deletePos(int pos) {
             return this.blockPos.remove(pos);

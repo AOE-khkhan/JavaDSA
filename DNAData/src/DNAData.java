@@ -65,8 +65,8 @@ public class DNAData {
 
         if (!(isTwosPower(buffSize))) {
             System.out.println(
-                    "<buffer-size> param must be a positive power of two. Got: |"
-                            + buffSize + "|");
+                    "<buffer-size> param must be a positive power of two."
+                            + " Got: |" + buffSize + "|");
             return;
         }
 

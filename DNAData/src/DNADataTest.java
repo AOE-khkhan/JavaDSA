@@ -28,7 +28,8 @@ public class DNADataTest extends TestCase {
         String[] params = new String[] {"10", "20", "10", "input.txt"};
         DNAData.main(params);
         String expectedOutput =
-                "<buffer-size> param must be a positive power of two. Got: |20|";
+                "<buffer-size> param must be a positive power of two."
+                        + " Got: |20|";
         assertFuzzyEquals(expectedOutput, systemOut().getHistory());
     }
 

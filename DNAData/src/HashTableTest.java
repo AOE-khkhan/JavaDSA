@@ -94,8 +94,8 @@ public class HashTableTest extends TestCase {
 
     /** Test the toString method of the HashTable. */
     public void testToString() {
-        table.insert(1234123456789l, "Death Note");
-        table.insert(21l, "Can you handle?");
+        table.insert(1234123456789L, "Death Note");
+        table.insert(21L, "Can you handle?");
 
         String expectedString =
                 "21: 2\n" + "1234123456789: 6\n" + "Total records: 2";

@@ -111,8 +111,8 @@ public class World {
         Object deleted = hashTable.delete(key);
 
         if (deleted == null) {
-            System.out.println(key
-                    + " not deleted because it does not exist in the database.");
+            System.out.println(key + " not deleted because it does not"
+                    + " exist in the database.");
         }
         else {
             // need to deserialize the record from the memory manager
