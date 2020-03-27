@@ -46,7 +46,8 @@ public class WorldTest extends TestCase {
         expectedOutput += "1221 has been added to the database.\n";
 
         world.deleteRecord("1221");
-        expectedOutput += "Record 1221, 11, |UAG| deleted from the database.\n";
+        expectedOutput += "Record 1221, 11, |UAG|"
+                + " has been deleted from the database.\n";
 
         world.deleteRecord("1121");
         expectedOutput +=
@@ -66,7 +67,8 @@ public class WorldTest extends TestCase {
         expectedOutput += "Record found: 1221, 11, |UAG|\n";
 
         world.printRecord("1121");
-        expectedOutput += "1121 does not exist in the database.\n";
+        expectedOutput += "1121 not printed because "
+                + "it does not exist in the database.\n";
 
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
 

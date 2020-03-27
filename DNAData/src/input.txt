@@ -1,2 +1,22 @@
 laugh
 print nothing
+  print           hashtable
+print blocks  
+ print  buffers
+ print record  1234123456789
+delete    1234123456789
+  
+     add  1234123456789 17  AGCDAAAAAGCDAAGGGGGCCCCCDDDDDDDDD
+     print record 1234123456789
+print hashtable
+print blocks
+print buffers
+
+delete 1234123456789
+add 1234123456789 17  AGCD
+print blocks
+print buffers
+
+add 1 1 A
+add 2 2 B
+

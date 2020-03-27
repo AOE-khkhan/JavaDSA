@@ -49,19 +49,12 @@ public class DNAData {
         }
 
         // now we have exactly four arguments passed
-        // let's make sure that they are in order
-        int numBuffs;
-        int buffSize;
-        int numHashSlots;
-        try {
-            numBuffs = Integer.parseInt(args[0]);
-            buffSize = Integer.parseInt(args[1]);
-            numHashSlots = Integer.parseInt(args[2]);
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            return;
-        }
+        // @note its assumed that they will result
+        // into successful parser
+        //
+        int numBuffs = Integer.parseInt(args[0]);
+        int buffSize = Integer.parseInt(args[1]);
+        int numHashSlots = Integer.parseInt(args[2]);
 
         if (!(isTwosPower(buffSize))) {
             System.out.println(
@@ -134,7 +127,7 @@ public class DNAData {
      * @return     True if num is a positive power of two.
      */
     private static boolean isTwosPower(int num) {
-        if (num <= 0) {
+        if (num < 1) {
             return false;
         }
         while (num != 1) {

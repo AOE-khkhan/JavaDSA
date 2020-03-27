@@ -76,14 +76,7 @@ public class World {
         byte[] recordData = serializeDNARecord(key, type, dnaCode);
 
         // store recordData in the memory pool and obtain a MemoryHandle
-        // also need to track if the memory pool is expanded in the process
-        int poolSizeBefore = memManager.getPoolSize();
         MemoryHandle recordHandle = memManager.storeBytes(recordData);
-        int poolSizeAfter = memManager.getPoolSize();
-        if (poolSizeAfter > poolSizeBefore) {
-            System.out.println(
-                    "Memory pool expanded to be " + poolSizeAfter + " bytes.");
-        }
 
         if (hashTable.isHalfFull()) {
             hashTable.doubleTableSize();
@@ -117,9 +110,9 @@ public class World {
         else {
             // need to deserialize the record from the memory manager
             MemoryHandle handle = (MemoryHandle) deleted;
-            System.out.println(
-                    String.format("Record %s deleted from the database.",
-                            deserializeMemoryHandle(handle)));
+            System.out.println(String.format(
+                    "Record %s has been deleted from the database.",
+                    deserializeMemoryHandle(handle)));
             // free the memory block in the memory pool
             memManager.freeBlock(handle);
         }
@@ -138,7 +131,8 @@ public class World {
 
         Object found = hashTable.get(key);
         if (found == null) {
-            System.out.println(key + " does not exist in the database.");
+            System.out.println(key + " not printed because "
+                    + "it does not exist in the database.");
         }
         else {
             DNARecord foundRecord =

@@ -52,7 +52,7 @@ public class MemoryManager {
      */
     public MemoryHandle storeBytes(byte[] bytes) {
         int dataSize = bytes.length;
-        // find the position in the BlockInfo[] blocks array
+        // find an entry in the BlockInfo[] array
         // that corresponds to the memory block of size
         // that is required to store the received bytes
         int minBlockPos = MemoryManager.getLog2(dataSize);
@@ -62,7 +62,15 @@ public class MemoryManager {
         minBlockPos = dataSize > usedBlockSize ? minBlockPos + 1 : minBlockPos;
         usedBlockSize = 1 << minBlockPos;
 
+        // usedBlockPos is the position in the BlockInfo array, the block
+        // corresponding to which is used to either store the data in case it is
+        // at least one free entry, or split until we get a free block of
+        // minimum size in the database
         int usedBlockPos = minBlockPos;
+        //
+        // we want to store bytes in the computed minBlockPos
+        // however we may not have a free chunk of memory
+        // of that particular size
         while (usedBlockPos < blocks.length) {
             if (!blocks[usedBlockPos].isEmpty()) {
                 break;
@@ -71,7 +79,7 @@ public class MemoryManager {
         }
 
         if (usedBlockPos >= blocks.length) {
-            // no memory block of appropriate size exists
+            // even the largest memory block is too small for our data
             // double the pool size and call storeBytes recursively
             doublePoolSize();
             return storeBytes(bytes);
@@ -93,6 +101,7 @@ public class MemoryManager {
 
         // removing the just used memory block from the free-block database
         blocks[minBlockPos].deletePos(insertionPos);
+
         return new MemoryHandle(insertionPos, usedBlockSize, bytes.length);
     }
 
@@ -123,15 +132,14 @@ public class MemoryManager {
         // simply mark the block as free by storing
         // the position of the handle's database into
         // the block size's position database
-        int blockArrayPos = MemoryManager.getLog2(handle.getBlockSize());
+        int blockInfoPos = MemoryManager.getLog2(handle.getBlockSize());
 
-        // first attempt mergin buddies
+        // first attempt merging buddies
         // if it succeeds, then nothing needs to be done
-        boolean merged =
-                this.mergeBuddy(handle.getBlockSize(), handle.getPos());
+        boolean merged = mergeBuddy(handle.getBlockSize(), handle.getPos());
 
         if (!merged) {
-            this.blocks[blockArrayPos].insertPos(handle.getPos());
+            blocks[blockInfoPos].insertPos(handle.getPos());
         }
     }
 
@@ -277,6 +285,8 @@ public class MemoryManager {
         this.byteArray = biggerMemoryManager.byteArray;
         this.blocks = biggerMemoryManager.blocks;
         this.mergeBuddy(poolSize / 2, poolSize / 2);
+        System.out.println(
+                "Memory pool expanded to be " + this.poolSize + " bytes.");
     }
 
     /**

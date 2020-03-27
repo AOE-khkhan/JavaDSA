@@ -95,6 +95,17 @@ public class MemoryManagerTest extends TestCase {
         manager.getBytes(retainedData, handle);
         retainedString = new String(retainedData);
         assertEquals(course, retainedString);
+
+        // get code coverage
+        data = "hello".getBytes();
+        handle = manager.storeBytes(data);
+        retainedData = new byte[data.length];
+        MemoryHandle newHandle = new MemoryHandle(handle.getPos(),
+                handle.getBlockSize(), handle.getDataSize() - 1);
+        manager.getBytes(retainedData, newHandle);
+        retainedString = new String(retainedData);
+        assertFuzzyEquals(retainedString, "hell");
+        //
     }
 
     /** Test the freeBlock method. */
@@ -102,11 +113,8 @@ public class MemoryManagerTest extends TestCase {
         // initially there was a single 32 sized blocks starting at 0
         assertFuzzyEquals(manager.toString(), "32: 0");
 
-        // some data we will store
-        byte[] data = new byte[2];
-
         // add data and receive the handle
-        MemoryHandle handle = manager.storeBytes(data);
+        MemoryHandle handle = manager.storeBytes(new byte[2]);
 
         // the memory block has now split up into multiple chunks
         assertFuzzyEquals(manager.toString(),
@@ -118,7 +126,7 @@ public class MemoryManagerTest extends TestCase {
         assertFuzzyEquals(manager.toString(), "32: 0");
 
         // adding more data
-        manager.storeBytes(data);
+        manager.storeBytes(new byte[2]);
         // the memory block has now split up into multiple chunks
         assertFuzzyEquals(manager.toString(),
                 "2: 2\n" + "4: 4\n" + "8: 8\n" + "16: 16\n");
@@ -176,5 +184,37 @@ public class MemoryManagerTest extends TestCase {
     public void testToStringWhenFull() {
         manager.storeBytes(new byte[32]);
         assertFuzzyEquals(manager.toString(), "No free blocks are available.");
+    }
+
+    /** Verify the memory manager works as expected. */
+    public void testComplexActions() {
+        assertFuzzyEquals(manager.toString(), "32: 0\n");
+
+        MemoryHandle handle20 = manager.storeBytes(new byte[2]);
+        assertFuzzyEquals(manager.toString(),
+                "2: 2\n" + "4: 4\n" + "8: 8\n" + "16: 16\n");
+
+        MemoryHandle handle88 = manager.storeBytes(new byte[8]);
+        assertFuzzyEquals(manager.toString(), "2: 2\n" + "4: 4\n" + "16: 16\n");
+
+        MemoryHandle handle816 = manager.storeBytes(new byte[8]);
+        assertFuzzyEquals(manager.toString(), "2: 2\n" + "4: 4\n" + "8: 24\n");
+
+        MemoryHandle handle824 = manager.storeBytes(new byte[8]);
+        assertFuzzyEquals(manager.toString(), "2: 2\n" + "4: 4\n");
+
+        manager.freeBlock(handle88);
+        assertFuzzyEquals(manager.toString(), "2: 2\n" + "4: 4\n" + "8: 8\n");
+
+        manager.freeBlock(handle816);
+        assertFuzzyEquals(manager.toString(),
+                "2: 2\n" + "4: 4\n" + "8: 8 16\n");
+
+        manager.freeBlock(handle824);
+        assertFuzzyEquals(manager.toString(),
+                "2: 2\n" + "4: 4\n" + "8: 8\n" + "16: 16\n");
+
+        manager.freeBlock(handle20);
+        assertFuzzyEquals(manager.toString(), "32: 0\n");
     }
 }

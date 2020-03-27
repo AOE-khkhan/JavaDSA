@@ -32,8 +32,19 @@ public class MemoryHandleTest extends TestCase {
     public void testEquals() {
         MemoryHandle handle1 = new MemoryHandle(0, 2, 2);
         MemoryHandle handle2 = new MemoryHandle(0, 2, 2);
-        assertEquals(handle1, handle2);
+        MemoryHandle handle3 = new MemoryHandle(1, 2, 2);
+        MemoryHandle handle4 = new MemoryHandle(0, 3, 2);
+        MemoryHandle handle5 = new MemoryHandle(0, 2, 3);
+
         assertEquals(handle1, handle1);
+        assertEquals(handle1, handle2);
+        assertFalse(handle1.equals(handle3));
+        assertFalse(handle1.equals(handle4));
+        assertFalse(handle1.equals(handle5));
+
+        // comparing non-MemoryHandle object
+        Object obj = "unrelated object";
+        assertFalse(handle1.equals(obj));
     }
 
     /** Test toString method. */
