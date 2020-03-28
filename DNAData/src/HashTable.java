@@ -171,7 +171,7 @@ public class HashTable {
      *
      * @param  key The int key to be hashed.
      * 
-     * @return     The home slot for string
+     * @return     The home slot for key.
      */
     private int getHomeSlot(long key) {
 
@@ -194,11 +194,11 @@ public class HashTable {
      * @return            The next slot found by probing.
      */
     private int getProbedSlot(int homeSlot, int probeLevel) {
-        return (homeSlot + probeLevel * probeLevel) % getSize();
+        return (int) (homeSlot + probeLevel * probeLevel) % getSize();
     }
 
     /**
-     * Return a slot index in the hashtable for insertion.
+     * Return a slot index in the hash table for insertion.
      *
      * Candidate positions will be computed using hashing and probing as needed.
      * A free slot or a deleted slot (given that no duplicate exists after the
@@ -252,7 +252,7 @@ public class HashTable {
     }
 
     /**
-     * Return a slot index from the hashtable that has a key being looked for.
+     * Return a slot index from the hash table that has a key being looked for.
      *
      * Candidate positions will be computed using hashing and probing as needed.
      * Only active slots will be considered and the key will be matched against

@@ -101,4 +101,32 @@ public class HashTableTest extends TestCase {
                 "21: 2\n" + "1234123456789: 6\n" + "Total records: 2";
         assertFuzzyEquals(expectedString, table.toString());
     }
+
+    /** Get code coverage. */
+    public void testGetCodeCoverage() {
+        // table.size = 10
+        //
+        // the home slot for numbers 100L, 105L, 110L is the same: 0
+        // the probed slots are 1, 4, and 9 upto three level probing
+        table.insert(100L, "");
+        table.insert(105L, "");
+
+        table.delete(100L);
+
+        table.insert(110L, ""); // takes 100L's place
+        table.delete(105L);
+
+        System.out.println(table);
+        String expectedOutput = "110: 0\n" + "Total records: 1\n";
+
+        table.insert(100L, "");
+        table.insert(105L, "");
+        table.delete(100L);
+        table.delete(105L);
+        table.insert(105L, "");
+        table.doubleTableSize();
+
+        assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
+        assertEquals(table.getSize(), 20);
+    }
 }

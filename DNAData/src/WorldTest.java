@@ -15,7 +15,7 @@ public class WorldTest extends TestCase {
     public void setUp() {
         // 5 buffers
         // each of 32 bytes memory pool
-        // using a hashtable with 10 slots
+        // using a hash table with 10 slots
         world = new World(5, 32, 10);
     }
 
