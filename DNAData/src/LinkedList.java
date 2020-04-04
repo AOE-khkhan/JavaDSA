@@ -114,6 +114,26 @@ public class LinkedList<E extends Comparable<E>> {
         return data;
     }
 
+    /** Make the current node the head node. */
+    public void bubbleNodeToFront() {
+        if (isEmpty()) {
+            return;
+        }
+        Node thisNode = currNode;
+        Node nextNode = currNode.getNext();
+        Node headNode = headerNode.getNext();
+
+        moveToFront();
+        currNode.setNext(thisNode);
+        thisNode.setNext(headNode);
+        curseToNext();
+        for (; !atEnd(); curseToNext()) {
+            if (currNode.getNext() == thisNode) {
+                currNode.setNext(nextNode);
+            }
+        }
+    }
+
     /**
      * Get the number of items in the list.
      * 
@@ -206,6 +226,15 @@ public class LinkedList<E extends Comparable<E>> {
     public void moveToHead() {
         moveToFront();
         curseToNext();
+    }
+
+    /** Move the cursor to the tail node. */
+    public void moveToTail() {
+        if (isEmpty()) {
+            return;
+        }
+        for (moveToHead(); currNode.getNext() != trailerNode; curseToNext()) {
+        }
     }
 
     /** Move the cursor node to the header node of the list. */

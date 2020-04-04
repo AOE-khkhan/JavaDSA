@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 
 /**
@@ -18,6 +20,9 @@ public class World {
     /** The memory manager for this world. */
     private MemoryManager memManager;
 
+    /** The buffer pool used for disk I/O by the memory manager. */
+    private BufferPool bufferPool;
+
     /** The hash table for this world. */
     private HashTable hashTable;
 
@@ -34,10 +39,18 @@ public class World {
 
         // buffSize serves as the initial size of the memory pool as per the
         // spec document of the project
-        memManager = new MemoryManager(buffSize);
-
-        // initialize the hash table
-        hashTable = new HashTable(hashSlots);
+        try {
+            File ioFile = new File(".diskIO.raw");
+            ioFile.delete();
+            bufferPool = new BufferPool(numBuffers, buffSize,
+                    new RandomAccessFile(ioFile, "rw"));
+            memManager = new MemoryManager(buffSize, bufferPool);
+            // initialize the hash table
+            hashTable = new HashTable(hashSlots);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -157,7 +170,7 @@ public class World {
      * dirty.
      */
     public void printBuffers() {
-        System.out.println("To do");
+        System.out.println(bufferPool);
     }
 
 

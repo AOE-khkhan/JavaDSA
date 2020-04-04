@@ -79,7 +79,16 @@ public class DNADataTest extends TestCase {
         expectedOutput += "16: 0\n";
 
         // 'print buffers'
-        expectedOutput += "To do\n";
+        //@formatter:off
+        expectedOutput += "-1 clean\n"
+                        + "-1 clean\n"
+                        + "-1 clean\n"
+                        + "-1 clean\n"
+                        + "-1 clean\n"
+                        + "Cache Hits: 0\n"
+                        + "Disk Reads: 0\n"
+                        + "Disk Writes: 0\n";
+        //@formatter:on
 
         // 'print record 1234123456789'
         expectedOutput += "1234123456789 not printed because "
@@ -106,7 +115,16 @@ public class DNADataTest extends TestCase {
         expectedOutput += "No free blocks are available.\n";
 
         // 'print buffers'
-        expectedOutput += "To do\n";
+        //@formatter:off
+        expectedOutput += "2 dirty\n"
+                        + "1 dirty\n"
+                        + "0 dirty\n"
+                        + "-1 clean\n"
+                        + "-1 clean\n"
+                        + "Cache Hits: 3\n"
+                        + "Disk Reads: 0\n"
+                        + "Disk Writes: 0\n";
+        //@formatter:on
 
         // 'delete 1234123456789'
         expectedOutput += "Record "
@@ -120,7 +138,16 @@ public class DNADataTest extends TestCase {
         expectedOutput += "16: 16\n 32: 32\n";
 
         // 'print buffers'
-        expectedOutput += "To do\n";
+        //@formatter:off
+        expectedOutput += "0 dirty\n"
+                        + "2 dirty\n"
+                        + "1 dirty\n"
+                        + "-1 clean\n"
+                        + "-1 clean\n"
+                        + "Cache Hits: 7\n"
+                        + "Disk Reads: 0\n"
+                        + "Disk Writes: 0\n";
+        //@formatter:on
 
         // 'add 1 1 A'
         expectedOutput += "1 has been added to the database.\n"

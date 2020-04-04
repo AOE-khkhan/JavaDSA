@@ -136,15 +136,52 @@ public class LinkedListTest extends TestCase {
         assertNull(strList.popFront());
     }
 
+    /** Test the bubbleNodeToFront method. */
+    public void testBubbleNodeToFront() {
+        strList.append("Name");
+        strList.append("Class");
+        strList.append("Address");
 
-    /** Get code coverage for unexecuted statemetns. */
+        strList.moveToHead();
+        strList.curseToNext();
+        assertEquals(strList.yieldNode(), "Class");
+        // "Class" is now bubbled to the front
+        strList.bubbleNodeToFront();
+
+        assertEquals(strList.popFront(), "Class");
+        assertEquals(strList.popFront(), "Name");
+        assertEquals(strList.popFront(), "Address");
+
+        // testing corner cases
+        strList.append("Name");
+        strList.bubbleNodeToFront();
+        assertEquals(strList.popFront(), "Name");
+        assertNull(strList.popFront());
+        strList.bubbleNodeToFront();
+        assertNull(strList.popFront());
+    }
+
+
+    /** Get code coverage for not executed statements. */
     public void testGetCodeCoverage() {
         LinkedList<String> myList = new LinkedList<String>();
+        myList.moveToTail();
         myList.append("data");
+
         myList.moveToHead();
         myList.curseToNext();
         myList.curseToNext();
         myList.curseToNext();
+
+        assertTrue(myList.atEnd());
+
+        myList.append("more data");
+        myList.append("more more data");
+
+        myList.moveToHead();
+        myList.moveToTail();
+        myList.curseToNext();
+
         assertTrue(myList.atEnd());
     }
 }

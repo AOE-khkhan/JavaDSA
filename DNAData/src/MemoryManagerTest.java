@@ -1,5 +1,8 @@
 import student.TestCase;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+
 /**
  * Test the MemoryManager class.
  * 
@@ -13,7 +16,17 @@ public class MemoryManagerTest extends TestCase {
 
     /** Sets up the tests that follow. */
     public void setUp() {
-        manager = new MemoryManager(32);
+        //
+        try {
+            File ioFile = new File(".diskIO.raw");
+            ioFile.delete();
+            BufferPool buffer =
+                    new BufferPool(5, 16, new RandomAccessFile(ioFile, "rw"));
+            manager = new MemoryManager(32, buffer);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /** Test the constructor of the MemoryManager class. */
@@ -22,7 +35,7 @@ public class MemoryManagerTest extends TestCase {
     }
 
     /** Test the storeBytes method. */
-    public void testRecordBytes() {
+    public void testStoreBytes() {
         // initially there was a single 32 sized blocks starting at 0
         assertFuzzyEquals(manager.toString(), "32: 0");
 
@@ -58,17 +71,18 @@ public class MemoryManagerTest extends TestCase {
         // because as of right now the largest free block
         // is of size 16, we double once and get another
         // free block of size 32, but that is not enough
-        // to store a data of size 33, so we double in
+        // to store a data of size 33, so we double the
         // pool size again, and get a free block of size
         // 64, then that size 64 block is used for storage
         handle = manager.storeBytes(new byte[33]);
         assertFuzzyEquals(manager.toString(),
                 "2: 6\n" + "8: 8\n" + "16: 16\n" + "32: 32");
-        // assertFuzzyEquals(handle.toString(), "64: 64 33");
+        assertFuzzyEquals(handle.toString(), "64: 64 33");
     }
 
     /** Test the getBytes method. */
     public void testGetBytes() {
+        System.out.println("\nTesting getBytes\n-------------");
         String course = "COMP 5040";
         byte[] data = course.getBytes();
         MemoryHandle handle = manager.storeBytes(data);
@@ -94,7 +108,7 @@ public class MemoryManagerTest extends TestCase {
         retainedData = new byte[data.length];
         manager.getBytes(retainedData, handle);
         retainedString = new String(retainedData);
-        assertEquals(course, retainedString);
+        assertFuzzyEquals(course, retainedString);
 
         // get code coverage
         data = "hello".getBytes();
@@ -151,6 +165,8 @@ public class MemoryManagerTest extends TestCase {
 
     /** Test whether the pool size gets expanded as expected. */
     public void testPoolSizeExpansion() {
+        System.out.println(
+                "\nTesting pool size expansion" + "\n----------------");
         int initPoolSize = manager.getPoolSize();
 
         // started with free 32 byte block, and storing a 32 byte data
@@ -173,11 +189,25 @@ public class MemoryManagerTest extends TestCase {
         // pool size should now be doubled
         assertEquals(initPoolSize * 2, manager.getPoolSize());
 
-        manager = new MemoryManager(32);
-        manager.storeBytes("Death Note".getBytes()); // 10 bytes
-        manager.storeBytes("Genre<SEP>Anime".getBytes()); // 15 bytes
-        manager.storeBytes("Can You Handle?".getBytes()); // 15 bytes
-        assertEquals(manager.getPoolSize(), 64);
+        try {
+            System.out.println("\nTesting multiple expansions..");
+            File ioFile = new File(".diskIO.raw");
+            ioFile.delete();
+            BufferPool buffer =
+                    new BufferPool(5, 16, new RandomAccessFile(ioFile, "rw"));
+            manager = new MemoryManager(32, buffer);
+            manager.storeBytes(new byte[10]); // 10 bytes
+            manager.storeBytes(new byte[15]); // 15 bytes
+            manager.storeBytes(new byte[15]); // 15 bytes
+            assertEquals(manager.getPoolSize(), 64);
+            manager.storeBytes(new byte[10]); // 10 bytes
+            manager.storeBytes(new byte[15]); // 15 bytes
+            manager.storeBytes("Can You Handle?".getBytes()); // 15 bytes
+            assertEquals(manager.getPoolSize(), 128);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /** Test toString method when the memory pool is full. */

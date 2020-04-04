@@ -56,7 +56,7 @@ public class DNAData {
         int buffSize = Integer.parseInt(args[1]);
         int numHashSlots = Integer.parseInt(args[2]);
 
-        if (!(isTwosPower(buffSize))) {
+        if (!(HelperFunctions.isPowerOf2(buffSize))) {
             System.out.println(
                     "<buffer-size> param must be a positive power of two."
                             + " Got: |" + buffSize + "|");
@@ -119,25 +119,4 @@ public class DNAData {
         sc.close();
     }
 
-    /**
-     * Check if a number is a positive power of two.
-     * 
-     * @param  num An integer.
-     * 
-     * @return     True if num is a positive power of two.
-     */
-    private static boolean isTwosPower(int num) {
-        if (num < 1) {
-            return false;
-        }
-        while (num != 1) {
-            if (((num / 2) * 2) == num) {
-                num = num / 2;
-            }
-            else {
-                return false;
-            }
-        }
-        return true;
-    }
 }

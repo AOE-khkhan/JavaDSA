@@ -1,6 +1,5 @@
 /**
- * The memory manager class. This class manages an array of bytes using the
- * buddy method.
+ * A memory manager that makes use of disk I/O.
  * 
  * @author  Bimal Gaudel
  * 
@@ -8,14 +7,12 @@
  */
 public class MemoryManager {
     /**
-     * The total number of bytes available to the MemoryManager object.
+     * The total number of bytes intially available to the MemoryManager object.
      */
     private int poolSize;
 
-    /**
-     * The bare bytes this object currently manages.
-     */
-    private byte[] byteArray;
+    /** The buffer pool object used for disk I/O. */
+    private BufferPool bufferPool;
 
     /**
      * An array of log2(poolSize) many BlockInfo objects to keep a record of
@@ -26,13 +23,14 @@ public class MemoryManager {
     /**
      * Construct the MemoryManager object.
      * 
-     * @param poolSize Total number of bytes to start managing.
+     * @param poolSize   Total number of bytes to start managing.
+     * @param bufferPool The buffer pool object used for disk I/O.
      */
-    public MemoryManager(int poolSize) {
+    public MemoryManager(int poolSize, BufferPool bufferPool) {
         this.poolSize = poolSize;
-        byteArray = new byte[this.poolSize];
+        this.bufferPool = bufferPool;
 
-        blocks = new BlockInfo[getLog2(this.poolSize) + 1];
+        blocks = new BlockInfo[HelperFunctions.getLog2(this.poolSize) + 1];
 
         for (int i = 0; i < blocks.length; ++i) {
             blocks[i] = new BlockInfo();
@@ -55,12 +53,12 @@ public class MemoryManager {
         // find an entry in the BlockInfo[] array
         // that corresponds to the memory block of size
         // that is required to store the received bytes
-        int minBlockPos = MemoryManager.getLog2(dataSize);
+        int minBlockPos = HelperFunctions.getLog2(dataSize);
 
         // get rid of under estimation
-        int usedBlockSize = 1 << minBlockPos;
+        int usedBlockSize = HelperFunctions.getPower2(minBlockPos);
         minBlockPos = dataSize > usedBlockSize ? minBlockPos + 1 : minBlockPos;
-        usedBlockSize = 1 << minBlockPos;
+        usedBlockSize = HelperFunctions.getPower2(minBlockPos);
 
         // usedBlockPos is the position in the BlockInfo array, the block
         // corresponding to which is used to either store the data in case it is
@@ -91,23 +89,25 @@ public class MemoryManager {
         // splitting is required if the block was different from first
         // calculated
         if (usedBlockPos > minBlockPos) {
-            splitBlock(insertionPos, 1 << usedBlockPos, usedBlockSize);
+            splitBlock(insertionPos, HelperFunctions.getPower2(usedBlockPos),
+                    usedBlockSize);
         }
+
+        // creating the memory handle to return
+        MemoryHandle handle =
+                new MemoryHandle(insertionPos, usedBlockSize, dataSize);
 
         // inserting the data
-        for (int i = 0; i < bytes.length; ++i) {
-            byteArray[insertionPos + i] = bytes[i];
-        }
-
+        bufferPool.insertBytes(bytes, handle);
         // removing the just used memory block from the free-block database
         blocks[minBlockPos].deletePos(insertionPos);
 
-        return new MemoryHandle(insertionPos, usedBlockSize, bytes.length);
+        return handle;
     }
 
     /**
      * Retain the bytes from the memory. Handle is used to get reading positions
-     * and bytes will be overrwritten with the read data.
+     * and bytes will be overwritten with the read data.
      *
      * @param bytes  A reference to an array of bytes that will be overrwritten
      *               with the retained data.
@@ -115,12 +115,7 @@ public class MemoryManager {
      *               reading.
      */
     public void getBytes(byte[] bytes, MemoryHandle handle) {
-        // copy the number of bytes that is equal to the smaller of bytes length
-        // and stored bytes length
-        for (int i = 0; ((i < bytes.length)
-                && (i < handle.getDataSize())); ++i) {
-            bytes[i] = this.byteArray[handle.getPos() + i];
-        }
+        bufferPool.getBytes(bytes, handle);
     }
 
     /**
@@ -132,7 +127,7 @@ public class MemoryManager {
         // simply mark the block as free by storing
         // the position of the handle's database into
         // the block size's position database
-        int blockInfoPos = MemoryManager.getLog2(handle.getBlockSize());
+        int blockInfoPos = HelperFunctions.getLog2(handle.getBlockSize());
 
         // first attempt merging buddies
         // if it succeeds, then nothing needs to be done
@@ -164,7 +159,7 @@ public class MemoryManager {
         for (int i = 0; i < blocks.length; ++i) {
             String posStrings = blocks[i].toString();
             if (!posStrings.isEmpty()) {
-                int size = 1 << i;
+                int size = HelperFunctions.getPower2(i);
                 result += size + ": " + posStrings + "\n";
             }
         }
@@ -182,7 +177,7 @@ public class MemoryManager {
      * @param pos       Position in the bytes array where the block starts.
      */
     private void addPos(int blockSize, int pos) {
-        int blockInfoPos = MemoryManager.getLog2(blockSize);
+        int blockInfoPos = HelperFunctions.getLog2(blockSize);
         this.blocks[blockInfoPos].insertPos(pos);
     }
 
@@ -196,7 +191,7 @@ public class MemoryManager {
      * @return           True if position removed, false otherwise.
      */
     private boolean removePos(int blockSize, int pos) {
-        int blockInfoPos = MemoryManager.getLog2(blockSize);
+        int blockInfoPos = HelperFunctions.getLog2(blockSize);
         return blocks[blockInfoPos].deletePos(pos);
     }
 
@@ -265,48 +260,26 @@ public class MemoryManager {
 
     /** Double the capacity of the memory poolsize. */
     private void doublePoolSize() {
-        // initialize a new MemoryManager object with double capacity
-        MemoryManager biggerMemoryManager = new MemoryManager(2 * poolSize);
-        biggerMemoryManager.removePos(poolSize * 2, 0);
-        // copy all the bytes
-        for (int i = 0; i < byteArray.length; ++i) {
-            biggerMemoryManager.byteArray[i] = byteArray[i];
-        }
-        // copy all the block informations
-        for (int i = 0; i < blocks.length; ++i) {
-            biggerMemoryManager.blocks[i] = blocks[i];
-        }
-        // finally mark the extra space as free
-        biggerMemoryManager.addPos(poolSize, poolSize);
+        try {
+            bufferPool.getDiskIOFile().setLength(2 * poolSize);
+            poolSize *= 2;
+            BlockInfo[] temp = this.blocks;
 
-        // okay now time to obtain everything from the biggerMemoryManager
-        // to this memory manager
-        this.poolSize = biggerMemoryManager.poolSize;
-        this.byteArray = biggerMemoryManager.byteArray;
-        this.blocks = biggerMemoryManager.blocks;
-        this.mergeBuddy(poolSize / 2, poolSize / 2);
-        System.out.println(
-                "Memory pool expanded to be " + this.poolSize + " bytes.");
-    }
+            this.blocks = new BlockInfo[temp.length + 1];
+            for (int i = 0; i < temp.length; ++i) {
+                blocks[i] = temp[i];
+            }
+            // finally mark the extra space as free
+            this.blocks[temp.length] = new BlockInfo();
+            addPos(poolSize / 2, poolSize / 2);
+            mergeBuddy(poolSize / 2, poolSize / 2);
 
-    /**
-     * Get the log based two.
-     * E.g.
-     * getLog2(4) = 2
-     * getLog2(31) = 4
-     * getLog2(32) = 5
-     * 
-     * @param  num The positive number to calculate log2 of.
-     * 
-     * @return     The number which is to be raised to the power of two.
-     */
-    public static int getLog2(int num) {
-        int result = -1;
-        while (num != 0) {
-            num = num >> 1;
-            ++result;
+            System.out.println(
+                    "Memory pool expanded to be " + poolSize + " bytes.");
         }
-        return result;
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**

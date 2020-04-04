@@ -1,5 +1,8 @@
 import student.TestCase;
 
+import java.io.File;
+import java.io.RandomAccessFile;
+
 /**
  * Test the World class.
  * 
@@ -82,11 +85,28 @@ public class WorldTest extends TestCase {
         world.printHashtable();
         expectedOutput += new HashTable(10).toString() + "\n";
 
-        world.printBlocks();
-        expectedOutput += new MemoryManager(32).toString() + "\n";
+        try {
+            world.printBlocks();
+            File ioFile = new File(".diskIO.raw");
+            BufferPool pool =
+                    new BufferPool(5, 32, new RandomAccessFile(ioFile, "rw"));
+            expectedOutput += new MemoryManager(32, pool).toString() + "\n";
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
         world.printBuffers();
-        expectedOutput += "To do\n";
+        //@formatter:off
+        expectedOutput += "-1 clean\n"
+                        + "-1 clean\n"
+                        + "-1 clean\n"
+                        + "-1 clean\n"
+                        + "-1 clean\n"
+                        + "Cache Hits: 0\n"
+                        + "Disk Reads: 0\n"
+                        + "Disk Writes: 0\n";
+        //@formatter:on
 
         world.addRecord("1 1 ATG"); // 15 bytes
         expectedOutput += "1 has been added to the database.\n";
