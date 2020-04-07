@@ -91,6 +91,8 @@ public class BufferPool {
                 // either a block with proper id was found
                 // or an empty block was encountered
                 if (currBuffer.getBlockId() != -1) {
+                    // non-empty block with proper block id
+                    // encountered
                     ++cacheHits;
                 }
             }
@@ -127,6 +129,8 @@ public class BufferPool {
             for (; !pool.atEnd(); pool.curseToNext()) {
                 currBuffer = pool.yieldNode();
                 if (currBuffer.getBlockId() == blockId) {
+                    // block with proper id was found
+                    ++cacheHits;
                     break;
                 }
             }
@@ -134,6 +138,7 @@ public class BufferPool {
             if (pool.atEnd()) {
                 // no suitable block found
                 // need to overwrite least recently used block
+                // works even if the last buffer is empty
                 pool.moveToTail();
                 currBuffer = pool.yieldNode();
                 if (currBuffer.isDirty()) {
@@ -141,23 +146,22 @@ public class BufferPool {
                 }
                 writeBufferFromDisk(blockId, currBuffer);
             }
-            else {
-                // else
-                // block with proper id was found
-                ++cacheHits;
-            }
             int spaceOffset = handle.getDataSize() - remainingBytes;
             int bytesRetrieved = currBuffer.getBytes(space, remainingBytes,
                     spaceOffset, bufferOffset);
             //
             pool.bubbleNodeToFront();
             pool.moveToHead();
+            // no can skip processing in the next iteration the buffer that
+            // recently got moved to the head
             pool.curseToNext();
             //
 
             remainingBytes -= bytesRetrieved;
-            bufferOffset = 0;
             ++blockId;
+            // if we need to look at the next buffer then we must be looking
+            // from the beginning of that buffer so bufferOffset is set to zero
+            bufferOffset = 0;
         } while (remainingBytes > 0);
     }
 
@@ -187,6 +191,7 @@ public class BufferPool {
      */
     private void writeBufferFromDisk(int blockId, Buffer bufferInPool) {
         try {
+            // move to the beginning of the block
             diskIOFile.seek(blockId * sizeBuffer);
             diskIOFile.read(bufferInPool.getDataBytes(), 0, sizeBuffer);
             bufferInPool.setBlockId(blockId);
@@ -204,6 +209,7 @@ public class BufferPool {
      */
     private void writeBufferToDisk(Buffer bufferInPool) {
         try {
+            // move to the beginning of the block
             diskIOFile.seek(bufferInPool.getBlockId() * sizeBuffer);
             diskIOFile.write(bufferInPool.getDataBytes());
             bufferInPool.markClean();

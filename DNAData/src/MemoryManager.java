@@ -261,7 +261,9 @@ public class MemoryManager {
     /** Double the capacity of the memory poolsize. */
     private void doublePoolSize() {
         try {
-            bufferPool.getDiskIOFile().setLength(2 * poolSize);
+            // turns out setLength is not needed as we can write beyond the file
+            // size limit
+            // bufferPool.getDiskIOFile().setLength(2 * poolSize);
             poolSize *= 2;
             BlockInfo[] temp = this.blocks;
 
