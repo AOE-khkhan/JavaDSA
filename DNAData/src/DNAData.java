@@ -114,9 +114,9 @@ public class DNAData {
                 System.out.println("Unrecognized input: |" + cmd + "|");
             }
         }
-
         // done with the scanner object
         sc.close();
+        // delete the disk file used for I/O.
+        world.deleteIOfileFromDisk();
     }
-
 }

@@ -26,6 +26,9 @@ public class World {
     /** The hash table for this world. */
     private HashTable hashTable;
 
+    /** The disk file used for I/O. */
+    private File ioFile;
+
     /**
      * Construct a World object.
      * 
@@ -40,7 +43,7 @@ public class World {
         // buffSize serves as the initial size of the memory pool as per the
         // spec document of the project
         try {
-            File ioFile = new File(".diskIO.raw");
+            ioFile = new File(".diskIO.raw");
             ioFile.delete();
             bufferPool = new BufferPool(numBuffers, buffSize,
                     new RandomAccessFile(ioFile, "rw"));
@@ -171,6 +174,11 @@ public class World {
      */
     public void printBuffers() {
         System.out.println(bufferPool);
+    }
+
+    /** Delete the file that is used for disk I/O. */
+    public void deleteIOfileFromDisk() {
+        ioFile.delete();
     }
 
 

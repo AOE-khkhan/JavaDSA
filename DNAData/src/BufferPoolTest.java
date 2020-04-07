@@ -61,7 +61,6 @@ public class BufferPoolTest extends TestCase {
         doubleRAfileSize(); // new size 128 bytes
         pool.insertBytes(new byte[45], new MemoryHandle(64, 64, 45));
 
-        // System.out.println("\nprinting pool again..");
         System.out.println(pool);
         //@formatter:off
         expectedOutput += "6 dirty\n"
@@ -72,6 +71,20 @@ public class BufferPoolTest extends TestCase {
                         + "Cache Hits: 0\n"
                         + "Disk Reads: 0\n"
                         + "Disk Writes: 1\n";
+        //@formatter:on
+
+        pool.insertBytes(new byte[8], new MemoryHandle(48, 8, 8));
+
+        System.out.println(pool);
+        //@formatter:off
+        expectedOutput += "3 dirty\n"
+                        + "6 dirty\n"
+                        + "5 dirty\n"
+                        + "4 dirty\n"
+                        + "2 dirty\n"
+                        + "Cache Hits: 0\n"
+                        + "Disk Reads: 1\n"
+                        + "Disk Writes: 2\n";
         //@formatter:on
 
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);

@@ -26,6 +26,9 @@ public class BufferPool {
     /** Number of times disk writes performed. */
     private int diskWrites;
 
+    /** The largest block id that have been written to disk. */
+    private int largestBlockIdWritten;
+
     /**
      * Construct a BufferPool object.
      * 
@@ -39,21 +42,13 @@ public class BufferPool {
         cacheHits = 0;
         diskReads = 0;
         diskWrites = 0;
+        largestBlockIdWritten = -1;
         // initialize the buffers
         pool = new LinkedList<Buffer>();
         for (int i = 0; i < numBuffers; ++i) {
             // initially Buffer is initialized with the block id -1
             pool.append(new Buffer(-1, sizeBuffer));
         }
-    }
-
-    /**
-     * Get a reference to the disk I/O file.
-     * 
-     * @return Pointer to the random access file used by this buffer pool.
-     */
-    public RandomAccessFile getDiskIOFile() {
-        return diskIOFile;
     }
 
     /**
@@ -72,30 +67,28 @@ public class BufferPool {
         do {
             for (; !pool.atEnd(); pool.curseToNext()) {
                 currBuffer = pool.yieldNode();
-                if ((currBuffer.getBlockId() == blockId)
-                        || (currBuffer.getBlockId() == -1)) {
+                if (currBuffer.getBlockId() == blockId) {
+                    // block with proper id was found
+                    ++cacheHits;
                     break;
                 }
             }
 
             if (pool.atEnd()) {
                 // no suitable block found
-                // need to overwrite least recently used block
+                // works even if the last buffer is empty
                 pool.moveToTail();
                 currBuffer = pool.yieldNode();
+
                 if (currBuffer.isDirty()) {
                     writeBufferToDisk(currBuffer);
+                    // might need to overwrite the least recently used block
+                    if (blockId <= largestBlockIdWritten) {
+                        writeBufferFromDisk(blockId, currBuffer);
+                    }
                 }
             }
-            else {
-                // either a block with proper id was found
-                // or an empty block was encountered
-                if (currBuffer.getBlockId() != -1) {
-                    // non-empty block with proper block id
-                    // encountered
-                    ++cacheHits;
-                }
-            }
+
             int spaceOffset = handle.getDataSize() - remainingBytes;
             int bytesInserted = currBuffer.insert(space, remainingBytes,
                     spaceOffset, bufferOffset);
@@ -106,9 +99,15 @@ public class BufferPool {
             pool.curseToNext();
             //
 
+            // update largest block id ever written so far
+            largestBlockIdWritten = largestBlockIdWritten < blockId ? blockId
+                    : largestBlockIdWritten;
+
             remainingBytes -= bytesInserted;
             bufferOffset = 0;
             ++blockId;
+
+
         } while (remainingBytes > 0);
     }
 
