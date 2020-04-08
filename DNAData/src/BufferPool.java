@@ -61,53 +61,62 @@ public class BufferPool {
         int blockId = findBlockId(handle);
         int bufferOffset = handle.getPos() % sizeBuffer;
         int remainingBytes = handle.getDataSize();
-        //
-        Buffer currBuffer = null;
-        pool.moveToHead();
+
         do {
-            for (; !pool.atEnd(); pool.curseToNext()) {
-                currBuffer = pool.yieldNode();
-                if (currBuffer.getBlockId() == blockId) {
-                    // block with proper id was found
-                    ++cacheHits;
-                    break;
-                }
-            }
+            // finding the buffer to insert data
+            // if the target block id is never written before
+            // set the end node as the found buffer
+            Buffer currBuffer = null;
 
-            if (pool.atEnd()) {
-                // no suitable block found
-                // works even if the last buffer is empty
+            if (blockId > largestBlockIdWritten) {
+                largestBlockIdWritten = blockId;
+                //
                 pool.moveToTail();
-                currBuffer = pool.yieldNode();
-
+                currBuffer = pool.yieldCurrNode();
+                //
                 if (currBuffer.isDirty()) {
                     writeBufferToDisk(currBuffer);
-                    // might need to overwrite the least recently used block
-                    if (blockId <= largestBlockIdWritten) {
-                        writeBufferFromDisk(blockId, currBuffer);
+                }
+                currBuffer.setBlockId(blockId);
+            }
+            else {
+                // block id has been written before
+                // see if a buffer has the data
+                // else overwrite the end buffer from the disk
+                // works even if the end buffer is empty
+                for (pool.moveToHead(); !pool.atEnd(); pool.curseToNext()) {
+
+                    currBuffer = pool.yieldCurrNode();
+                    if (currBuffer.getBlockId() == blockId) {
+                        // block with proper id found
+                        ++cacheHits;
+                        break;
                     }
+                }
+
+                if (pool.atEnd()) {
+                    // block is in the disk
+                    pool.moveToTail();
+                    currBuffer = pool.yieldCurrNode();
+                    if (currBuffer.isDirty()) {
+                        writeBufferToDisk(currBuffer);
+                    }
+                    writeBufferFromDisk(blockId, currBuffer);
                 }
             }
 
+            // at this point currBuffer is the buffer with proper block id
             int spaceOffset = handle.getDataSize() - remainingBytes;
             int bytesInserted = currBuffer.insert(space, remainingBytes,
                     spaceOffset, bufferOffset);
-            currBuffer.setBlockId(blockId);
             //
-            pool.bubbleNodeToFront();
-            pool.moveToHead();
-            pool.curseToNext();
-            //
-
-            // update largest block id ever written so far
-            largestBlockIdWritten = largestBlockIdWritten < blockId ? blockId
-                    : largestBlockIdWritten;
-
             remainingBytes -= bytesInserted;
-            bufferOffset = 0;
             ++blockId;
-
-
+            // if we need to look at the next buffer then we must be looking
+            // from the beginning of that buffer so bufferOffset is set to zero
+            bufferOffset = 0;
+            // move the recently written buffer to the front
+            pool.moveCurrNodeToFront();
         } while (remainingBytes > 0);
     }
 
@@ -121,12 +130,12 @@ public class BufferPool {
         int blockId = findBlockId(handle);
         int bufferOffset = handle.getPos() % sizeBuffer;
         int remainingBytes = handle.getDataSize();
-        //
-        Buffer currBuffer = null;
-        pool.moveToHead();
+
         do {
-            for (; !pool.atEnd(); pool.curseToNext()) {
-                currBuffer = pool.yieldNode();
+            // finding the buffer to read data from
+            Buffer currBuffer = null;
+            for (pool.moveToHead(); !pool.atEnd(); pool.curseToNext()) {
+                currBuffer = pool.yieldCurrNode();
                 if (currBuffer.getBlockId() == blockId) {
                     // block with proper id was found
                     ++cacheHits;
@@ -137,9 +146,10 @@ public class BufferPool {
             if (pool.atEnd()) {
                 // no suitable block found
                 // need to overwrite least recently used block
-                // works even if the last buffer is empty
+                // works even if the end buffer is empty
                 pool.moveToTail();
-                currBuffer = pool.yieldNode();
+                currBuffer = pool.yieldCurrNode();
+
                 if (currBuffer.isDirty()) {
                     writeBufferToDisk(currBuffer);
                 }
@@ -148,19 +158,14 @@ public class BufferPool {
             int spaceOffset = handle.getDataSize() - remainingBytes;
             int bytesRetrieved = currBuffer.getBytes(space, remainingBytes,
                     spaceOffset, bufferOffset);
-            //
-            pool.bubbleNodeToFront();
-            pool.moveToHead();
-            // no can skip processing in the next iteration the buffer that
-            // recently got moved to the head
-            pool.curseToNext();
-            //
 
             remainingBytes -= bytesRetrieved;
             ++blockId;
             // if we need to look at the next buffer then we must be looking
             // from the beginning of that buffer so bufferOffset is set to zero
             bufferOffset = 0;
+            // move the recently read buffer to the front
+            pool.moveCurrNodeToFront();
         } while (remainingBytes > 0);
     }
 
@@ -173,7 +178,7 @@ public class BufferPool {
     public String toString() {
         String result = "";
         for (pool.moveToHead(); !pool.atEnd(); pool.curseToNext()) {
-            result += pool.yieldNode().toString() + "\n";
+            result += pool.yieldCurrNode().toString() + "\n";
         }
 
         result += String.format(

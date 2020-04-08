@@ -350,7 +350,7 @@ public class MemoryManager {
             String result = "";
             for (blockPos.moveToHead(); !blockPos.atEnd(); blockPos
                     .curseToNext()) {
-                result += " " + blockPos.yieldNode().toString();
+                result += " " + blockPos.yieldCurrNode().toString();
             }
             return result;
         }

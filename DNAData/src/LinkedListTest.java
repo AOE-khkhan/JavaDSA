@@ -27,9 +27,9 @@ public class LinkedListTest extends TestCase {
         strList.append("Name");
         strList.append("Class");
         strList.moveToHead();
-        assertEquals(strList.yieldNode(), "Name");
+        assertEquals(strList.yieldCurrNode(), "Name");
         strList.curseToNext();
-        assertEquals(strList.yieldNode(), "Class");
+        assertEquals(strList.yieldCurrNode(), "Class");
     }
 
     /** Test the remove method. */
@@ -95,7 +95,7 @@ public class LinkedListTest extends TestCase {
         strList.moveToHead();
         strList.curseToNext(); // set curr node to "Address"
         strList.yieldIndex(2);
-        assertTrue(strList.yieldNode().equals("Address"));
+        assertTrue(strList.yieldCurrNode().equals("Address"));
 
         strList = new LinkedList<String>();
         assertNull(strList.yieldIndex(0));
@@ -107,13 +107,13 @@ public class LinkedListTest extends TestCase {
     public void testInsert() {
         strList.insert("Name");
         strList.moveToHead();
-        assertEquals(strList.yieldNode(), "Name");
+        assertEquals(strList.yieldCurrNode(), "Name");
 
         assertEquals(strList.getCount(), 1);
 
         strList.insert("Naame");
         strList.moveToHead();
-        assertEquals(strList.yieldNode(), "Naame");
+        assertEquals(strList.yieldCurrNode(), "Naame");
 
         assertEquals(strList.getCount(), 2);
 
@@ -122,7 +122,7 @@ public class LinkedListTest extends TestCase {
         strList.insert("Address");
         assertEquals(strList.getCount(), 5);
         strList.moveToHead();
-        assertEquals(strList.yieldNode(), "Address");
+        assertEquals(strList.yieldCurrNode(), "Address");
     }
 
     /** Test the popFront method. */
@@ -144,9 +144,9 @@ public class LinkedListTest extends TestCase {
 
         strList.moveToHead();
         strList.curseToNext();
-        assertEquals(strList.yieldNode(), "Class");
+        assertEquals(strList.yieldCurrNode(), "Class");
         // "Class" is now bubbled to the front
-        strList.bubbleNodeToFront();
+        strList.moveCurrNodeToFront();
 
         assertEquals(strList.popFront(), "Class");
         assertEquals(strList.popFront(), "Name");
@@ -154,10 +154,10 @@ public class LinkedListTest extends TestCase {
 
         // testing corner cases
         strList.append("Name");
-        strList.bubbleNodeToFront();
+        strList.moveCurrNodeToFront();
         assertEquals(strList.popFront(), "Name");
         assertNull(strList.popFront());
-        strList.bubbleNodeToFront();
+        strList.moveCurrNodeToFront();
         assertNull(strList.popFront());
     }
 

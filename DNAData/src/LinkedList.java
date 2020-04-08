@@ -109,13 +109,13 @@ public class LinkedList<E extends Comparable<E>> {
             return null;
         }
         moveToHead();
-        E data = yieldNode();
+        E data = yieldCurrNode();
         remove(data);
         return data;
     }
 
     /** Make the current node the head node. */
-    public void bubbleNodeToFront() {
+    public void moveCurrNodeToFront() {
         if (isEmpty()) {
             return;
         }
@@ -159,7 +159,7 @@ public class LinkedList<E extends Comparable<E>> {
      *
      * @return Data in the current node pointed to by currNode.
      */
-    public E yieldNode() {
+    public E yieldCurrNode() {
         return currNode.getData();
     }
 
@@ -207,7 +207,7 @@ public class LinkedList<E extends Comparable<E>> {
             --index;
             curseToNext();
         }
-        E data = yieldNode();
+        E data = yieldCurrNode();
         // unmutate the current node
         currNode = currentNodeBeforeProcessing;
         return data;
