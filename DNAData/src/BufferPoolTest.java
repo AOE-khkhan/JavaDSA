@@ -88,9 +88,6 @@ public class BufferPoolTest extends TestCase {
         //@formatter:on
 
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
-
-        deleteIOfile();
-        closeRAfile();
     }
 
     /** Test the method getBytes. */
@@ -106,9 +103,6 @@ public class BufferPoolTest extends TestCase {
         byte[] retrievedData = new byte[data.length];
         pool.getBytes(retrievedData, handle);
         assertEquals(new String(retrievedData), "abracadabra");
-
-        deleteIOfile();
-        closeRAfile();
     }
 
     /** Get code coverage. */
@@ -122,6 +116,10 @@ public class BufferPoolTest extends TestCase {
         byte[] storage = new byte[64];
         pool.getBytes(storage, handle);
         assertNotNull(pool);
+
+        // finally close and delete the file objects
+        closeRAfile();
+        deleteIOfile();
     }
 
     /** Double the size of the disk file used for I/O. */

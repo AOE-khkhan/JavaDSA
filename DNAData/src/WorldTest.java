@@ -91,6 +91,7 @@ public class WorldTest extends TestCase {
             BufferPool pool =
                     new BufferPool(5, 32, new RandomAccessFile(ioFile, "rw"));
             expectedOutput += new MemoryManager(32, pool).toString() + "\n";
+            ioFile.delete();
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -130,5 +131,8 @@ public class WorldTest extends TestCase {
         expectedOutput += "6 has been added to the database.\n";
 
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
+
+        // finally delete the I/O file from the disk
+        world.deleteIOfileFromDisk();
     }
 }

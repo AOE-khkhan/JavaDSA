@@ -125,7 +125,7 @@ public class MemoryManager {
      */
     public void freeBlock(MemoryHandle handle) {
         // simply mark the block as free by storing
-        // the position of the handle's database into
+        // the position value of the handle in
         // the block size's position database
         int blockInfoPos = HelperFunctions.getLog2(handle.getBlockSize());
 

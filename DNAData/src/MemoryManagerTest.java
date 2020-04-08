@@ -14,11 +14,14 @@ public class MemoryManagerTest extends TestCase {
     /** An instance of MemoryManger used for testing. */
     private MemoryManager manager;
 
+    /** File used for disk I/O. */
+    private File ioFile;
+
     /** Sets up the tests that follow. */
     public void setUp() {
         //
         try {
-            File ioFile = new File(".diskIO.raw");
+            ioFile = new File(".diskIO.raw");
             ioFile.delete();
             BufferPool buffer =
                     new BufferPool(5, 16, new RandomAccessFile(ioFile, "rw"));
@@ -191,7 +194,6 @@ public class MemoryManagerTest extends TestCase {
 
         try {
             System.out.println("\nTesting multiple expansions..");
-            File ioFile = new File(".diskIO.raw");
             ioFile.delete();
             BufferPool buffer =
                     new BufferPool(5, 16, new RandomAccessFile(ioFile, "rw"));
@@ -246,5 +248,18 @@ public class MemoryManagerTest extends TestCase {
 
         manager.freeBlock(handle20);
         assertFuzzyEquals(manager.toString(), "32: 0\n");
+
+        // finally delete the I/O file from the disk
+        deleteIOfile();
+    }
+
+    /** Close the File object accompanying the random access file. */
+    private void deleteIOfile() {
+        try {
+            ioFile.delete();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

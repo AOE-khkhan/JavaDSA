@@ -64,13 +64,12 @@ public class BufferPool {
 
         do {
             // finding the buffer to insert data
-            // if the target block id is never written before
-            // set the end node as the found buffer
             Buffer currBuffer = null;
 
             if (blockId > largestBlockIdWritten) {
+                // if the target block id is never written before
                 largestBlockIdWritten = blockId;
-                //
+                // set the end buffer as the found buffer
                 pool.moveToTail();
                 currBuffer = pool.yieldCurrNode();
                 //
@@ -88,7 +87,7 @@ public class BufferPool {
 
                     currBuffer = pool.yieldCurrNode();
                     if (currBuffer.getBlockId() == blockId) {
-                        // block with proper id found
+                        // buffer with the target block id found in the buffer
                         ++cacheHits;
                         break;
                     }
@@ -111,9 +110,10 @@ public class BufferPool {
                     spaceOffset, bufferOffset);
             //
             remainingBytes -= bytesInserted;
+            // if we need to look at the next buffer then
             ++blockId;
-            // if we need to look at the next buffer then we must be looking
-            // from the beginning of that buffer so bufferOffset is set to zero
+            // we must be looking from the beginning of that buffer
+            // so bufferOffset is set to zero
             bufferOffset = 0;
             // move the recently written buffer to the front
             pool.moveCurrNodeToFront();
@@ -144,8 +144,8 @@ public class BufferPool {
             }
 
             if (pool.atEnd()) {
-                // no suitable block found
-                // need to overwrite least recently used block
+                // no suitable buffer found
+                // need to overwrite least recently used buffer
                 // works even if the end buffer is empty
                 pool.moveToTail();
                 currBuffer = pool.yieldCurrNode();
@@ -155,14 +155,17 @@ public class BufferPool {
                 }
                 writeBufferFromDisk(blockId, currBuffer);
             }
+
+            // at this point currBuffer is the buffer with proper block id
             int spaceOffset = handle.getDataSize() - remainingBytes;
             int bytesRetrieved = currBuffer.getBytes(space, remainingBytes,
                     spaceOffset, bufferOffset);
 
             remainingBytes -= bytesRetrieved;
+            // if we need to look at the next buffer then
             ++blockId;
-            // if we need to look at the next buffer then we must be looking
-            // from the beginning of that buffer so bufferOffset is set to zero
+            // we must be looking from the beginning of that buffer
+            // so bufferOffset is set to zero
             bufferOffset = 0;
             // move the recently read buffer to the front
             pool.moveCurrNodeToFront();
