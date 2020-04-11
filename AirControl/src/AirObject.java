@@ -114,6 +114,18 @@ public class AirObject implements Comparable<AirObject> {
         return name.compareTo(it.getName());
     }
 
+    /**
+     * Get a string representation of the AirObject. Derived classes should
+     * override it.
+     * 
+     * @return String representation of the air object.
+     */
+    @Override
+    public String toString() {
+        throw new java.lang.RuntimeException(
+                "toString() method not implemented for this derived class!");
+    }
+
 
     /**
      * Get the string representation of the prism.

@@ -72,6 +72,14 @@ public class AirObjectTest extends TestCase {
         assertEquals(airObject.getXwidth(), prism.getWidthX());
         assertEquals(airObject.getYwidth(), prism.getWidthY());
         assertEquals(airObject.getZwidth(), prism.getWidthZ());
+        try {
+            airObject.toString();
+        }
+        catch (Exception e) {
+            assertFuzzyEquals(e.getMessage(),
+                    "toString() method not implemented"
+                            + " for this derived class!");
+        }
     }
 
     /** Test the method compareTo. */
