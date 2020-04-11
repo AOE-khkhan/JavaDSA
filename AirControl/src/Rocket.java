@@ -16,16 +16,13 @@ public class Rocket extends AirObject {
      * Construct Rocket object.
      * 
      * @param name       Name of the object.
-     * @param prismSpec  Specifications for the prism that contains the object.
+     * @param prism      Prism of the object.
      * @param ascentRate Positive integer for object's rate of ascence.
      * @param trajectory Trajectory of the rocket object.
      *
      */
-    //@formatter:off
-    public Rocket(String name, int[] prismSpec,
-            int ascentRate, double trajectory) {
-    //@formatter:on
-        super(name, prismSpec);
+    public Rocket(String name, Prism prism, int ascentRate, double trajectory) {
+        super(name, prism);
         this.ascentRate = ascentRate;
         this.trajectory = trajectory;
     }

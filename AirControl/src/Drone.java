@@ -16,15 +16,12 @@ public class Drone extends AirObject {
      * Construct Drone object.
      * 
      * @param name       Name of the object.
-     * @param prismSpec  Specifications for the prism that contains the object.
+     * @param prism      Prism of the object.
      * @param brand      Brand name of the drone.
      * @param numEngines Number of engines in the drone.
      */
-    //@formatter:off
-    public Drone(String name, int[] prismSpec,
-            String brand, int numEngines) {
-    //@formatter:on
-        super(name, prismSpec);
+    public Drone(String name, Prism prism, String brand, int numEngines) {
+        super(name, prism);
         this.brand = brand;
         this.numEngines = numEngines;
     }

@@ -17,18 +17,13 @@ public class AirObject implements Comparable<AirObject> {
     /**
      * Constructor for base AirObject
      * 
-     * @param name      The object's name.
-     * @param prismSpec Size six array of ints to construct the prism.
-     *                  [0] x co-ordinate of the origin.
-     *                  [1] y co-ordinate of the origin.
-     *                  [2] z co-ordinate of the origin.
-     *                  [3] X width of the prism.
-     *                  [4] Y width of the prism.
-     *                  [5] Z width of the prism.
+     * @param name  The object's name.
+     * @param prism Prism for the object.
+     *
      */
-    public AirObject(String name, int[] prismSpec) {
+    public AirObject(String name, Prism prism) {
         this.name = name;
-        this.prism = new Prism(prismSpec);
+        this.prism = prism;
     }
 
     /**

@@ -15,13 +15,13 @@ public class Bird extends AirObject {
     /**
      * Construct Bird object.
      * 
-     * @param name      Name of the object.
-     * @param prismSpec Specifications for the prism that contains the object.
-     * @param type      Name of the bird's kind. eg. crow, vulture.
-     * @param number    Number of birds.
+     * @param name   Name of the object.
+     * @param prism  Prism of the object.
+     * @param type   Name of the bird's kind. eg. crow, vulture.
+     * @param number Number of birds.
      */
-    public Bird(String name, int[] prismSpec, String type, int number) {
-        super(name, prismSpec);
+    public Bird(String name, Prism prism, String type, int number) {
+        super(name, prism);
         this.type = type;
         this.number = number;
     }

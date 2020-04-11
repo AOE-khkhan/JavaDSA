@@ -1,0 +1,41 @@
+ print skiplist
+ print bintree
+   collisions
+   intersect 0 0 0 1024 1024 1024
+ 
+ add    airplane Air2 100 1010 101 1020 102 1030 Delta 17 2
+  add    airplane Air3 100 1010 101 -1020 102 1030 Delta 17 2
+ 
+   add balloon B1 10 11 11 21 12 31 hot_air 15
+   add airplane Air1 0 10 1 20 2 30 USAir 717 4
+add    airplane Air2 100 1010 101 924 2 900 Delta 17 2
+
+add bird pterodactyl 0 100 20 10 50 50 Dinosaur 1
+print bintree
+add rocket Enterprise 0 100 20 10 50 50 5000 99.29
+  add drone MVPwatch 50 50 50 50 50 50 Droners 3
+    add drone MVPwatch 60 60 60 50 50 50 Droners 3
+    print bintree
+
+print object MVPwatch
+print object mvpwatch
+
+print skiplist
+        rangeprint a z
+        rangeprint a l
+        rangeprint z a
+        rangeprint Air2 Enterprise
+        rangeprint Air Enterprise
+        
+        print bintree
+        
+delete mvpwatch
+   delete MVPwatch
+   print skiplist
+   
+   print bintree
+      collisions
+   intersect 0 0 0 1024 1024 1024
+   intersect 0 0 0 1 1 1
+   intersect 0 100 20 10 50 50
+   

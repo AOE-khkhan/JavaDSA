@@ -16,15 +16,12 @@ public class Balloon extends AirObject {
      * Construct Balloon object.
      * 
      * @param name       Name of the object.
-     * @param prismSpec  Specifications for the prism that contains the object.
+     * @param prism      Prism for the object.
      * @param type       The type of the balloon.
      * @param ascentRate Positive integer for object's rate of ascence.
      */
-    //@formatter:off
-    public Balloon(String name, int[] prismSpec,
-            String type, int ascentRate) {
-    //@formatter:on
-        super(name, prismSpec);
+    public Balloon(String name, Prism prism, String type, int ascentRate) {
+        super(name, prism);
         this.type = type;
         this.ascentRate = ascentRate;
     }

@@ -19,16 +19,14 @@ public class Airplane extends AirObject {
      * Construct an Airplane object.
      * 
      * @param name       Name of the object.
-     * @param prismSpec  Specifications for the prism that contains the object.
+     * @param prism      Prism of the object.
      * @param carrier    Name for the airplane carrier.
      * @param numFlight  Flight number.
      * @param numEngines Number of engines in the airplane.
      */
-    //@formatter:off
-    public Airplane(String name, int[] prismSpec,
-            String carrier, int numFlight, int numEngines) {
-    //@formatter:on
-        super(name, prismSpec);
+    public Airplane(String name, Prism prism, String carrier, int numFlight,
+            int numEngines) {
+        super(name, prism);
         this.carrier = carrier;
         this.numFlight = numFlight;
         this.numEngines = numEngines;
