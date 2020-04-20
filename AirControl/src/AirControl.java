@@ -66,7 +66,7 @@ public class AirControl {
                 else if (target.equals("bintree")) {
                     world.printBintree();
                 }
-                else {
+                else { // "object"
                     String name = sc.next();
                     world.printObject(name);
                 }
@@ -87,7 +87,7 @@ public class AirControl {
                 Prism prism = scanPrism(sc);
                 world.printIntersection(prism);
             }
-            else {
+            else { // "add"
                 String objectType = sc.next();
                 if (objectType.equals("balloon")) {
                     world.addObject(scanBalloon(sc));
@@ -101,7 +101,7 @@ public class AirControl {
                 else if (objectType.equals("drone")) {
                     world.addObject(scanDrone(sc));
                 }
-                else {
+                else { // "bird"
                     world.addObject(scanBird(sc));
                 }
             }

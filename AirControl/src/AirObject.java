@@ -96,6 +96,15 @@ public class AirObject implements Comparable<AirObject> {
         return name;
     }
 
+    /**
+     * Getter for the prism object.
+     * 
+     * @return Prism object of air object.
+     */
+    public Prism getPrism() {
+        return prism;
+    }
+
 
     /**
      * Compare against a (name) String.

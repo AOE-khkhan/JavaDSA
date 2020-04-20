@@ -10,6 +10,7 @@ public class AirControlTest extends TestCase {
     public void testGetCodeCoverage() {
         AirControl recstore = new AirControl();
         assertNotNull(recstore);
+        AirControl.main(new String[] {"invalid-file.txt"});
         AirControl.main(new String[] {"src/input.txt"});
     }
 }
