@@ -6,7 +6,7 @@
  * @version Apr 22, 2020
  *
  */
-public interface BinTreeNodeAbstract {
+public interface BinTreeNode {
     /**
      * Check if the node is a leaf node.
      * 

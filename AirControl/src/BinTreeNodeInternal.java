@@ -6,7 +6,7 @@
  * @version Apr 22, 2020
  *
  */
-public class BinTreeNodeInternal implements BinTreeNodeAbstract {
+public class BinTreeNodeInternal implements BinTreeNode {
     /**
      * Check if a node is a leaf node.
      * 

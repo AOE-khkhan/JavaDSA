@@ -25,7 +25,7 @@ public class BinTree {
     private final BinTreeNodeFlyweight fly = BinTreeNodeFlyweight.getInstance();
 
     /** The root node of the bin tree. */
-    private BinTreeNodeAbstract root;
+    private BinTreeNode root;
 
     /**
      * Construct a bin tree.

@@ -6,7 +6,7 @@
  * @version Apr 22, 2020
  *
  */
-public class BinTreeNodeLeaf implements BinTreeNodeAbstract {
+public class BinTreeNodeLeaf implements BinTreeNode {
 
     /** List of records stored by this node. */
     private LinkedList<AirObject> records;
