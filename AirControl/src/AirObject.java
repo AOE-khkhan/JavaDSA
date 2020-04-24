@@ -1,6 +1,6 @@
 /**
  * Air traffic control general object type interface.
- * All tracked objects must have a bounding prism and a name.
+ * All tracked objects must have a bounding box and a name.
  * 
  * @author  Bimal Gaudel
  * 
@@ -11,19 +11,19 @@ public class AirObject implements Comparable<AirObject> {
     /** Name for this AirObject */
     private String name;
 
-    /** Prism that confines this AirObject. */
-    private Prism prism;
+    /** Box that confines this AirObject. */
+    private Box box;
 
     /**
      * Constructor for base AirObject
      * 
      * @param name  The object's name.
-     * @param prism Prism for the object.
+     * @param box Box for the object.
      *
      */
-    public AirObject(String name, Prism prism) {
+    public AirObject(String name, Box box) {
         this.name = name;
-        this.prism = prism;
+        this.box = box;
     }
 
     /**
@@ -32,7 +32,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return x origin
      */
     public int getXorig() {
-        return prism.getOrigX();
+        return box.getOrig()[Box.dimX];
     }
 
 
@@ -42,7 +42,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return x width
      */
     public int getXwidth() {
-        return prism.getWidthX();
+        return box.getWidths()[Box.dimX];
     }
 
 
@@ -52,7 +52,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return y origin
      */
     public int getYorig() {
-        return prism.getOrigY();
+        return box.getOrig()[Box.dimY];
     }
 
 
@@ -62,7 +62,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return y width
      */
     public int getYwidth() {
-        return prism.getWidthY();
+        return box.getWidths()[Box.dimY];
     }
 
 
@@ -72,7 +72,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return z origin
      */
     public int getZorig() {
-        return prism.getOrigZ();
+        return box.getOrig()[Box.dimZ];
     }
 
 
@@ -81,9 +81,8 @@ public class AirObject implements Comparable<AirObject> {
      * 
      * @return z width
      */
-
     public int getZwidth() {
-        return prism.getWidthZ();
+        return box.getWidths()[Box.dimZ];
     }
 
 
@@ -97,12 +96,12 @@ public class AirObject implements Comparable<AirObject> {
     }
 
     /**
-     * Getter for the prism object.
+     * Getter for the box object.
      * 
-     * @return Prism object of air object.
+     * @return Box object of air object.
      */
-    public Prism getPrism() {
-        return prism;
+    public Box getBox() {
+        return box;
     }
 
 
@@ -132,11 +131,11 @@ public class AirObject implements Comparable<AirObject> {
 
 
     /**
-     * Get the string representation of the prism.
+     * Get the string representation of the box.
      * 
-     * @return Specs of prism as string.
+     * @return Specs of box as string.
      */
-    protected String prismString() {
-        return prism.toString();
+    protected String boxString() {
+        return box.toString();
     }
 } // class AirObject

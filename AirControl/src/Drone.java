@@ -16,12 +16,12 @@ public class Drone extends AirObject {
      * Construct Drone object.
      * 
      * @param name       Name of the object.
-     * @param prism      Prism of the object.
+     * @param box      Box of the object.
      * @param brand      Brand name of the drone.
      * @param numEngines Number of engines in the drone.
      */
-    public Drone(String name, Prism prism, String brand, int numEngines) {
-        super(name, prism);
+    public Drone(String name, Box box, String brand, int numEngines) {
+        super(name, box);
         this.brand = brand;
         this.numEngines = numEngines;
     }
@@ -33,7 +33,7 @@ public class Drone extends AirObject {
      */
     @Override
     public String toString() {
-        return String.format("Drone %s %s %s %d", getName(), prismString(),
+        return String.format("Drone %s %s %s %d", getName(), boxString(),
                 brand, numEngines);
     }
 }

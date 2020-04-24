@@ -16,12 +16,12 @@ public class Balloon extends AirObject {
      * Construct Balloon object.
      * 
      * @param name       Name of the object.
-     * @param prism      Prism for the object.
+     * @param box      Box for the object.
      * @param type       The type of the balloon.
      * @param ascentRate Positive integer for object's rate of ascence.
      */
-    public Balloon(String name, Prism prism, String type, int ascentRate) {
-        super(name, prism);
+    public Balloon(String name, Box box, String type, int ascentRate) {
+        super(name, box);
         this.type = type;
         this.ascentRate = ascentRate;
     }
@@ -33,7 +33,7 @@ public class Balloon extends AirObject {
      */
     @Override
     public String toString() {
-        return String.format("Balloon %s %s %s %d", getName(), prismString(),
+        return String.format("Balloon %s %s %s %d", getName(), boxString(),
                 type, ascentRate);
     }
 }

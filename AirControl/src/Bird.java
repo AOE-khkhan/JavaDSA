@@ -16,12 +16,12 @@ public class Bird extends AirObject {
      * Construct Bird object.
      * 
      * @param name   Name of the object.
-     * @param prism  Prism of the object.
+     * @param box  Box of the object.
      * @param type   Name of the bird's kind. eg. crow, vulture.
      * @param number Number of birds.
      */
-    public Bird(String name, Prism prism, String type, int number) {
-        super(name, prism);
+    public Bird(String name, Box box, String type, int number) {
+        super(name, box);
         this.type = type;
         this.number = number;
     }
@@ -33,7 +33,7 @@ public class Bird extends AirObject {
      */
     @Override
     public String toString() {
-        return String.format("Bird %s %s %s %d", getName(), prismString(), type,
+        return String.format("Bird %s %s %s %d", getName(), boxString(), type,
                 number);
     }
 }

@@ -16,13 +16,13 @@ public class Rocket extends AirObject {
      * Construct Rocket object.
      * 
      * @param name       Name of the object.
-     * @param prism      Prism of the object.
+     * @param box      Box of the object.
      * @param ascentRate Positive integer for object's rate of ascence.
      * @param trajectory Trajectory of the rocket object.
      *
      */
-    public Rocket(String name, Prism prism, int ascentRate, double trajectory) {
-        super(name, prism);
+    public Rocket(String name, Box box, int ascentRate, double trajectory) {
+        super(name, box);
         this.ascentRate = ascentRate;
         this.trajectory = trajectory;
     }
@@ -34,7 +34,7 @@ public class Rocket extends AirObject {
      */
     @Override
     public String toString() {
-        return String.format("Rocket %s %s %d %.2f", getName(), prismString(),
+        return String.format("Rocket %s %s %d %.2f", getName(), boxString(),
                 ascentRate, trajectory);
     }
 }

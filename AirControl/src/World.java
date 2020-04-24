@@ -55,11 +55,11 @@ public class World {
     }
 
     /**
-     * Print the air objects that intersect the given prism.
+     * Print the air objects that intersect the given box.
      * 
-     * @param prism A prism object.
+     * @param box A box object.
      */
-    public void printIntersection(Prism prism) {
+    public void printIntersection(Box box) {
         System.out.println("printIntersection will be implemented later..");
     }
 
@@ -102,14 +102,14 @@ public class World {
      * @param airObject An AirObject to be added to the database.
      */
     public void addObject(AirObject airObject) {
-        Prism prism = airObject.getPrism();
-        if (World.prismWithInvalidDimension(prism)) {
-            System.out.println(
-                    "Bad box (" + prism + "). All widths must be positive.");
+        if (World.boxWithInvalidDimension(airObject)) {
+            System.out.println("Bad box (" + airObject.getBox()
+                    + "). All widths must be positive.");
             return;
         }
-        else if (prismExcludesWorld(prism) || prismExtendsBeyondWorld(prism)) {
-            System.out.println("Bad box (" + prism + "). "
+        else if (boxExcludesWorld(airObject)
+                || boxExtendsBeyondWorld(airObject)) {
+            System.out.println("Bad box (" + airObject.getBox() + "). "
                     + "All boxes must be entirely within the world box.");
             return;
         }
@@ -125,52 +125,55 @@ public class World {
     }
 
     /**
-     * Check if a prism has non-positive sizes for x, y, or z lengths.
+     * Check if a box has non-positive sizes for x, y, or z lengths.
      * 
-     * @param  prism The prism object being checked.
+     * @param  box The box object being checked.
      * 
      * @return       True if x, y or z length is non-positive.
      */
-    private static boolean prismWithInvalidDimension(Prism prism) {
-        return (prism.getWidthX() <= 0) || (prism.getWidthY() <= 0)
-                || (prism.getWidthZ() <= 0);
+    private static boolean boxWithInvalidDimension(AirObject airObject) {
+        return (airObject.getXwidth() <= 0) || (airObject.getYwidth() <= 0)
+                || (airObject.getZwidth() <= 0);
     }
 
     /**
-     * Check if a prism doesn't overlap with the world at all.
+     * Check if a box doesn't overlap with the world at all.
      * 
-     * @param  prism The prism object being checked.
+     * @param  box The box object being checked.
      *
-     * @return       True if prism excludes the world.
+     * @return       True if box excludes the world.
      */
-    private static boolean prismExcludesWorld(Prism prism) {
+    private static boolean boxExcludesWorld(AirObject airObject) {
 
-        if ((prism.getOrigX() >= World.SIZE_ONE_DIM)
-                || (prism.getOrigY() >= World.SIZE_ONE_DIM)
-                || (prism.getOrigZ() >= World.SIZE_ONE_DIM)) {
+        if ((airObject.getXorig() >= World.SIZE_ONE_DIM)
+                || (airObject.getYorig() >= World.SIZE_ONE_DIM)
+                || (airObject.getZorig() >= World.SIZE_ONE_DIM)) {
             return true;
         }
 
-        return (prism.getOrigX() + prism.getWidthX() <= 0)
-                || (prism.getOrigY() + prism.getWidthY() <= 0)
-                || (prism.getOrigZ() + prism.getWidthZ() <= 0);
+        return (airObject.getXorig() + airObject.getXwidth() <= 0)
+                || (airObject.getYorig() + airObject.getYwidth() <= 0)
+                || (airObject.getZorig() + airObject.getZwidth() <= 0);
 
     }
 
     /**
-     * Check if a prism extends beyond the world.
+     * Check if a box extends beyond the world.
      * 
-     * @param  prism The prism object to be checked.
+     * @param  airObject The air object to be checked.
      * 
-     * @return       True if prism extends beyond the world.
+     * @return           True if box extends beyond the world.
      */
-    private static boolean prismExtendsBeyondWorld(Prism prism) {
-        if ((prism.getOrigX() < 0) || (prism.getOrigY() < 0)
-                || (prism.getOrigZ() < 0)) {
+    private static boolean boxExtendsBeyondWorld(AirObject airObject) {
+        if ((airObject.getXorig() < 0) || (airObject.getYorig() < 0)
+                || (airObject.getZorig() < 0)) {
             return true;
         }
-        return (prism.getOrigX() + prism.getWidthX() > World.SIZE_ONE_DIM)
-                || (prism.getOrigY() + prism.getWidthY() > World.SIZE_ONE_DIM)
-                || (prism.getOrigZ() + prism.getWidthZ() > World.SIZE_ONE_DIM);
+        return (airObject.getXorig()
+                + airObject.getXwidth() > World.SIZE_ONE_DIM)
+                || (airObject.getYorig()
+                        + airObject.getYwidth() > World.SIZE_ONE_DIM)
+                || (airObject.getZorig()
+                        + airObject.getZwidth() > World.SIZE_ONE_DIM);
     }
 }

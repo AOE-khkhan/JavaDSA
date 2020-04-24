@@ -21,7 +21,7 @@ public class WorldTest extends TestCase {
         System.out.println("\nTesting print skip list\n--------------");
 
         world.addObject(new Bird("crit1",
-                new Prism(new int[] {0, 0, 0, 5, 5, 5}), "crow", 5));
+                new Box(new int[] {0, 0, 0, 5, 5, 5}), "crow", 5));
         world.printSkiplist();
         assertTrue(systemOut().getHistory()
                 .endsWith("1 skiplist nodes printed\n"));
@@ -34,47 +34,47 @@ public class WorldTest extends TestCase {
         System.out.print(expectedOutput);
 
         // negative widths
-        Prism prism = new Prism(new int[] {0, 0, 0, -5, 5, 5});
-        Bird bird = new Bird("crit1", prism, "crow", 5);
+        Box box = new Box(new int[] {0, 0, 0, -5, 5, 5});
+        Bird bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All widths must be positive.\n";
 
-        prism = new Prism(new int[] {0, 0, 0, 5, -5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, 0, 0, 5, -5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All widths must be positive.\n";
 
-        prism = new Prism(new int[] {0, 0, 0, 5, 5, -5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, 0, 0, 5, 5, -5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All widths must be positive.\n";
 
-        prism = new Prism(new int[] {0, 0, 0, 5, 5, -5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, 0, 0, 5, 5, -5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All widths must be positive.\n";
 
-        // prism excludes world
-        prism = new Prism(new int[] {1024, 0, 0, 5, 5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        // box excludes world
+        box = new Box(new int[] {1024, 0, 0, 5, 5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {0, 1024, 0, 5, 5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, 1024, 0, 5, 5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {0, 0, 1024, 5, 5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, 0, 1024, 5, 5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
@@ -86,60 +86,60 @@ public class WorldTest extends TestCase {
                 "\nTesting inavlid box handling: part 2\n-------------\n";
         System.out.print(expectedOutput);
 
-        Prism prism = new Prism(new int[] {-50, 0, 0, 5, 5, 5});
-        Bird bird = new Bird("crit1", prism, "crow", 5);
+        Box box = new Box(new int[] {-50, 0, 0, 5, 5, 5});
+        Bird bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {0, -50, 0, 5, 5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, -50, 0, 5, 5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {0, 0, -50, 5, 5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, 0, -50, 5, 5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
 
-        // prism extends beyond world
-        prism = new Prism(new int[] {-1, 0, 0, 5, 5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        // box extends beyond world
+        box = new Box(new int[] {-1, 0, 0, 5, 5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {0, -1, 0, 5, 5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, -1, 0, 5, 5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {0, 0, -1, 5, 5, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {0, 0, -1, 5, 5, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {1020, 1020, 1020, 5, 2, 2});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {1020, 1020, 1020, 5, 2, 2});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {1020, 1020, 1020, 2, 5, 2});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {1020, 1020, 1020, 2, 5, 2});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
 
-        prism = new Prism(new int[] {1020, 1020, 1020, 2, 2, 5});
-        bird = new Bird("crit1", prism, "crow", 5);
+        box = new Box(new int[] {1020, 1020, 1020, 2, 2, 5});
+        bird = new Bird("crit1", box, "crow", 5);
         world.addObject(bird);
-        expectedOutput += "Bad box (" + prism.toString() + ") "
+        expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
 

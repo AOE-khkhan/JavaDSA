@@ -84,8 +84,8 @@ public class AirControl {
                 world.deleteObject(name);
             }
             else if (cmd.equals("intersect")) {
-                Prism prism = scanPrism(sc);
-                world.printIntersection(prism);
+                Box box = scanBox(sc);
+                world.printIntersection(box);
             }
             else { // "add"
                 String objectType = sc.next();
@@ -111,13 +111,13 @@ public class AirControl {
     }
 
     /**
-     * Scan a prism specs from a string. @see Prism.java
+     * Scan a box specs from a string. @see Box.java
      * 
      * @param  sc Scanner object.
      * 
-     * @return    Prism object.
+     * @return    Box object.
      */
-    private static Prism scanPrism(Scanner sc) {
+    private static Box scanBox(Scanner sc) {
         int[] specs = new int[6];
         specs[0] = sc.nextInt();
         specs[1] = sc.nextInt();
@@ -125,7 +125,7 @@ public class AirControl {
         specs[3] = sc.nextInt();
         specs[4] = sc.nextInt();
         specs[5] = sc.nextInt();
-        return new Prism(specs);
+        return new Box(specs);
     }
 
     /**
@@ -137,10 +137,10 @@ public class AirControl {
      */
     private static Balloon scanBalloon(Scanner sc) {
         String name = sc.next();
-        Prism prism = scanPrism(sc);
+        Box box = scanBox(sc);
         String type = sc.next();
         int ascentRate = sc.nextInt();
-        return new Balloon(name, prism, type, ascentRate);
+        return new Balloon(name, box, type, ascentRate);
     }
 
     /**
@@ -152,11 +152,11 @@ public class AirControl {
      */
     private static Airplane scanAirplane(Scanner sc) {
         String name = sc.next();
-        Prism prism = scanPrism(sc);
+        Box box = scanBox(sc);
         String carrier = sc.next();
         int numFlight = sc.nextInt();
         int numEngines = sc.nextInt();
-        return new Airplane(name, prism, carrier, numFlight, numEngines);
+        return new Airplane(name, box, carrier, numFlight, numEngines);
     }
 
     /**
@@ -168,10 +168,10 @@ public class AirControl {
      */
     private static Rocket scanRocket(Scanner sc) {
         String name = sc.next();
-        Prism prism = scanPrism(sc);
+        Box box = scanBox(sc);
         int ascentRate = sc.nextInt();
         double trajectory = sc.nextDouble();
-        return new Rocket(name, prism, ascentRate, trajectory);
+        return new Rocket(name, box, ascentRate, trajectory);
     }
 
     /**
@@ -183,10 +183,10 @@ public class AirControl {
      */
     private static Drone scanDrone(Scanner sc) {
         String name = sc.next();
-        Prism prism = scanPrism(sc);
+        Box box = scanBox(sc);
         String brand = sc.next();
         int numEngines = sc.nextInt();
-        return new Drone(name, prism, brand, numEngines);
+        return new Drone(name, box, brand, numEngines);
     }
 
     /**
@@ -198,9 +198,9 @@ public class AirControl {
      */
     private static Bird scanBird(Scanner sc) {
         String name = sc.next();
-        Prism prism = scanPrism(sc);
+        Box box = scanBox(sc);
         String type = sc.next();
         int number = sc.nextInt();
-        return new Bird(name, prism, type, number);
+        return new Bird(name, box, type, number);
     }
 }

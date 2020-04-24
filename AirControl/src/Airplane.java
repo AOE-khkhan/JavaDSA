@@ -19,14 +19,14 @@ public class Airplane extends AirObject {
      * Construct an Airplane object.
      * 
      * @param name       Name of the object.
-     * @param prism      Prism of the object.
+     * @param box      Box of the object.
      * @param carrier    Name for the airplane carrier.
      * @param numFlight  Flight number.
      * @param numEngines Number of engines in the airplane.
      */
-    public Airplane(String name, Prism prism, String carrier, int numFlight,
+    public Airplane(String name, Box box, String carrier, int numFlight,
             int numEngines) {
-        super(name, prism);
+        super(name, box);
         this.carrier = carrier;
         this.numFlight = numFlight;
         this.numEngines = numEngines;
@@ -40,6 +40,6 @@ public class Airplane extends AirObject {
     @Override
     public String toString() {
         return String.format("Airplane %s %s %s %d %d", getName(),
-                prismString(), carrier, numFlight, numEngines);
+                boxString(), carrier, numFlight, numEngines);
     }
 }
