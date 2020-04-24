@@ -28,7 +28,6 @@ public class BinTreeNodeTest extends TestCase {
     public void testFlyWeight() {
         assertTrue(fly.isLeaf());
         assertTrue(fly.isEmpty());
-        assertFalse(fly.isFull(3));
         assertEquals(fly, BinTreeNodeFlyweight.getInstance());
     }
 
@@ -37,7 +36,6 @@ public class BinTreeNodeTest extends TestCase {
         assertTrue(leaf.isLeaf());
         // leaf is empty to start with
         assertTrue(leaf.isEmpty());
-        assertFalse(leaf.isFull(3));
     }
 
     /** Test the internal node. */

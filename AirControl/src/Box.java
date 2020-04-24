@@ -41,7 +41,7 @@ public class Box {
                           spec[dimY],
                           spec[dimZ]};
 
-        short offset = numDims;
+        int offset = numDims;
         widths = new int[] {spec[offset + dimX],
                             spec[offset + dimY],
                             spec[offset + dimZ]};
@@ -187,23 +187,23 @@ public class Box {
      * Position in the array of size three for origin co-ordinate and width
      * along x-axis
      */
-    public static final short dimX = 0;
+    public static final int dimX = 0;
 
 
     /**
      * Position in the array of size three for origin co-ordinate and width
      * along y-axis
      */
-    public static final short dimY = 1;
+    public static final int dimY = 1;
 
 
     /**
      * Position in the array of size three for origin co-ordinate and width
      * along z-axis
      */
-    public static final short dimZ = 2;
+    public static final int dimZ = 2;
 
 
     /** Total number of dimensions. */
-    public static final short numDims = 3;
+    public static final int numDims = 3;
 }

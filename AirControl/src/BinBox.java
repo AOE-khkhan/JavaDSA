@@ -45,7 +45,7 @@ public class BinBox extends Box {
      *                   axis and
      *                   chosen by @c whichHalf.
      */
-    public BinBox split(short axis, int whichHalf) {
+    public BinBox split(long axis, int whichHalf) {
         // split accross the axis
         int[] splitWidths = new int[Box.numDims];
         for (int ii = 0; ii < Box.numDims; ++ii) {
