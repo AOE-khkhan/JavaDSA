@@ -26,4 +26,83 @@ public class BoxTest extends TestCase {
         assertEquals(box.getWidths()[Box.dimY], 6);
         assertEquals(box.getWidths()[Box.dimZ], 8);
     }
+
+
+    /** Test has point method. */
+    public void testHasPoint() {
+        Box box = new Box(new int[] {0, 0, 0, 256, 256, 256});
+
+        assertTrue(box.hasPoint(new int[] {0, 0, 0}));
+        assertTrue(box.hasPoint(new int[] {100, 100, 100}));
+        assertTrue(box.hasPoint(new int[] {100, 0, 0}));
+        assertTrue(box.hasPoint(new int[] {0, 100, 0}));
+        assertTrue(box.hasPoint(new int[] {0, 0, 100}));
+
+        assertFalse(box.hasPoint(new int[] {256, 256, 256}));
+        assertFalse(box.hasPoint(new int[] {256, 0, 0}));
+        assertFalse(box.hasPoint(new int[] {0, 256, 0}));
+        assertFalse(box.hasPoint(new int[] {0, 0, 256}));
+    }
+
+
+    /** Test intersects method. */
+    public void testIntersects() {
+        Box box1 = new Box(new int[] {0, 0, 0, 256, 256, 256});
+        Box box2 = new Box(new int[] {0, 0, 0, 256, 256, 256});
+
+        assertTrue(box1.intersects(box1));
+        assertTrue(box1.intersects(box2));
+
+        box2 = new Box(new int[] {64, 64, 64, 128, 128, 128});
+        assertTrue(box1.intersects(box2));
+
+        box2 = new Box(new int[] {256, 256, 256, 256, 256, 256});
+        assertFalse(box1.intersects(box2));
+
+        box2 = new Box(new int[] {512, 0, 0, 256, 256, 256});
+        assertFalse(box1.intersects(box2));
+
+        box2 = new Box(new int[] {0, 512, 0, 256, 256, 256});
+        assertFalse(box1.intersects(box2));
+
+        box2 = new Box(new int[] {0, 0, 512, 256, 256, 256});
+        assertFalse(box1.intersects(box2));
+    }
+
+
+    /** Test getIntersection method. */
+    public void testGetIntersection() {
+        Box box1 = new Box(new int[] {0, 0, 0, 512, 512, 512});
+        Box box2 = new Box(new int[] {128, 128, 128, 640, 640, 640});
+        Box isec = box1.getIntersection(box2);
+        //@formatter:off
+        String expected = String.format("%d, %d, %d, %d, %d, %d",
+                                            128, 128, 128,
+                                                512 - 128,
+                                                512 - 128,
+                                                512 - 128);
+        //@formatter:on
+        assertFuzzyEquals(isec.toString(), expected);
+    }
+
+
+    /** Test the BinBox class. */
+    public void testBinBox() {
+        final int firstHalf = 0;
+        final int secondHalf = 1;
+        BinBox binBox = new BinBox(1024);
+        assertFuzzyEquals(binBox.toString(), "0, 0, 0, 1024, 1024, 1024");
+
+        // split accross x axis and choose the first half
+        binBox = binBox.split(Box.dimX, firstHalf);
+        assertFuzzyEquals(binBox.toString(), "0, 0, 0, 512, 1024, 1024");
+
+        // split accross x axis and choose the second half
+        binBox = binBox.split(Box.dimX, secondHalf);
+        assertFuzzyEquals(binBox.toString(), "256, 0, 0, 256, 1024, 1024");
+
+        // split accross z axis and choose the second half
+        binBox = binBox.split(Box.dimZ, secondHalf);
+        assertFuzzyEquals(binBox.toString(), "256, 0, 512, 256, 1024, 512");
+    }
 }
