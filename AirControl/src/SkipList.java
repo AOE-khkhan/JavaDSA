@@ -126,10 +126,8 @@ public class SkipList<K extends Comparable<K>> {
         }
         currNode = update[0].getForward()[0];
         int currNodeLevel = currNode.getForward().length - 1;
-        for (int i = 0; i <= level; ++i) { // splice into list
-            if (i <= currNodeLevel) {
-                update[i].getForward()[i] = currNode.getForward()[i];
-            }
+        for (int i = 0; i <= currNodeLevel; ++i) { // splice into list
+            update[i].getForward()[i] = currNode.getForward()[i];
         }
         --size;
     }

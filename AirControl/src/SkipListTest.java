@@ -32,6 +32,7 @@ public class SkipListTest extends TestCase {
 
     /** Test the delete method. */
     public void testDelete() {
+        System.out.println("\nTesting delete method\n-----------");
         list.insert(1, "A");
         list.insert(2, "B");
         list.insert(6, "F");
