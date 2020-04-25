@@ -13,7 +13,7 @@ public class BinTreeNodeLeaf implements BinTreeNode {
      * The maximum number of records allowed in the node. For the current
      * project it is three.
      */
-    private static final int maxRecords = 3;
+    protected static final int MAX_RECORDS = 3;
 
 
     /** List of records stored by this node. */
@@ -27,10 +27,21 @@ public class BinTreeNodeLeaf implements BinTreeNode {
 
 
     /**
+     * Give access the records list to the classes in the same package.
+     * 
+     * @return The linked list of records.
+     */
+    protected LinkedList<AirObject> getRecords() {
+        return records;
+    }
+
+
+    /**
      * Check if the node is a leaf node.
      * 
      * @return True as it is a leaf node.
      */
+    @Override
     public boolean isLeaf() {
         return true;
     }
@@ -43,21 +54,6 @@ public class BinTreeNodeLeaf implements BinTreeNode {
      */
     public boolean isEmpty() {
         return records.getCount() == 0;
-    }
-
-    /**
-     * Get a string representation of the leaf node.
-     * 
-     * @return The String for each air object in the leaf node in a separate
-     *         line.
-     */
-    @Override
-    public String toString() {
-        String result = "Leaf with " + records.getCount() + " objects:";
-        for (records.moveToHead(); !records.atEnd(); records.curseToNext()) {
-            result += "\n(" + records.yieldCurrNode() + ")";
-        }
-        return result;
     }
 
 
@@ -94,6 +90,29 @@ public class BinTreeNodeLeaf implements BinTreeNode {
         return splitNode;
     }
 
+
+    /**
+     * Delete an AirObject from the tree.
+     * 
+     * @param  airObject The AirObject to be deleted.
+     * @param  box       The Box information passed to current node to help
+     *                   locate the AirObject.
+     * @param  nodeLevel The level of the current node in the tree. The root is
+     *                   at the level zero and the level increases down the
+     *                   tree.
+     * 
+     * @return           The node after the deletion.
+     */
+    @Override
+    public BinTreeNode delete(AirObject airObject, BinBox box, int nodeLevel) {
+        records.remove(airObject);
+        if (isEmpty()) {
+            return BinTreeNodeFlyweight.getInstance();
+        }
+        return this;
+    }
+
+
     /**
      * Check if this leaf node in the current state should split according to
      * the decomposition rule. The decomposition rule for this project is that
@@ -106,7 +125,7 @@ public class BinTreeNodeLeaf implements BinTreeNode {
      *         rule.
      */
     private boolean shouldSplit() {
-        if (records.getCount() <= maxRecords) {
+        if (records.getCount() <= MAX_RECORDS) {
             return false;
         }
 

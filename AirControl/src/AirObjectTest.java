@@ -64,13 +64,13 @@ public class AirObjectTest extends TestCase {
     public void testGetCodeCoverage() {
         assertEquals(airObject.getName(), "Apollo");
         //
-        assertEquals(airObject.getXorig(), box.getOrig()[Box.dimX]);
-        assertEquals(airObject.getYorig(), box.getOrig()[Box.dimY]);
-        assertEquals(airObject.getZorig(), box.getOrig()[Box.dimZ]);
+        assertEquals(airObject.getXorig(), box.getOrig()[Box.DIM_X]);
+        assertEquals(airObject.getYorig(), box.getOrig()[Box.DIM_Y]);
+        assertEquals(airObject.getZorig(), box.getOrig()[Box.DIM_Z]);
         //
-        assertEquals(airObject.getXwidth(), box.getWidths()[Box.dimX]);
-        assertEquals(airObject.getYwidth(), box.getWidths()[Box.dimY]);
-        assertEquals(airObject.getZwidth(), box.getWidths()[Box.dimZ]);
+        assertEquals(airObject.getXwidth(), box.getWidths()[Box.DIM_X]);
+        assertEquals(airObject.getYwidth(), box.getWidths()[Box.DIM_Y]);
+        assertEquals(airObject.getZwidth(), box.getWidths()[Box.DIM_Z]);
         try {
             airObject.toString();
         }

@@ -37,14 +37,14 @@ public class Box {
      */
     public Box(int[] spec) {
         //@formatter:off
-        orig = new int[] {spec[dimX],
-                          spec[dimY],
-                          spec[dimZ]};
+        orig = new int[] {spec[DIM_X],
+                          spec[DIM_Y],
+                          spec[DIM_Z]};
 
-        int offset = numDims;
-        widths = new int[] {spec[offset + dimX],
-                            spec[offset + dimY],
-                            spec[offset + dimZ]};
+        int offset = NUM_DIMS;
+        widths = new int[] {spec[offset + DIM_X],
+                            spec[offset + DIM_Y],
+                            spec[offset + DIM_Z]};
         //@formatter:on
     }
 
@@ -95,8 +95,8 @@ public class Box {
     public String toString() {
         //@formatter:off
         return String.format("%d %d %d %d %d %d",
-                getOrig()[dimX], getOrig()[dimY], getOrig()[dimZ],
-                getWidths()[dimX], getWidths()[dimY], getWidths()[dimZ]);
+                getOrig()[DIM_X], getOrig()[DIM_Y], getOrig()[DIM_Z],
+                getWidths()[DIM_X], getWidths()[DIM_Y], getWidths()[DIM_Z]);
         //@formatter:on
     }
 
@@ -104,19 +104,21 @@ public class Box {
     /**
      * Check if this box contains a point.
      * 
-     * @param point A 3d point: array of integers for x, y and z co-ordinates
-     *              resrespectively.
+     * @param  point A 3d point: array of integers for x, y and z co-ordinates
+     *               resrespectively.
+     * 
+     * @return       True if the box contains the point.
      */
     public boolean hasPoint(int[] point) {
         //@formatter:off
-        return (point[dimX] >= getOrig()[dimX])
-                && (point[dimX] < getOrig()[dimX] + getWidths()[dimX]) &&
+        return (point[DIM_X] >= getOrig()[DIM_X])
+                && (point[DIM_X] < getOrig()[DIM_X] + getWidths()[DIM_X]) &&
                 // x co-ordinate is contained
-                (point[dimY] >= getOrig()[dimY])
-                && (point[dimY] < getOrig()[dimY] + getWidths()[dimY]) &&
+                (point[DIM_Y] >= getOrig()[DIM_Y])
+                && (point[DIM_Y] < getOrig()[DIM_Y] + getWidths()[DIM_Y]) &&
                 // y co-ordinate is contained
-                (point[dimZ] >= getOrig()[dimZ])
-                && (point[dimZ] < getOrig()[dimZ] + getWidths()[dimZ]);
+                (point[DIM_Z] >= getOrig()[DIM_Z])
+                && (point[DIM_Z] < getOrig()[DIM_Z] + getWidths()[DIM_Z]);
                 // z co-ordinate is contained
         //@formatter:on
     }
@@ -127,22 +129,22 @@ public class Box {
      * 
      * @param  box Box object to be checked.
      * 
-     * @return       True if box intersects this object.
+     * @return     True if box intersects this object.
      */
     public boolean intersects(Box box) {
         //@formatter:off
-        return !((getOrig()[dimX] >= box.getOrig()[dimX]
-                                        + box.getWidths()[dimX]) ||
-                 (getOrig()[dimY] >= box.getOrig()[dimY]
-                                        + box.getWidths()[dimY]) ||
-                 (getOrig()[dimZ] >= box.getOrig()[dimZ]
-                                        + box.getWidths()[dimZ]) ||
-                 (box.getOrig()[dimX] >= getOrig()[dimX]
-                                              + getWidths()[dimX]) ||
-                 (box.getOrig()[dimY] >= getOrig()[dimY]
-                                              + getWidths()[dimY]) ||
-                 (box.getOrig()[dimZ] >= getOrig()[dimZ]
-                                              + getWidths()[dimZ]));
+        return !((getOrig()[DIM_X] >= box.getOrig()[DIM_X]
+                                        + box.getWidths()[DIM_X]) ||
+                 (getOrig()[DIM_Y] >= box.getOrig()[DIM_Y]
+                                        + box.getWidths()[DIM_Y]) ||
+                 (getOrig()[DIM_Z] >= box.getOrig()[DIM_Z]
+                                        + box.getWidths()[DIM_Z]) ||
+                 (box.getOrig()[DIM_X] >= getOrig()[DIM_X]
+                                              + getWidths()[DIM_X]) ||
+                 (box.getOrig()[DIM_Y] >= getOrig()[DIM_Y]
+                                              + getWidths()[DIM_Y]) ||
+                 (box.getOrig()[DIM_Z] >= getOrig()[DIM_Z]
+                                              + getWidths()[DIM_Z]));
         //@formatter:on
     }
 
@@ -153,14 +155,14 @@ public class Box {
      * 
      * @param  box Another box that this object intersects.
      * 
-     * @return       A box made out of the intersection of this and the other.
+     * @return     A box made out of the intersection of this and the other.
      */
     public Box getIntersection(Box box) {
         // The origin of the intersection starts as later as possible.
         // So, the x co-ordinate of the intersection is the greater
         // of the x co-ordinates of this object and the box. And, so on.
-        int[] isecOrig = new int[numDims];
-        for (int ii = 0; ii < numDims; ++ii) {
+        int[] isecOrig = new int[NUM_DIMS];
+        for (int ii = 0; ii < NUM_DIMS; ++ii) {
             isecOrig[ii] = Math.max(getOrig()[ii], box.getOrig()[ii]);
         }
 
@@ -169,8 +171,8 @@ public class Box {
         // ends whichever of the corresponding dimension's widths
         // of this object and the box end.
         //
-        int[] isecWidths = new int[numDims];
-        for (int ii = 0; ii < numDims; ++ii) {
+        int[] isecWidths = new int[NUM_DIMS];
+        for (int ii = 0; ii < NUM_DIMS; ++ii) {
 
             //@formatter:off
             isecWidths[ii] = Math.min((getOrig()[ii] + getWidths()[ii]),
@@ -187,23 +189,23 @@ public class Box {
      * Position in the array of size three for origin co-ordinate and width
      * along x-axis
      */
-    public static final int dimX = 0;
+    public static final int DIM_X = 0;
 
 
     /**
      * Position in the array of size three for origin co-ordinate and width
      * along y-axis
      */
-    public static final int dimY = 1;
+    public static final int DIM_Y = 1;
 
 
     /**
      * Position in the array of size three for origin co-ordinate and width
      * along z-axis
      */
-    public static final int dimZ = 2;
+    public static final int DIM_Z = 2;
 
 
     /** Total number of dimensions. */
-    public static final int numDims = 3;
+    public static final int NUM_DIMS = 3;
 }

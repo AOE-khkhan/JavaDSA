@@ -6,33 +6,48 @@
  * @version Apr 11, 2020
  */
 public class World {
+
     /**
      * Length of the world in one of the three dimensions that are all equal.
      */
     private static final int SIZE_ONE_DIM = 1024;
 
+
     /** SkipList object used for the AirControl project. */
     private SkipList<String> skipList;
+
+
+    /** BinTree object used for the AirControl project. */
+    private BinTree binTree;
+
 
     /** Construct World. */
     public World() {
         skipList = new SkipList<String>();
+        binTree = new BinTree(SIZE_ONE_DIM);
     }
+
 
     /** Print the skip list. */
     public void printSkiplist() {
         System.out.println(skipList);
     }
 
+
     /** Print the bintree. */
     public void printBintree() {
-        System.out.println("printBintree will be implemented later..");
+        System.out.println("Bintree dump:");
+        int nodesPrinted = binTree.dumpTree();
+        System.out.println(nodesPrinted + " bintree nodes printed");
     }
+
 
     /** Print air objects in the database that collide. */
     public void printCollisions() {
-        System.out.println("printCollisions will be implemented later..");
+        System.out.println("The following collisions exist in the database:");
+        binTree.printCollisions();
     }
+
 
     /**
      * Print the records from the skip list from start to end. Printing is done
@@ -54,6 +69,7 @@ public class World {
         skipList.rangePrint(start, end);
     }
 
+
     /**
      * Print the air objects that intersect the given box.
      * 
@@ -62,6 +78,7 @@ public class World {
     public void printIntersection(Box box) {
         System.out.println("printIntersection will be implemented later..");
     }
+
 
     /**
      * Print an object if it exists in the database.
@@ -78,6 +95,7 @@ public class World {
         }
     }
 
+
     /**
      * Delete an object if it exists in the database.
      * 
@@ -89,11 +107,15 @@ public class World {
             System.out.println("Object |" + name + "| not in the database");
         }
         else {
+            // delete from the bintree
+            binTree.delete(found);
+            // delete from the skip list
             skipList.delete(name);
             System.out.println("Deleted |" + name + "| from the database");
         }
 
     }
+
 
     /**
      * Add an AirObject to the database. The object won't be added if there's
@@ -120,28 +142,28 @@ public class World {
         }
 
         skipList.insert(airObject.getName(), airObject);
+        binTree.insert(airObject);
         System.out.println(
                 airObject.getName() + " has been added to the database");
     }
 
+
     /**
-     * Check if a box has non-positive sizes for x, y, or z lengths.
+     * Check if an AirObject's box has non-positive sizes for x, y, or z
+     * lengths.
      * 
-     * @param  box The box object being checked.
-     * 
-     * @return       True if x, y or z length is non-positive.
+     * @return True if x, y or z length is non-positive.
      */
     private static boolean boxWithInvalidDimension(AirObject airObject) {
         return (airObject.getXwidth() <= 0) || (airObject.getYwidth() <= 0)
                 || (airObject.getZwidth() <= 0);
     }
 
+
     /**
-     * Check if a box doesn't overlap with the world at all.
+     * Check if an AirObject doesn't overlap with the world at all.
      * 
-     * @param  box The box object being checked.
-     *
-     * @return       True if box excludes the world.
+     * @return True if the world's box excludes the world.
      */
     private static boolean boxExcludesWorld(AirObject airObject) {
 
@@ -154,8 +176,8 @@ public class World {
         return (airObject.getXorig() + airObject.getXwidth() <= 0)
                 || (airObject.getYorig() + airObject.getYwidth() <= 0)
                 || (airObject.getZorig() + airObject.getZwidth() <= 0);
-
     }
+
 
     /**
      * Check if a box extends beyond the world.

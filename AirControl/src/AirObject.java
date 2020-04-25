@@ -32,7 +32,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return x origin
      */
     public int getXorig() {
-        return box.getOrig()[Box.dimX];
+        return box.getOrig()[Box.DIM_X];
     }
 
 
@@ -42,7 +42,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return x width
      */
     public int getXwidth() {
-        return box.getWidths()[Box.dimX];
+        return box.getWidths()[Box.DIM_X];
     }
 
 
@@ -52,7 +52,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return y origin
      */
     public int getYorig() {
-        return box.getOrig()[Box.dimY];
+        return box.getOrig()[Box.DIM_Y];
     }
 
 
@@ -62,7 +62,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return y width
      */
     public int getYwidth() {
-        return box.getWidths()[Box.dimY];
+        return box.getWidths()[Box.DIM_Y];
     }
 
 
@@ -72,7 +72,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return z origin
      */
     public int getZorig() {
-        return box.getOrig()[Box.dimZ];
+        return box.getOrig()[Box.DIM_Z];
     }
 
 
@@ -82,7 +82,7 @@ public class AirObject implements Comparable<AirObject> {
      * @return z width
      */
     public int getZwidth() {
-        return box.getWidths()[Box.dimZ];
+        return box.getWidths()[Box.DIM_Z];
     }
 
 

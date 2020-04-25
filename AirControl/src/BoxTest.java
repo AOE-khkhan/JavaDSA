@@ -18,30 +18,38 @@ public class BoxTest extends TestCase {
 
     /** Test the getters. **/
     public void testGetters() {
-        assertEquals(box.getOrig()[Box.dimX], 1);
-        assertEquals(box.getOrig()[Box.dimY], 2);
-        assertEquals(box.getOrig()[Box.dimZ], 3);
+        assertEquals(box.getOrig()[Box.DIM_X], 1);
+        assertEquals(box.getOrig()[Box.DIM_Y], 2);
+        assertEquals(box.getOrig()[Box.DIM_Z], 3);
         //
-        assertEquals(box.getWidths()[Box.dimX], 4);
-        assertEquals(box.getWidths()[Box.dimY], 6);
-        assertEquals(box.getWidths()[Box.dimZ], 8);
+        assertEquals(box.getWidths()[Box.DIM_X], 4);
+        assertEquals(box.getWidths()[Box.DIM_Y], 6);
+        assertEquals(box.getWidths()[Box.DIM_Z], 8);
     }
 
 
     /** Test has point method. */
     public void testHasPoint() {
-        Box box = new Box(new int[] {0, 0, 0, 256, 256, 256});
+        Box box1 = new Box(new int[] {0, 0, 0, 256, 256, 256});
 
-        assertTrue(box.hasPoint(new int[] {0, 0, 0}));
-        assertTrue(box.hasPoint(new int[] {100, 100, 100}));
-        assertTrue(box.hasPoint(new int[] {100, 0, 0}));
-        assertTrue(box.hasPoint(new int[] {0, 100, 0}));
-        assertTrue(box.hasPoint(new int[] {0, 0, 100}));
+        assertTrue(box1.hasPoint(new int[] {0, 0, 0}));
+        assertTrue(box1.hasPoint(new int[] {100, 100, 100}));
+        assertTrue(box1.hasPoint(new int[] {100, 0, 0}));
+        assertTrue(box1.hasPoint(new int[] {0, 100, 0}));
+        assertTrue(box1.hasPoint(new int[] {0, 0, 100}));
 
-        assertFalse(box.hasPoint(new int[] {256, 256, 256}));
-        assertFalse(box.hasPoint(new int[] {256, 0, 0}));
-        assertFalse(box.hasPoint(new int[] {0, 256, 0}));
-        assertFalse(box.hasPoint(new int[] {0, 0, 256}));
+        assertFalse(box1.hasPoint(new int[] {256, 256, 256}));
+        assertFalse(box1.hasPoint(new int[] {256, 0, 0}));
+        assertFalse(box1.hasPoint(new int[] {0, 256, 0}));
+        assertFalse(box1.hasPoint(new int[] {0, 0, 256}));
+
+        assertFalse(box1.hasPoint(new int[] {-1,  0,  0}));
+        assertFalse(box1.hasPoint(new int[] { 0, -1,  0}));
+        assertFalse(box1.hasPoint(new int[] { 0,  0, -1}));
+
+        assertFalse(box1.hasPoint(new int[] {300, 0, 0}));
+        assertFalse(box1.hasPoint(new int[] {0, 300, 0}));
+        assertFalse(box1.hasPoint(new int[] {0, 0, 300}));
     }
 
 
@@ -94,15 +102,15 @@ public class BoxTest extends TestCase {
         assertFuzzyEquals(binBox.toString(), "0, 0, 0, 1024, 1024, 1024");
 
         // split accross x axis and choose the first half
-        binBox = binBox.split(Box.dimX, firstHalf);
+        binBox = binBox.split(Box.DIM_X, firstHalf);
         assertFuzzyEquals(binBox.toString(), "0, 0, 0, 512, 1024, 1024");
 
         // split accross x axis and choose the second half
-        binBox = binBox.split(Box.dimX, secondHalf);
+        binBox = binBox.split(Box.DIM_X, secondHalf);
         assertFuzzyEquals(binBox.toString(), "256, 0, 0, 256, 1024, 1024");
 
         // split accross z axis and choose the second half
-        binBox = binBox.split(Box.dimZ, secondHalf);
+        binBox = binBox.split(Box.DIM_Z, secondHalf);
         assertFuzzyEquals(binBox.toString(), "256, 0, 512, 256, 1024, 512");
     }
 }

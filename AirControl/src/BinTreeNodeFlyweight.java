@@ -10,12 +10,14 @@ public final class BinTreeNodeFlyweight extends BinTreeNodeLeaf {
 
 
     /** The singleton flyweight instance. */
-    private static BinTreeNodeFlyweight SINGLETON_FLYWEIGHT =
+    private static final BinTreeNodeFlyweight SINGLETON_FLYWEIGHT =
             new BinTreeNodeFlyweight();
 
 
     /** Default constructor made private for flyweight singleton. */
-    private BinTreeNodeFlyweight() {}
+    private BinTreeNodeFlyweight() {
+        // empty
+    }
 
 
     /**
@@ -34,7 +36,6 @@ public final class BinTreeNodeFlyweight extends BinTreeNodeLeaf {
     public BinTreeNode insert(AirObject airObject, BinBox box, int nodeLevel) {
         return new BinTreeNodeLeaf().insert(airObject, box, nodeLevel);
     }
-
 
     /**
      * Get reference to the singleton flyweight object.

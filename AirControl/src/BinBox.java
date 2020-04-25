@@ -29,33 +29,32 @@ public class BinBox extends Box {
      *               [1] y width of the box
      *               [2] z width of the box
      */
-    protected BinBox(int[] orig, int[] width) {
-        super(orig, width);
+    protected BinBox(int[] orig, int[] widths) {
+        super(orig, widths);
     }
 
     /**
      * Split the box in half accross an axis.
      * 
-     * @param  axis      The Box.dimX, dimY or dimZ.
+     * @param  axis      The Box.DIM_X, DIM_Y or DIM_Z.
      * @param  whichHalf The halved box to get.
      *                   0 for the first half
      *                   1 for the second half.
      * 
      * @return           The half of the BinBox obtained by splitting accross @c
-     *                   axis and
-     *                   chosen by @c whichHalf.
+     *                   axis and chosen by @c whichHalf.
      */
-    public BinBox split(long axis, int whichHalf) {
+    public BinBox split(int axis, int whichHalf) {
         // split accross the axis
-        int[] splitWidths = new int[Box.numDims];
-        for (int ii = 0; ii < Box.numDims; ++ii) {
+        int[] splitWidths = new int[Box.NUM_DIMS];
+        for (int ii = 0; ii < Box.NUM_DIMS; ++ii) {
             splitWidths[ii] =
                     (ii == axis) ? getWidths()[ii] / 2 : getWidths()[ii];
         }
 
         // decide the origin based on whichHalf
-        int[] splitOrig = new int[Box.numDims];
-        for (int ii = 0; ii < Box.numDims; ++ii) {
+        int[] splitOrig = new int[Box.NUM_DIMS];
+        for (int ii = 0; ii < Box.NUM_DIMS; ++ii) {
             splitOrig[ii] = getOrig()[ii];
             splitOrig[ii] += (ii == axis) ? whichHalf * splitWidths[ii] : 0;
         }

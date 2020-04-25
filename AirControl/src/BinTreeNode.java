@@ -7,6 +7,8 @@
  *
  */
 public interface BinTreeNode {
+
+
     /**
      * Check if the node is a leaf node.
      * 
@@ -28,4 +30,19 @@ public interface BinTreeNode {
      * @return           The node after the insertion.
      */
     public BinTreeNode insert(AirObject airObject, BinBox box, int nodeLevel);
+
+
+    /**
+     * Delete an AirObject from the tree.
+     * 
+     * @param  airObject The AirObject to be deleted.
+     * @param  box       The Box information passed to current node to help
+     *                   locate the AirObject.
+     * @param  nodeLevel The level of the current node in the tree. The root is
+     *                   at the level zero and the level increases down the
+     *                   tree.
+     * 
+     * @return           The node after the deletion.
+     */
+    public BinTreeNode delete(AirObject airObject, BinBox box, int nodeLevel);
 }

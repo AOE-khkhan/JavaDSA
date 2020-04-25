@@ -22,15 +22,8 @@ public class BinTree {
     private BinTreeNode root;
 
 
-    /**
-     * The dimension in one direction for the 3d world space applicable to this
-     * BinTree object.
-     */
-    private final int worldSize;
-
-
     /** The BinBox object for the root node. */
-    private final BinBox worldBinBox;
+    private final BinBox rootBinBox;
 
 
     /**
@@ -40,8 +33,7 @@ public class BinTree {
      *                  applicable to this BinTree object.
      */
     public BinTree(int worldSize) {
-        this.worldSize = worldSize;
-        worldBinBox = new BinBox(this.worldSize);
+        rootBinBox = new BinBox(worldSize);
         root = fly;
     }
 
@@ -52,16 +44,34 @@ public class BinTree {
      * @param airObject The AirObject to be inserted.
      */
     public void insert(AirObject airObject) {
-        root = root.insert(airObject, worldBinBox, 0);
+        root = root.insert(airObject, rootBinBox, 0);
     }
 
 
-    /** Print the BinTree. */
-    public void dumpTree() {
-        int nodesPrinted = dumpNode(root, "");
-        System.out.println(nodesPrinted + " bintree nodes printed");
+    /**
+     * Delete an AirObject from the tree.
+     * 
+     * @param airObject The AirObject to be deleted.
+     */
+    public void delete(AirObject airObject) {
+        root = root.delete(airObject, rootBinBox, 0);
     }
 
+
+    /**
+     * Print the BinTree.
+     * 
+     * @return Number of nodes printed.
+     */
+    public int dumpTree() {
+        return dumpNode(root, "");
+    }
+
+
+    /** Print the intersections in the tree. */
+    public void printCollisions() {
+        printCollInNode(root, rootBinBox, 0);
+    }
 
     /**
      * Print a node of the BinTree.
@@ -78,26 +88,97 @@ public class BinTree {
             if (leaf.isEmpty()) {
                 // printing the flyweight
                 System.out.println(leftPad + "E");
-                return 1;
+                return 1; // printed this node
             }
             else {
-                Scanner sc = new Scanner(node.toString());
-                while (sc.hasNext()) {
-                    System.out.println(leftPad + sc.nextLine());
+                LinkedList<AirObject> records =
+                        ((BinTreeNodeLeaf) node).getRecords();
+
+                System.out.println(leftPad + "Leaf with " + records.getCount()
+                        + " objects:");
+
+                for (records.moveToHead(); !records.atEnd(); records
+                        .curseToNext()) {
+                    System.out.println(
+                            leftPad + "(" + records.yieldCurrNode() + ")");
                 }
-                sc.close();
-                return 1;
+
+                return 1; // printed this node
             }
         }
         else {
             // printing an internal node
             System.out.println(leftPad + "I");
-            int nodesPrinted = 1; // just printed this internal node.
+
+            int nodesPrinted = 1; // printed this internal node.
             BinTreeNodeInternal intrnl = (BinTreeNodeInternal) node;
             for (BinTreeNode child : intrnl.getChildren()) {
                 nodesPrinted += dumpNode(child, leftPad + "  ");
             }
+
             return nodesPrinted;
+        }
+    }
+
+
+    /**
+     * Print unique intersections in a node.
+     * 
+     * @param node      The node to be printed intersections from.
+     * @param box       A BinBox corresponding to the node.
+     * @param nodeLevel The level of the node.
+     */
+    private static void printCollInNode(BinTreeNode node, BinBox box,
+            int nodeLevel) {
+        if (node.isLeaf()) {
+            // Found a leaf node.
+            // Iterate through its records and print pair of records with
+            // intersecting boxes
+            LinkedList<AirObject> records =
+                    ((BinTreeNodeLeaf) node).getRecords();
+            int ocounter = 0;
+            //@formatter:off
+            for (records.moveToHead();
+                    !records.atEnd();
+                    records.curseToNext()) {
+                // the outer loop is cursed using the cursor of the linked list
+
+                AirObject rec1 = records.yieldCurrNode();
+
+                for (int icounter = ocounter + 1;
+                        icounter < records.getCount();
+                        ++icounter) {
+            //@formatter:on
+                    // the inner loop is cursed using indices
+
+
+                    AirObject rec2 = records.yieldIndex(icounter);
+
+                    Box isecBox = rec1.getBox().getIntersection(rec2.getBox());
+
+                    if (box.hasPoint(isecBox.getOrig())) {
+                        // We see if the origin of the intersection falls in the
+                        // current node's BinBox, to avoid printing the same
+                        // pair of intersecting objects from multiple nodes in
+                        // the tree.
+                        System.out.println("(" + rec1 + ") and (" + rec2 + ")");
+                    }
+                }
+                ++ocounter;
+            }
+        }
+        else {
+            // children of the internal node
+            BinTreeNode[] children = ((BinTreeNodeInternal) node).getChildren();
+
+            // descriminator dimension
+            int descriDim = nodeLevel % Box.NUM_DIMS;
+
+            // for each children call printIsecsInNode
+            for (int ii = 0; ii < children.length; ++ii) {
+                printCollInNode(children[ii], box.split(descriDim, ii),
+                        nodeLevel + 1);
+            }
         }
     }
 }

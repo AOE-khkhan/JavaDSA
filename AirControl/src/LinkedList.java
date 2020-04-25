@@ -8,17 +8,23 @@
  * @version     Feb 2020
  */
 public class LinkedList<E extends Comparable<E>> {
+
+
     /** The head node of the list. */
     private Node headerNode;
+
 
     /** The tail node of the list. */
     private Node trailerNode;
 
+
     /** The current node used for iterating. */
     private Node currNode;
 
+
     /** The number of items in the list. */
     private int count;
+
 
     /** Empty parameter LinkedList constructor. */
     LinkedList() {
@@ -29,6 +35,7 @@ public class LinkedList<E extends Comparable<E>> {
         count = 0;
     }
 
+
     /**
      * Check if the list is empty.
      * 
@@ -37,6 +44,7 @@ public class LinkedList<E extends Comparable<E>> {
     public boolean isEmpty() {
         return (headerNode.getNext() == trailerNode);
     }
+
 
     /**
      * Append data to the list.
@@ -50,6 +58,7 @@ public class LinkedList<E extends Comparable<E>> {
         currNode.setNext(trailerNode);
         ++count;
     }
+
 
     /**
      * Insert data in the list at the position that has an existing data is
@@ -77,6 +86,7 @@ public class LinkedList<E extends Comparable<E>> {
         append(data);
     }
 
+
     /**
      * Remove the first occurrence of data if exists.
      * 
@@ -99,6 +109,7 @@ public class LinkedList<E extends Comparable<E>> {
         //@formatter:on
     }
 
+
     /**
      * Pop the datum at the beginning of the list.
      * 
@@ -113,6 +124,7 @@ public class LinkedList<E extends Comparable<E>> {
         remove(data);
         return data;
     }
+
 
     /** Make the current node the head node. */
     public void moveCurrNodeToFront() {
@@ -134,6 +146,7 @@ public class LinkedList<E extends Comparable<E>> {
         }
     }
 
+
     /**
      * Get the number of items in the list.
      * 
@@ -142,6 +155,7 @@ public class LinkedList<E extends Comparable<E>> {
     public int getCount() {
         return count;
     }
+
 
     /**
      * Move the cursor node towards the end. Moving stops once the cursor hits
@@ -154,6 +168,7 @@ public class LinkedList<E extends Comparable<E>> {
         }
     }
 
+
     /**
      * Get the data from the Node pointed by the currNode.
      *
@@ -162,6 +177,7 @@ public class LinkedList<E extends Comparable<E>> {
     public E yieldCurrNode() {
         return currNode.getData();
     }
+
 
     /**
      * Check if the list has a datum.
@@ -180,6 +196,7 @@ public class LinkedList<E extends Comparable<E>> {
         }
         return false;
     }
+
 
     /**
      * Yield the data stored at a given position when counted from the head.
@@ -213,6 +230,7 @@ public class LinkedList<E extends Comparable<E>> {
         return data;
     }
 
+
     /**
      * Check if the current node is at the end of the list.
      * 
@@ -222,11 +240,13 @@ public class LinkedList<E extends Comparable<E>> {
         return currNode == trailerNode;
     }
 
+
     /** Move the cursor to the head node. */
     public void moveToHead() {
         moveToFront();
         curseToNext();
     }
+
 
     /** Move the cursor to the tail node. */
     public void moveToTail() {
@@ -237,10 +257,12 @@ public class LinkedList<E extends Comparable<E>> {
         }
     }
 
+
     /** Move the cursor node to the header node of the list. */
     private void moveToFront() {
         currNode = headerNode;
     }
+
 
     /** Move the cursor node to the trailer node of the list. */
     private void moveToEnd() {
@@ -250,10 +272,15 @@ public class LinkedList<E extends Comparable<E>> {
 
     /** The node data structure used in the LinkedList<E> class. */
     private class Node {
+
+
         /** Data stored by this Node. */
         private E data;
+
+
         /** Reference to the linked Node. */
         private Node next;
+
 
         /** Construct from null. */
         Node() {
@@ -261,24 +288,29 @@ public class LinkedList<E extends Comparable<E>> {
             this.next = null;
         }
 
+
         /** Getter for data. */
         public E getData() {
             return this.data;
         }
+
 
         /** Getter for next. */
         public Node getNext() {
             return this.next;
         }
 
+
         /** Setter for data. */
         public void setData(E data) {
             this.data = data;
         }
+
 
         /** Setter for next. */
         public void setNext(Node next) {
             this.next = next;
         }
     } // class Node
-}
+
+} // class LinkedList
