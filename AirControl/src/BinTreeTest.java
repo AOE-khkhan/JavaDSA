@@ -165,4 +165,81 @@ public class BinTreeTest extends TestCase {
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
     }
 
+
+    /** Test printCollisions method. */
+    public void testPrintCollisions() {
+        String expectedOutput =
+                "\nTesting BinTree printCollisions\n---------------\n";
+        System.out.print(expectedOutput);
+
+        // let's add an airplane object
+        AirObject airObject = new Airplane("Air1",
+                new Box(new int[] {0, 10, 1, 20, 2, 30}), "USAir", 717, 4);
+        tree.insert(airObject);
+
+        // adding a balloon
+        airObject = new Balloon("B1",
+                new Box(new int[] {10, 11, 11, 21, 12, 31}), "hot_air", 15);
+        tree.insert(airObject);
+
+        // adding another airplane
+        airObject = new Airplane("Air2",
+                new Box(new int[] {100, 1010, 101, 924, 2, 900}), "Delta", 17,
+                2);
+        tree.insert(airObject);
+
+        // adding a bird
+        airObject = new Bird("pterodactyl",
+                new Box(new int[] {0, 100, 20, 10, 50, 50}), "Dinosaur", 1);
+        tree.insert(airObject);
+
+        tree.printCollisions();
+
+        expectedOutput += "(Airplane Air1 0 10 1 20 2 30 USAir 717 4) and "
+                + "(Balloon B1 10 11 11 21 12 31 hot_air 15)\n"
+                + "(Airplane Air1 0 10 1 20 2 30 USAir 717 4) and "
+                + "(Bird pterodactyl 0 100 20 10 50 50 Dinosaur 1)\n"
+                + "(Balloon B1 10 11 11 21 12 31 hot_air 15) and "
+                + "(Bird pterodactyl 0 100 20 10 50 50 Dinosaur 1)\n";
+
+        assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
+
+    }
+
+    /** Test the printIntersections method. */
+    public void testPrintIntersections() {
+        String expectedOutput =
+                "\nTesting BinTree printIntersections\n---------------\n";
+        System.out.print(expectedOutput);
+
+        // let's add an airplane object
+        AirObject airObject = new Airplane("Air1",
+                new Box(new int[] {0, 10, 1, 20, 2, 30}), "USAir", 717, 4);
+        tree.insert(airObject);
+
+        // adding a balloon
+        airObject = new Balloon("B1",
+                new Box(new int[] {10, 11, 11, 21, 12, 31}), "hot_air", 15);
+        tree.insert(airObject);
+
+        // adding another airplane
+        airObject = new Airplane("Air2",
+                new Box(new int[] {100, 1010, 101, 924, 2, 900}), "Delta", 17,
+                2);
+        tree.insert(airObject);
+
+        // adding a bird
+        airObject = new Bird("pterodactyl",
+                new Box(new int[] {0, 100, 20, 10, 50, 50}), "Dinosaur", 1);
+        tree.insert(airObject);
+
+        //
+        tree.printIntersections(new Box(new int[] {0, 0, 0, 100, 100, 100}));
+
+        expectedOutput += "Airplane Air1 0 10 1 20 2 30 USAir 717 4\n"
+                + "Balloon B1 10 11 11 21 12 31 hot_air 15\n";
+
+        assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
+    }
+
 }

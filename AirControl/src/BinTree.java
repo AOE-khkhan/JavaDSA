@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 /**
  * A BinTree class for storing AirObjects'.
  *
@@ -73,6 +71,18 @@ public class BinTree {
         printCollInNode(root, rootBinBox, 0);
     }
 
+
+    /**
+     * Print the records in the tree that intersect with a given Box object.
+     * 
+     * @param  box The box that is checked for intersection with the records.
+     * 
+     * @return     Number of nodes visited.
+     */
+    public int printIntersections(Box box) {
+        return printIsecsInNode(box, root, rootBinBox, 0);
+    }
+
     /**
      * Print a node of the BinTree.
      * 
@@ -122,9 +132,9 @@ public class BinTree {
 
 
     /**
-     * Print unique intersections in a node.
+     * Print unique collisions in a node.
      * 
-     * @param node      The node to be printed intersections from.
+     * @param node      The node to be printed collisions from.
      * @param box       A BinBox corresponding to the node.
      * @param nodeLevel The level of the node.
      */
@@ -132,8 +142,8 @@ public class BinTree {
             int nodeLevel) {
         if (node.isLeaf()) {
             // Found a leaf node.
-            // Iterate through its records and print pair of records with
-            // intersecting boxes
+            // Iterate through its records and
+            // print pair of records that collide
             LinkedList<AirObject> records =
                     ((BinTreeNodeLeaf) node).getRecords();
             int ocounter = 0;
@@ -159,7 +169,7 @@ public class BinTree {
                     if (box.hasPoint(isecBox.getOrig())) {
                         // We see if the origin of the intersection falls in the
                         // current node's BinBox, to avoid printing the same
-                        // pair of intersecting objects from multiple nodes in
+                        // pair of colliding objects from multiple nodes in
                         // the tree.
                         System.out.println("(" + rec1 + ") and (" + rec2 + ")");
                     }
@@ -174,11 +184,74 @@ public class BinTree {
             // descriminator dimension
             int descriDim = nodeLevel % Box.NUM_DIMS;
 
-            // for each children call printIsecsInNode
+            // for each children call printCollInNode
             for (int ii = 0; ii < children.length; ++ii) {
                 printCollInNode(children[ii], box.split(descriDim, ii),
                         nodeLevel + 1);
             }
+        }
+    }
+
+
+    /**
+     * Print objects in a node that intersect with a given Box.
+     * 
+     * @param  box       The box with which records might intersect.
+     * @param  node      The node to be printed intersections from.
+     * @param  binBox    A BinBox corresponding to the node.
+     * @param  nodeLevel The level of the node.
+     * 
+     * @return           Number of nodes visited.
+     */
+    private static int printIsecsInNode(Box box, BinTreeNode node,
+            BinBox binBox, int nodeLevel) {
+
+        if (node.isLeaf()) {
+            // loop through the leaf's records
+            LinkedList<AirObject> records =
+                    ((BinTreeNodeLeaf) node).getRecords();
+            //@formatter:off
+            for (records.moveToHead();
+                    !records.atEnd();
+                    records.curseToNext()) {
+            //@formatter:on
+                Box recordBox = records.yieldCurrNode().getBox();
+                if (box.intersects(recordBox)) {
+                    // the param box intersects with the object's box
+                    // now check if the origin of the intersection
+                    // falls into the binBox of the current node.
+                    int[] orig = box.getIntersection(recordBox).getOrig();
+
+                    if (binBox.hasPoint(orig)) {
+                        System.out.println(records.yieldCurrNode());
+                    }
+                }
+            }
+            return 1; // visited this leaf node
+        }
+        else {
+            // got an internal node
+            int first = 0;
+            int second = 1;
+            // the descriminator dimension
+            int descriDim = nodeLevel % Box.NUM_DIMS;
+            // the children of the internal node
+            BinTreeNode[] children = ((BinTreeNodeInternal) node).getChildren();
+
+            // call printIsecsInNode for each children ONLY if their
+            // corresponding BinBoxes already intersect the param box
+            BinBox firstBinBox = binBox.split(descriDim, first);
+            BinBox secondBinBox = binBox.split(descriDim, second);
+
+            //@formatter:off
+            return (box.intersects(firstBinBox)
+                    ? printIsecsInNode(box, children[first],
+                                        firstBinBox, nodeLevel + 1) : 0)
+                    + (box.intersects(secondBinBox)
+                       ? printIsecsInNode(box, children[second],
+                           secondBinBox, nodeLevel + 1) : 0) + 1;
+            //@formatter:on
+            // + 1 at the end is because we just visited this internal node
         }
     }
 }

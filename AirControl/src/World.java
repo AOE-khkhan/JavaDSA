@@ -76,7 +76,9 @@ public class World {
      * @param box A box object.
      */
     public void printIntersection(Box box) {
-        System.out.println("printIntersection will be implemented later..");
+        System.out.println("The following objects intersect (" + box + "):");
+        int nodesVisited = binTree.printIntersections(box);
+        System.out.println(nodesVisited + " nodes were visited in the bintree");
     }
 
 
