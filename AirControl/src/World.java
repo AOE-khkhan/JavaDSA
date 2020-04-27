@@ -76,6 +76,13 @@ public class World {
      * @param box A box object.
      */
     public void printIntersection(Box box) {
+        // assert valid box
+        AirObject dummy = new Balloon("", box, "", 0);
+        if (boxWithInvalidDimension(dummy)) {
+            printBadBoxInvalidDims(box);
+            return;
+        }
+
         System.out.println("The following objects intersect (" + box + "):");
         int nodesVisited = binTree.printIntersections(box);
         System.out.println(nodesVisited + " nodes were visited in the bintree");
@@ -109,13 +116,12 @@ public class World {
             System.out.println("Object |" + name + "| not in the database");
         }
         else {
-            // delete from the bintree
-            binTree.delete(found);
             // delete from the skip list
             skipList.delete(name);
+            // delete from the bintree
+            binTree.delete(found);
             System.out.println("Deleted |" + name + "| from the database");
         }
-
     }
 
 
@@ -127,14 +133,12 @@ public class World {
      */
     public void addObject(AirObject airObject) {
         if (World.boxWithInvalidDimension(airObject)) {
-            System.out.println("Bad box (" + airObject.getBox()
-                    + "). All widths must be positive.");
+            printBadBoxInvalidDims(airObject.getBox());
             return;
         }
         else if (boxExcludesWorld(airObject)
                 || boxExtendsBeyondWorld(airObject)) {
-            System.out.println("Bad box (" + airObject.getBox() + "). "
-                    + "All boxes must be entirely within the world box.");
+            printBadBoxOutofWorld(airObject.getBox());
             return;
         }
         else if (skipList.find(airObject.getName()) != null) {
@@ -199,5 +203,27 @@ public class World {
                         + airObject.getYwidth() > World.SIZE_ONE_DIM)
                 || (airObject.getZorig()
                         + airObject.getZwidth() > World.SIZE_ONE_DIM);
+    }
+
+
+    /**
+     * Print message for a bad box whose dimensions extend beyond the world.
+     * 
+     * @param box A bad box.
+     */
+    private static void printBadBoxOutofWorld(Box box) {
+        System.out.println("Bad box (" + box + "). "
+                + "All boxes must be entirely within the world box.");
+    }
+
+
+    /**
+     * Print message for a bad box that has non-positive widths.
+     * 
+     * @param box A bad box.
+     */
+    private static void printBadBoxInvalidDims(Box box) {
+        System.out.println(
+                "Bad box (" + box + "). " + "All widths must be positive.");
     }
 }

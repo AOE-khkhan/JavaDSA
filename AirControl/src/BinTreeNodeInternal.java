@@ -23,7 +23,7 @@ public class BinTreeNodeInternal implements BinTreeNode {
      * 
      * @return The array of children node.
      */
-    public BinTreeNode[] getChildren() {
+    protected BinTreeNode[] getChildren() {
         return children;
     }
 
@@ -90,7 +90,7 @@ public class BinTreeNodeInternal implements BinTreeNode {
      *                   at the level zero and the level increases down the
      *                   tree.
      * 
-     * @return           The node after the deletion.
+     * @return           The node after deletion.
      */
     @Override
     public BinTreeNode delete(AirObject airObject, BinBox box, int nodeLevel) {
@@ -116,22 +116,21 @@ public class BinTreeNodeInternal implements BinTreeNode {
             }
         }
 
-        //@formatter:off
         //
         // At this point all the children are leaf nodes. We now check if the
         // decomposition rule is violated or not.
         //
-        // Decomposition rule for this project says there can at most three
-        // records in node without a common intersection among all of their
-        // boxes. However there can be arbitrary number of records in a node
-        // if all the record's boxes have a common intersection.
+        // Decomposition rule for this project says there can be at most three
+        // records in a leaf node without a common intersection among all of
+        // their boxes. However there can be arbitrary number of records in a
+        // node if all the record's boxes have a common intersection.
         //
         //
+        //@formatter:off
         // We will collect all the unique record entries from the children.
-        //   - If there are no more than three records, we must merge.
-        //   - If there are more than three records but all of them share
-        //     a common intersection, we must merge.
-        //
+        // - If there are no more than three records, we must merge.
+        // - If there are more than three records but all of them share
+        //   a common intersection, we must merge.
         //@formatter:on
 
         LinkedList<AirObject> uniqueRecords = new LinkedList<AirObject>();
@@ -166,7 +165,7 @@ public class BinTreeNodeInternal implements BinTreeNode {
         // should be merged.
 
         // Set the initial intersection to be the first object's box, then curse
-        // through the end of the list computing intersection of previous
+        // through the end of the list computing intersection between previous
         // intersection and the current record's box.
         uniqueRecords.moveToHead();
         Box isecBox = uniqueRecords.yieldCurrNode().getBox();
@@ -182,7 +181,7 @@ public class BinTreeNodeInternal implements BinTreeNode {
         // If control reaches this point, all the records do have a common
         // intersection. Must be merged.
         return getMergedNode(uniqueRecords, box, nodeLevel);
-    } // method delete(...)
+    } // method delete record
 
 
     /**
@@ -196,7 +195,7 @@ public class BinTreeNodeInternal implements BinTreeNode {
             int nodeLevel) {
         BinTreeNode merged = BinTreeNodeFlyweight.getInstance();
         for (records.moveToHead(); !records.atEnd(); records.curseToNext()) {
-            merged.insert(records.yieldCurrNode(), box, nodeLevel);
+            merged = merged.insert(records.yieldCurrNode(), box, nodeLevel);
         }
         return merged;
     }

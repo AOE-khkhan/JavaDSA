@@ -11,7 +11,7 @@ public class BinTree {
 
     /**
      * Keep a flyweight object initialized so that we won't be recreating it
-     * when no instance of BinTreeNodeFlyweight class exist.
+     * when no instance of BinTreeNodeFlyweight node exists.
      */
     private final BinTreeNodeFlyweight fly = BinTreeNodeFlyweight.getInstance();
 
@@ -158,12 +158,16 @@ public class BinTree {
                 for (int icounter = ocounter + 1;
                         icounter < records.getCount();
                         ++icounter) {
-            //@formatter:on
                     // the inner loop is cursed using indices
+            //@formatter:on
 
 
                     AirObject rec2 = records.yieldIndex(icounter);
 
+                    if (!rec1.getBox().intersects(rec2.getBox())) {
+                        // no intersection between objects
+                        continue;
+                    }
                     Box isecBox = rec1.getBox().getIntersection(rec2.getBox());
 
                     if (box.hasPoint(isecBox.getOrig())) {
@@ -230,28 +234,23 @@ public class BinTree {
             return 1; // visited this leaf node
         }
         else {
-            // got an internal node
-            int first = 0;
-            int second = 1;
             // the descriminator dimension
             int descriDim = nodeLevel % Box.NUM_DIMS;
             // the children of the internal node
             BinTreeNode[] children = ((BinTreeNodeInternal) node).getChildren();
 
-            // call printIsecsInNode for each children ONLY if their
-            // corresponding BinBoxes already intersect the param box
-            BinBox firstBinBox = binBox.split(descriDim, first);
-            BinBox secondBinBox = binBox.split(descriDim, second);
+            // for each children call printIsecsInNode if their corresponding
+            // BinBoxes' intersect param box
+            int numVisited = 1; // just visited this node
+            for (int ii = 0; ii < children.length; ++ii) {
+                BinBox childBinBox = binBox.split(descriDim, ii);
+                if (box.intersects(childBinBox)) {
+                    numVisited += printIsecsInNode(box, children[ii],
+                            childBinBox, nodeLevel + 1);
+                }
+            }
+            return numVisited;
 
-            //@formatter:off
-            return (box.intersects(firstBinBox)
-                    ? printIsecsInNode(box, children[first],
-                                        firstBinBox, nodeLevel + 1) : 0)
-                    + (box.intersects(secondBinBox)
-                       ? printIsecsInNode(box, children[second],
-                           secondBinBox, nodeLevel + 1) : 0) + 1;
-            //@formatter:on
-            // + 1 at the end is because we just visited this internal node
         }
     }
 }

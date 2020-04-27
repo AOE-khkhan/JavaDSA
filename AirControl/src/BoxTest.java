@@ -43,9 +43,9 @@ public class BoxTest extends TestCase {
         assertFalse(box1.hasPoint(new int[] {0, 256, 0}));
         assertFalse(box1.hasPoint(new int[] {0, 0, 256}));
 
-        assertFalse(box1.hasPoint(new int[] {-1,  0,  0}));
-        assertFalse(box1.hasPoint(new int[] { 0, -1,  0}));
-        assertFalse(box1.hasPoint(new int[] { 0,  0, -1}));
+        assertFalse(box1.hasPoint(new int[] {-1, 0, 0}));
+        assertFalse(box1.hasPoint(new int[] {0, -1, 0}));
+        assertFalse(box1.hasPoint(new int[] {0, 0, -1}));
 
         assertFalse(box1.hasPoint(new int[] {300, 0, 0}));
         assertFalse(box1.hasPoint(new int[] {0, 300, 0}));
@@ -74,6 +74,10 @@ public class BoxTest extends TestCase {
         assertFalse(box1.intersects(box2));
 
         box2 = new Box(new int[] {0, 0, 512, 256, 256, 256});
+        assertFalse(box1.intersects(box2));
+
+        box1 = new Box(new int[] {0, 0, 0, 50, 10, 20});
+        box2 = new Box(new int[] {50, 0, 0, 10, 10, 50});
         assertFalse(box1.intersects(box2));
     }
 

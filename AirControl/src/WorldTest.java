@@ -20,8 +20,8 @@ public class WorldTest extends TestCase {
     public void testPrintSkipList() {
         System.out.println("\nTesting print skip list\n--------------");
 
-        world.addObject(new Bird("crit1",
-                new Box(new int[] {0, 0, 0, 5, 5, 5}), "crow", 5));
+        world.addObject(new Bird("crit1", new Box(new int[] {0, 0, 0, 5, 5, 5}),
+                "crow", 5));
         world.printSkiplist();
         assertTrue(systemOut().getHistory()
                 .endsWith("1 skiplist nodes printed\n"));
@@ -141,6 +141,21 @@ public class WorldTest extends TestCase {
         world.addObject(bird);
         expectedOutput += "Bad box (" + box.toString() + ") "
                 + "All boxes must be entirely within the world box.\n";
+        assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
+
+    }
+
+    /** Test handling of invalid box specs: part 3. */
+    public void testInvalidBox3() {
+        String expectedOutput =
+                "\nTesting inavlid box handling: part 3\n-------------\n";
+        System.out.print(expectedOutput);
+        Box box = new Box(new int[] {50, 0, 0, -5, 5, 5});
+
+        world.printIntersection(box);
+        expectedOutput += "Bad box (" + box.toString() + ") "
+                + "All widths must be positive.\n";
+
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
 
     }
