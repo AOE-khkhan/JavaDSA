@@ -109,6 +109,7 @@ public class BinTreeNodeLeaf implements BinTreeNode {
         if (isEmpty()) {
             return BinTreeNodeFlyweight.getInstance();
         }
+        // else
         return this;
     }
 
@@ -126,6 +127,8 @@ public class BinTreeNodeLeaf implements BinTreeNode {
      */
     private boolean shouldSplit() {
         if (records.getCount() <= MAX_RECORDS) {
+            // not enough records present to split
+            // return false to indicate no splitting required
             return false;
         }
 

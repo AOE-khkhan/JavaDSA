@@ -37,14 +37,19 @@ public class LinkedListTest extends TestCase {
         strList.append("Name");
         strList.append("Class");
 
+        assertEquals(strList.getCount(), 2);
         boolean removed = strList.remove("Name");
         assertEquals(removed, true);
+        assertEquals(strList.getCount(), 1);
+        
 
         removed = strList.remove("Name");
         assertEquals(removed, false);
+        assertEquals(strList.getCount(), 1);
 
         removed = strList.remove("Class");
         assertEquals(removed, true);
+        assertEquals(strList.getCount(), 0);
     }
 
     /** Test the method is empty. */
@@ -136,8 +141,8 @@ public class LinkedListTest extends TestCase {
         assertNull(strList.popFront());
     }
 
-    /** Test the bubbleNodeToFront method. */
-    public void testBubbleNodeToFront() {
+    /** Test the moveCurrNodeToFront method. */
+    public void testMoveCurrNodeToFront() {
         strList.append("Name");
         strList.append("Class");
         strList.append("Address");
@@ -145,7 +150,7 @@ public class LinkedListTest extends TestCase {
         strList.moveToHead();
         strList.curseToNext();
         assertEquals(strList.yieldCurrNode(), "Class");
-        // "Class" is now bubbled to the front
+        // "Class" is now moved to the front
         strList.moveCurrNodeToFront();
 
         assertEquals(strList.popFront(), "Class");

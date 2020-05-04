@@ -107,6 +107,11 @@ public class BinTreeTest extends TestCase {
                         + "(Bird tota 10 10 10 5 5 5 Parrot 1)\n";
         //@formatter:on
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
+        // get code coverage
+        airObject = new Bird("thesaurus",
+                new Box(new int[] {20, 20, 20, 50, 50, 50}), "Dinosaur", 1);
+        tree.insert(airObject);
+        tree.delete(airObject);
     }
 
 
@@ -150,11 +155,47 @@ public class BinTreeTest extends TestCase {
                 + "  Leaf with 1 objects:\n"
                 + "  (Balloon B1 512 0 0 512 512 512 hot_air 15)\n";
 
+        assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
+
+        // get code coverage
         tree.delete(air1);
         tree.delete(balloon);
         tree.delete(air2);
         tree.delete(bird);
 
+        tree.insert(rocket);
+
+        // let's add an airplane object
+        air1 = new Airplane("Air1", new Box(new int[] {0, 0, 0, 256, 256, 256}),
+                "USAir", 717, 4);
+        tree.insert(air1);
+
+        // adding another airplane
+        air2 = new Airplane("Air2",
+                new Box(new int[] {0, 1024 - 256, 0, 256, 256, 256}), "Delta",
+                17, 2);
+        tree.insert(air2);
+
+        // adding a bird
+        bird = new Bird("pterodactyl",
+                new Box(new int[] {0, 0, 1024 - 256, 256, 256, 256}),
+                "Dinosaur", 1);
+        tree.insert(bird);
+
+        // adding a balloon
+        balloon = new Balloon("B1",
+                new Box(new int[] {1024 - 256, 0, 0, 256, 256, 256}), "hot_air",
+                15);
+        tree.insert(balloon);
+
+        tree.delete(rocket);
+        tree.delete(air1);
+        tree.delete(balloon);
+        tree.delete(air2);
+        tree.delete(bird);
+
+
+        // System.out.println("Getting code coverage for deletion..");
         tree.dumpTree();
         expectedOutput += "E\n";
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
@@ -251,10 +292,10 @@ public class BinTreeTest extends TestCase {
     }
 
 
-    /** Test the printIntersections method. */
-    public void testPrintIntersections() {
+    /** Test the intersections method. */
+    public void testIntersections() {
         String expectedOutput =
-                "\nTesting BinTree printIntersections\n---------------\n";
+                "\nTesting BinTree intersections\n---------------\n";
         System.out.print(expectedOutput);
 
         // let's add an airplane object
@@ -279,7 +320,7 @@ public class BinTreeTest extends TestCase {
         tree.insert(airObject);
 
         //
-        tree.printIntersections(new Box(new int[] {0, 0, 0, 100, 100, 100}));
+        tree.intersections(new Box(new int[] {0, 0, 0, 100, 100, 100}));
 
         expectedOutput += "Airplane Air1 0 10 1 20 2 30 USAir 717 4\n"
                 + "Balloon B1 10 11 11 21 12 31 hot_air 15\n";

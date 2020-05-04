@@ -57,26 +57,18 @@ public class BinTreeNodeInternal implements BinTreeNode {
         // for current node.
         int descriDim = nodeLevel % Box.NUM_DIMS;
 
-        // indexes for first and second
-        int first = 0;
-        int second = 1;
-
-        BinBox firstBin = box.split(descriDim, first);
-        BinBox secondBin = box.split(descriDim, second);
-
-        if (airObject.getBox().intersects(firstBin)) {
-            children[first] =
-                    children[first].insert(airObject, firstBin, nodeLevel + 1);
+        for (int ii = 0; ii < children.length; ++ii) {
+            // if each children node's bin box
+            // intersects the air object's box,
+            // insert the object and update the child
+            BinBox childBinBox = box.split(descriDim, ii);
+            if (airObject.getBox().intersects(childBinBox)) {
+                children[ii] = children[ii].insert(airObject, childBinBox,
+                        nodeLevel + 1);
+            }
         }
 
-        if (airObject.getBox().intersects(secondBin)) {
-            //@formatter:off
-            children[second] =
-                children[second].insert(airObject, secondBin, nodeLevel + 1);
-            //@formatter:on
-        }
         return this;
-
     }
 
 
@@ -95,8 +87,8 @@ public class BinTreeNodeInternal implements BinTreeNode {
     @Override
     public BinTreeNode delete(AirObject airObject, BinBox box, int nodeLevel) {
         // delete object from children
-        // ii: {0, 1} first or the second half
-        for (int descriDim = nodeLevel % Box.NUM_DIMS, ii = 0; ii < 2; ++ii) {
+        for (int descriDim = nodeLevel % Box.NUM_DIMS, ii =
+                0; ii < getChildren().length; ++ii) {
             BinBox childBin = box.split(descriDim, ii);
             if (childBin.intersects(airObject.getBox())) {
                 // child's box intersects the object's box
@@ -173,9 +165,11 @@ public class BinTreeNodeInternal implements BinTreeNode {
             Box currBox = uniqueRecords.yieldCurrNode().getBox();
             if (!currBox.intersects(isecBox)) {
                 // Found an object whose box doesn't intersect with all the
-                // record's boxes that came before it. Can't be merged.
+                // records' boxes that came before it. Can't be merged.
                 return this;
             }
+            // update the intersection
+            isecBox = isecBox.getIntersection(currBox);
         }
 
         // If control reaches this point, all the records do have a common

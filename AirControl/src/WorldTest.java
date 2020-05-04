@@ -159,4 +159,5 @@ public class WorldTest extends TestCase {
         assertFuzzyEquals(systemOut().getHistory(), expectedOutput);
 
     }
+
 }

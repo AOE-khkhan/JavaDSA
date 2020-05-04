@@ -73,14 +73,15 @@ public class BinTree {
 
 
     /**
-     * Print the records in the tree that intersect with a given Box object.
+     * Get the number of records in the tree that intersect with a given Box
+     * object.
      * 
      * @param  box The box that is checked for intersection with the records.
      * 
      * @return     Number of nodes visited.
      */
-    public int printIntersections(Box box) {
-        return printIsecsInNode(box, root, rootBinBox, 0);
+    public int intersections(Box box) {
+        return isecsInNode(box, root, rootBinBox, 0);
     }
 
     /**
@@ -164,23 +165,23 @@ public class BinTree {
 
                     AirObject rec2 = records.yieldIndex(icounter);
 
-                    if (!rec1.getBox().intersects(rec2.getBox())) {
-                        // no intersection between objects
-                        continue;
-                    }
-                    Box isecBox = rec1.getBox().getIntersection(rec2.getBox());
-
-                    if (box.hasPoint(isecBox.getOrig())) {
-                        // We see if the origin of the intersection falls in the
-                        // current node's BinBox, to avoid printing the same
-                        // pair of colliding objects from multiple nodes in
-                        // the tree.
-                        System.out.println("(" + rec1 + ") and (" + rec2 + ")");
-                    }
-                }
-                ++ocounter;
+                    if (rec1.getBox().intersects(rec2.getBox())) {
+                        Box isecBox =
+                                rec1.getBox().getIntersection(rec2.getBox());
+                        if (box.hasPoint(isecBox.getOrig())) {
+                            // We see if the origin of the intersection falls in
+                            // the
+                            // current node's BinBox, to avoid printing the same
+                            // pair of colliding objects from multiple nodes in
+                            // the tree.
+                            System.out.println(
+                                    "(" + rec1 + ") and (" + rec2 + ")");
+                        } // origin of the intersection contained in the BinBox
+                    } // rec1 and rec2 boxes intersect
+                } // inner loop
+                ++ocounter; // increment the outer loop counter
             }
-        }
+        } // node was leaf
         else {
             // children of the internal node
             BinTreeNode[] children = ((BinTreeNodeInternal) node).getChildren();
@@ -198,7 +199,7 @@ public class BinTree {
 
 
     /**
-     * Print objects in a node that intersect with a given Box.
+     * Number of objects in a node that intersect with a given Box.
      * 
      * @param  box       The box with which records might intersect.
      * @param  node      The node to be printed intersections from.
@@ -207,8 +208,8 @@ public class BinTree {
      * 
      * @return           Number of nodes visited.
      */
-    private static int printIsecsInNode(Box box, BinTreeNode node,
-            BinBox binBox, int nodeLevel) {
+    private static int isecsInNode(Box box, BinTreeNode node, BinBox binBox,
+            int nodeLevel) {
 
         if (node.isLeaf()) {
             // loop through the leaf's records
@@ -223,7 +224,7 @@ public class BinTree {
                 if (box.intersects(recordBox)) {
                     // the param box intersects with the object's box
                     // now check if the origin of the intersection
-                    // falls into the binBox of the current node.
+                    // falls within the binBox of the current node.
                     int[] orig = box.getIntersection(recordBox).getOrig();
 
                     if (binBox.hasPoint(orig)) {
@@ -245,8 +246,8 @@ public class BinTree {
             for (int ii = 0; ii < children.length; ++ii) {
                 BinBox childBinBox = binBox.split(descriDim, ii);
                 if (box.intersects(childBinBox)) {
-                    numVisited += printIsecsInNode(box, children[ii],
-                            childBinBox, nodeLevel + 1);
+                    numVisited += isecsInNode(box, children[ii], childBinBox,
+                            nodeLevel + 1);
                 }
             }
             return numVisited;

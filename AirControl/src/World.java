@@ -84,7 +84,7 @@ public class World {
         }
 
         System.out.println("The following objects intersect (" + box + "):");
-        int nodesVisited = binTree.printIntersections(box);
+        int nodesVisited = binTree.intersections(box);
         System.out.println(nodesVisited + " nodes were visited in the bintree");
     }
 

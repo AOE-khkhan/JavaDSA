@@ -174,10 +174,8 @@ public class Box {
         int[] isecWidths = new int[NUM_DIMS];
         for (int ii = 0; ii < NUM_DIMS; ++ii) {
 
-            //@formatter:off
             isecWidths[ii] = Math.min((getOrig()[ii] + getWidths()[ii]),
-                                      (box.getOrig()[ii] + getWidths()[ii]));
-            //@formatter:on
+                    (box.getOrig()[ii] + box.getWidths()[ii]));
 
             isecWidths[ii] -= isecOrig[ii];
         }
